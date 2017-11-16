@@ -49,14 +49,14 @@ public class YTAudioPlayer implements AudioPlayer
                         GET_INDEX = new Command("player.getPlaylistIndex"),
                         GET_DURATION = new Command("player.getDuration");
     
-    public JSValue executeCommand(Command command) 
+    private JSValue executeCommand(Command command) 
     {
         try{
             JSValue result = player.executeJavaScriptAndReturnValue(command.toString());
             command.clearParameters();
             return result;
         }catch(Exception e){
-            e.printStackTrace();
+            //e.printStackTrace();
             return null;
         }
     }
@@ -191,7 +191,7 @@ public class YTAudioPlayer implements AudioPlayer
         html = "<!DOCTYPE html>\n" +
         "<html>\n" +
         "  <body>\n" +
-        "<iframe id=\"player\" width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/videoseries?list=PL7aXwAD1wk5kdkuQOFBHY63R9Bhki7rCg&enablejsapi=1\" frameborder=\"0\" gesture=\"media\" allowfullscreen></iframe>\n" +
+        "<iframe id=\"player\" width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/videoseries?list=" + list + "&enablejsapi=1\" frameborder=\"0\" gesture=\"media\" allowfullscreen></iframe>\n" +
         "\n" +
         "<script type=\"text/javascript\">\n" +
         "  var tag = document.createElement('script');\n" +
@@ -240,6 +240,7 @@ public class YTAudioPlayer implements AudioPlayer
         "</html>";
         
         try{
+            System.out.println("GETTING DATA FOR: " + list);
             videodata = YouTubePlaylistLoader.getYouTubePlaylistVideos(list);
         }catch(Exception e){
             e.printStackTrace();

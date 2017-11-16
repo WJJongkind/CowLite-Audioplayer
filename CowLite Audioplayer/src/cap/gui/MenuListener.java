@@ -1,5 +1,6 @@
 package cap.gui;
 
+import cap.core.CoreTime;
 import cap.core.CowLiteAudioPlayer;
 import cap.gui.overlay.OverlaySettings;
 import cap.gui.settings.GraphicalSettingsMenu;
@@ -10,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import javax.swing.JOptionPane;
 
 /**
  * (c) Copyright
@@ -55,6 +57,15 @@ public class MenuListener implements ActionListener
         if(e.getSource() == GraphicalInterface.setOverlay)
         {
             new OverlaySettings();
+        }
+        
+        if(e.getSource() == GraphicalInterface.importYoutube)
+        {
+            String result = JOptionPane.showInputDialog("Enter the ID of the YouTube playlist, please.");
+            String name = JOptionPane.showInputDialog("Enter the name that you want to assign to the playlist, please.");
+            GraphicalInterface.uptodate2 = false;
+            CoreTime.update = true;
+            InterfaceIO.saveYouTube(name, result);
         }
     }
 }

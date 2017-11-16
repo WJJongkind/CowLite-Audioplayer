@@ -84,9 +84,42 @@ public class InterfaceIO
                 playlists = null;
             }catch(Exception f){System.out.println(f + "savefile");}
         }
-        else
-        {
-            //TODO
+    }
+    
+    public static void saveYouTube(String name, String id)
+    {
+        try{
+            PrintStream out1 = System.out;
+            FileReader red = new FileReader(CowLiteAudioPlayer.docPath + "CowLite Audio Player\\resources\\launchersettings\\savedlists.txt");
+            BufferedReader bufred = new BufferedReader(red);
+            String line = null;
+            ArrayList<String> playlists = new ArrayList<>();
+            playlists.add(name + "||" + id);
+            CowLiteAudioPlayer.playlists.add(1, id);
+            String empty = bufred.readLine();
+            while((line = bufred.readLine()) != null)
+            {
+                if(!line.equals(name + "||" + id))
+                    playlists.add(line);
+            }
+            PrintStream out = new PrintStream(new FileOutputStream(new File(CowLiteAudioPlayer.docPath + "CowLite Audio Player\\resources\\launchersettings\\savedlists.txt")));
+            System.setOut(out);
+
+            System.out.println(empty);
+            for(int i = 0; i < playlists.size(); i++)
+            {
+                System.out.println(playlists.get(i));
+            }
+            out.close();
+            System.setOut(out1);
+            CowLiteAudioPlayer.player.clearList();
+            CowLiteAudioPlayer.loadList(id);
+            GraphicalInterface.uptodate = false;
+            GraphicalInterface.uptodate2 = false;
+            CoreTime.update = true;
+            playlists = null;
+        }catch(Exception e){
+            
         }
     }
     

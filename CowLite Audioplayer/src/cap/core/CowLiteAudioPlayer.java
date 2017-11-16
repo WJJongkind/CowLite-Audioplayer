@@ -2,6 +2,7 @@ package cap.core;
 
 import cap.control.GlobalKeyListener;
 import cap.core.audio.AudioPlayer;
+import cap.core.audio.FileAudioPlayer;
 import cap.core.audio.youtube.YTAudioPlayer;
 import cap.gui.GUIHandler;
 import cap.gui.GraphicalInterface;
@@ -60,7 +61,10 @@ public class CowLiteAudioPlayer
             
             while((line = bufred.readLine()) != null)
             {
-                playlists.add(line);
+                if(!line.contains("||"))
+                    playlists.add(line);
+                else
+                    playlists.add(line.split("\\|\\|")[1]);
             }
             red.close();
             bufred.close();
@@ -99,9 +103,9 @@ public class CowLiteAudioPlayer
             pane = null;
 
             //Create the audioplayer
-            //player = new FileAudioPlayer();
-            player = new YTAudioPlayer();
-            player.loadList("PL7aXwAD1wk5kdkuQOFBHY63R9Bhki7rCg");
+            player = new FileAudioPlayer();
+           // player = new YTAudioPlayer();
+           // player.loadList("PL7aXwAD1wk5kdkuQOFBHY63R9Bhki7rCg");
             
             //Makes sure the frame gets refreshed
             GraphicalInterface.uptodate2 = false;
@@ -124,6 +128,22 @@ public class CowLiteAudioPlayer
             
             CoreTime.update = true;
         }catch(Exception g){g.printStackTrace();}
+    }
+    
+    public static void loadList(String list)
+    {
+        player.stop();
+        File file = new File(list);
+        if(file.exists())
+        {
+            player = new FileAudioPlayer();
+            player.loadList(list);
+        }
+        else
+        {
+            player = new YTAudioPlayer();
+            player.loadList(list);
+        }
     }
     
     private static void getGraphics(String path)

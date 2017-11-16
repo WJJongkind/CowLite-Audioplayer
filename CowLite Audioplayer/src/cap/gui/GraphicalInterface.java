@@ -37,7 +37,7 @@ public class GraphicalInterface extends JFrame
     public static JFileChooser filechooser;
     public static JMenuBar menufile;
     public static JMenu filemenu, helpmenu, settingsmenu;
-    public static JMenuItem help, about, setHotkeys, saveList, removeList,
+    public static JMenuItem help, about, setHotkeys, saveList, removeList, importYoutube,
             setGraphics, setOverlay;
     public static JPanel top, left, right, bottom;
     public static String time;
@@ -584,7 +584,7 @@ public class GraphicalInterface extends JFrame
                 {
                     oldSelected = savedListText.getSelectedIndex();
                     CowLiteAudioPlayer.player.clearList();
-                    CowLiteAudioPlayer.player.loadList(CowLiteAudioPlayer.playlists.get(savedListText.getSelectedIndex()));
+                    CowLiteAudioPlayer.loadList(CowLiteAudioPlayer.playlists.get(savedListText.getSelectedIndex()));
                 }
             }
         });
@@ -601,12 +601,15 @@ public class GraphicalInterface extends JFrame
         filemenu = new JMenu("file");
         saveList = new JMenuItem("Save Playlist");
         removeList = new JMenuItem("Remove Selected Playlist");
+        importYoutube = new JMenuItem("Import YouTube Playlist");
         filemenu.add(saveList);
         MenuListener menulistener = new MenuListener();
         setGraphics.addActionListener(menulistener);
         saveList.addActionListener(menulistener);
         removeList.addActionListener(menulistener);
+        importYoutube.addActionListener(menulistener);
         filemenu.add(removeList);
+        filemenu.add(importYoutube);
         filemenu.setForeground(MENUTEXTCOLOR);
         menufile.add(filemenu);
         //add(menu);
