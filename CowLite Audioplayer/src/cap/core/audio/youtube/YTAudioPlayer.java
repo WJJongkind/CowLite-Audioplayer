@@ -8,15 +8,13 @@ package cap.core.audio.youtube;
 import cap.core.CoreTime;
 import cap.core.audio.AudioPlayer;
 import cap.gui.GraphicalInterface;
+import com.google.api.services.youtube.model.PlaylistItem;
+import com.teamdev.jxbrowser.chromium.Browser;
+import com.teamdev.jxbrowser.chromium.JSArray;
+import com.teamdev.jxbrowser.chromium.JSValue;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Semaphore;
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.Scene;
-import javafx.scene.web.WebView;
-import javax.swing.JFrame;
+import java.util.Map;
 
 /**
  *
@@ -25,8 +23,8 @@ import javax.swing.JFrame;
 public class YTAudioPlayer implements AudioPlayer
 {
     private String html;
-    private WebView player;
-    private JFXPanel jfxPanel;
+    private Browser player;
+    private Map<String, PlaylistItem> videodata;
     private boolean shuffled = false, playing = false, paused = false;
     
     private static final Command NEXT = new Command("player.nextVideo"), 
@@ -45,39 +43,16 @@ public class YTAudioPlayer implements AudioPlayer
                         GET_POSITION = new Command("player.getCurrentTime"),
                         PLAY = new Command("player.playVideo"),
                         GET_LIST = new Command("player.getPlaylist"),
-                        GET_TITLE = new Command("player.getVideoData().title"){
-                            @Override
-                            public String toString()
-                            {
-                                return "player.getVideoData().title";
-                            }
-                        },
                         PLAY_INDEX = new Command("player.playVideoAt"),
                         GET_VOLUME = new Command("player.getVolume"),
                         SHUFFLE = new Command("player.setShuffle"),
                         GET_INDEX = new Command("player.getPlaylistIndex"),
                         GET_DURATION = new Command("player.getDuration");
     
-    private String result;
-    public String executeCommand(Command command) 
+    public JSValue executeCommand(Command command) 
     {
         try{
-            Semaphore semaphore = new Semaphore(0);
-            Platform.runLater ( new Runnable () {
-                @Override
-                public void run () {
-                    try{
-                        result = player.getEngine().executeScript(command.toString()).toString();
-                        semaphore.release();
-                    }catch(Exception e){
-                        System.out.println(command.toString());
-                        e.printStackTrace();
-                        result = null;
-                        semaphore.release();
-                    }
-                }
-            } );
-            semaphore.acquire();
+            JSValue result = player.executeJavaScriptAndReturnValue(command.toString());
             command.clearParameters();
             return result;
         }catch(Exception e){
@@ -92,19 +67,27 @@ public class YTAudioPlayer implements AudioPlayer
         playing = true;
     }
 
-    private String previousResult;
+    private JSValue previousResult;
     @Override
     public List<String> getList() {
-        String result = executeCommand(GET_LIST);
+        JSValue result = executeCommand(GET_LIST);
         if(result.equals(previousResult))
             GraphicalInterface.uptodate = true;
         previousResult = result;
-        return Arrays.asList(result.split(","));
+        
+        JSArray list = result.asArray();
+        ArrayList<String> playlist = new ArrayList<>();
+        for(int i = 0; i < list.length(); i++)
+        {
+            playlist.add(videodata.get(list.get(i).asString().getStringValue()).getSnippet().getTitle());
+        }
+       // return Arrays.asList(result.asArray()..split(","));
+       return playlist;
     }
 
     @Override
     public String getSongInfo() {
-        return executeCommand(GET_TITLE);
+        return getList().get(getIndex());
     }
 
     @Override
@@ -126,9 +109,8 @@ public class YTAudioPlayer implements AudioPlayer
     @Override
     public void clearList() {
         stop();
-        player = null;
-        jfxPanel = null;
         html = null;
+        player = null;
         playing = false;
         paused = false;
         GraphicalInterface.songlist.setSelectedIndex(-1);
@@ -156,7 +138,7 @@ public class YTAudioPlayer implements AudioPlayer
 
     @Override
     public double getVolume() {
-        return Double.parseDouble(executeCommand(GET_VOLUME)) / 100;
+        return executeCommand(GET_VOLUME).asNumber().getInteger() / 100.0;
     }
 
     @Override
@@ -204,7 +186,7 @@ public class YTAudioPlayer implements AudioPlayer
     }
 
     @Override
-    public void loadList(String list) 
+    public void loadList(String list)
     {
         html = "<!DOCTYPE html>\n" +
         "<html>\n" +
@@ -257,40 +239,29 @@ public class YTAudioPlayer implements AudioPlayer
         "  </body>\n" +
         "</html>";
         
-        jfxPanel = new JFXPanel();
-        Platform.runLater ( new Runnable () {
-            @Override
-            public void run () {
-                player = new WebView();
-                
-                player.getEngine().setJavaScriptEnabled(true);
-                player.setCache(true);
-                player.setContextMenuEnabled(true);
-                player.getEngine().loadContent(html);
-                jfxPanel.setScene(new Scene(player));
-                JFrame f = new JFrame();
-                f.add(jfxPanel);
-                f.setSize(1280,720);
-                f.setVisible(true);
-                
-            }
-        } );
+        try{
+            videodata = YouTubePlaylistLoader.getYouTubePlaylistVideos(list);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        player = new Browser();
+        player.loadHTML(html);
         GraphicalInterface.uptodate = false;
     }
 
     @Override
     public int getIndex() {
-        return Integer.parseInt(executeCommand(GET_INDEX));
+        return executeCommand(GET_INDEX).asNumber().getInteger();
     }
 
     @Override
     public int getDuration() {
-        return (int)Math.round(Double.parseDouble(executeCommand(GET_DURATION)));
+        return executeCommand(GET_DURATION).asNumber().getInteger();
     }
 
     @Override
     public int getPosition() {
-        return (int)Math.round(Double.parseDouble(executeCommand(GET_POSITION)));
+        return executeCommand(GET_POSITION).asNumber().getInteger();
     }
 
     @Override
