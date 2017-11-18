@@ -1,0 +1,20 @@
+You can edit hotkeys by going to settings > set hotkeys
+
+Hotkeys:
+Delete - Removes the selected item in the GUI. This may either be a song or a playlist. 
+For the hotkey-bindings you can check settings > Set Hotkeys. You can also customize your hotkeys here. This is what each hotkey does:
+Play Hotkey: Starts playing a song. If no songs are selected & no playlists are selected, it selects the first playlist & first song.
+Pause Hotkey: Pauses a song and continues playing the song if pressed after it was paused.
+Stop Hotkey: Completely stops playing a song, does not remember the time it stopped playing.
+Next Hotkey: Starts playing the next song in the (shuffle)list.
+Previous Hotkey: Starts playing the previous song in the (shuffle)list.
+Volume Up Hotkey: Turns the volume up by 5%.
+Volume Down Hotkey: Turns the volume down by 5%.
+
+Functionality:
+-You can shuffle the songs by hitting the shuffle button. Each time it plays through the list it will reshuffle. 
+-You can open up to 50 songs at once by selecting CowLite Audio Player(C) as your default audioplayer and then open the files.
+-You can have a total of infinite files opened at once. 
+-You can drag & drop files to get them opened in the program.
+-Playlists are removed/saved by going to file > save playlist.
+-Launch settings (such as volume, saved playlists, shuffle) are saved & loaded automatically.

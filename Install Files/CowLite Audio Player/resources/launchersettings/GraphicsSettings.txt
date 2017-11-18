@@ -1,0 +1,12 @@
+Background, listbg, listtext, menutext, sliderbackprim, sliderbacksec, volumeprim, volumesec, timeprim, timesec, time
+java.awt.Color[r=255,g=95,b=188]
+java.awt.Color[r=255,g=255,b=255]
+java.awt.Color[r=51,g=51,b=51]
+java.awt.Color[r=255,g=255,b=255]
+java.awt.Color[r=255,g=255,b=255]
+java.awt.Color[r=255,g=255,b=255]
+java.awt.Color[r=179,g=0,b=0]
+java.awt.Color[r=230,g=0,b=0]
+java.awt.Color[r=255,g=140,b=0]
+java.awt.Color[r=255,g=175,b=0]
+java.awt.Color[r=0,g=0,b=0]

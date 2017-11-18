@@ -1,0 +1,8 @@
+settings
+NumPad 5
+NumPad 7
+NumPad 9
+NumPad Add
+NumPad Subtract
+NumPad 6
+NumPad 4
