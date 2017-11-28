@@ -103,10 +103,11 @@ public class GraphicalInterface extends JFrame
         volumeSlider = new JSlider();
         setLayout(new GridBagLayout());
         volumeSlider.setOrientation(JSlider.VERTICAL);
-        volumeSlider.setValue(75);
+        volumeSlider.setValue(Integer.parseInt(PROPERTIES.getAudioProperties().get("volume")));
         volumeSlider.addChangeListener(new ChangeListener(){
             @Override
             public void stateChanged(ChangeEvent e) {
+                PROPERTIES.getAudioProperties().replace("volume", volumeSlider.getValue() + "");
                 AUDIO.getPlayer().setVolume(volumeSlider.getValue());
             }
         });

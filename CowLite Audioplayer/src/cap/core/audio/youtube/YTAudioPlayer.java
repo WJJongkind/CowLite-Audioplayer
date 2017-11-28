@@ -7,9 +7,11 @@ package cap.core.audio.youtube;
 
 import cap.core.audio.AudioPlayer;
 import com.google.api.services.youtube.model.PlaylistItem;
+import com.teamdev.jxbrowser.chromium.BeforeSendHeadersParams;
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.JSArray;
 import com.teamdev.jxbrowser.chromium.JSValue;
+import com.teamdev.jxbrowser.chromium.javafx.DefaultNetworkDelegate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -129,6 +131,7 @@ public class YTAudioPlayer implements AudioPlayer
 
     @Override
     public void setVolume(int value) {
+        SETTINGS.replace("volume", value + "");
         SETVOLUME.addParameter(value);
         executeCommand(SETVOLUME);
     }
@@ -218,6 +221,7 @@ public class YTAudioPlayer implements AudioPlayer
         "    });\n" +
         "  }\n" +
         "  function onPlayerReady(event) {\n" +
+        "      player.setVolume(volume); " +
         "     event.target.playVideo();\n" +
         "      //event.target.nextVideo();\n" +
         "  }\n" +
@@ -250,9 +254,20 @@ public class YTAudioPlayer implements AudioPlayer
         }catch(Exception e){
             e.printStackTrace();
         }
+        
         player = new Browser();
+        
+        //Setup the refere header so that YouTube WMG does not block videos
+        player.getContext().getNetworkService().setNetworkDelegate(new DefaultNetworkDelegate(){
+            @Override
+            public void onBeforeSendHeaders(BeforeSendHeadersParams params)
+            {
+                 params.getHeadersEx().setHeader("Referer", "http://www.cowlite.nl");
+            }
+        });
         player.loadHTML(html);
         playing = true;
+        System.out.println(SETTINGS.get("volume"));
         setVolume(Integer.parseInt(SETTINGS.get("volume")));
     }
 
