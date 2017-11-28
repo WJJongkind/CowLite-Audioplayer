@@ -127,6 +127,7 @@ public class YTAudioPlayer implements AudioPlayer
     public void stop() {
         executeCommand(STOP);
         playing = false;
+        paused = false;
     }
 
     @Override
@@ -156,7 +157,7 @@ public class YTAudioPlayer implements AudioPlayer
 
     @Override
     public void alphabetical() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        new UnsupportedOperationException("Not supported yet.").printStackTrace(); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
