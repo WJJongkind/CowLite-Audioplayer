@@ -1,17 +1,12 @@
 package cap.core;
 
-import static cap.core.CoreTime.update;
+import cap.core.audio.AudioController;
+import cap.core.audio.AudioPlayer;
 import cap.core.audio.FileAudioPlayer;
 import cap.core.audio.MetaData;
 import cap.gui.GUIHandler;
-import static cap.gui.GraphicalInterface.songlistmodel;
-import static cap.gui.GraphicalInterface.artistlistmodel;
-import static cap.gui.GraphicalInterface.albumlistmodel;
-import cap.gui.GUIListener;
 import cap.gui.GraphicalInterface;
-import cap.gui.SliderListener;
 import java.awt.event.ActionListener;
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
@@ -22,116 +17,58 @@ import javax.swing.*;
  * @author Wessel Jongkind
  */
 public class CoreTime implements ActionListener
-{
-    public static int imax = 0;
-    public static boolean update = true;
-    private File f;
+{ 
+    private final AudioController AUDIO;
+    private final GUIHandler GUI;
+    private int switchedIndex = -1;
+    private List<?> playlist;
     
-    public CoreTime()
+    public CoreTime(GUIHandler handler, AudioController controller)
     {
-        f = new File(CowLiteAudioPlayer.docPath + "CowLite Audio Player" + "\\resources\\arguments\\arg" + imax + ".txt");
+        AUDIO = controller;
+        GUI = handler;
     }
-        
+    
     @Override
     public void actionPerformed(java.awt.event.ActionEvent e)
     {
-        System.out.println("action");
-        try{
-            updateFrame();
-            CowLiteAudioPlayer.gui.updateOverlay(GraphicalInterface.time, CowLiteAudioPlayer.player.getSongInfo(), CowLiteAudioPlayer.player.getVolume());
-            checkSongChange();
-            updateTime();
-        }catch(Exception f){f.printStackTrace();}
-        
-        //Checks if song should change and if new files have arrived in CowLite's
-        //directory. If so, those files will be opened.
-        //checkNewFiles();
+        checkSongChange();
+        updatePlaylistInfo();
+        updateSongInfo();
     }
-    
-    /*private void checkNewFiles()
-    {
-        try
-        {
-            //checks if file 'arg + i + .txt' already exists. Those get
-            //created by launcher.exe (a seperate program I wrote)
-            if(f.exists());
-            {
-                int i=imax;
-                while(f.exists())
-                {
-                    try
-                    {
-                        i++;
-                        interpretFile(f.getAbsolutePath());
-                        f = new File(CowLiteAudioPlayer.docPath + "CowLite Audio Player" + "\\resources\\arguments\\arg" + i + ".txt");
-                    }catch(Exception e){}
-                }
-                imax = i;
-            }
-        }catch(Exception g){}
-    }
-    
-    private void interpretFile(String path)
-    {
-        String line = null;
-        try
-        {
-            //Retreives the filepath from the file with filepath path.
-            FileReader red = new FileReader(path);
-            BufferedReader bufred = new BufferedReader(red);
-            while((line = bufred.readLine()) != null)
-            {
-                CowLiteAudioPlayer.player.addSong(line);
-            }
-            red.close();
-            bufred.close();
-        }catch(Exception e){}
-        line = null;
-    }*/
     
     private void checkSongChange()
     {
         try{
-            if(CowLiteAudioPlayer.player.isFinished())
+            AudioPlayer player = AUDIO.getPlayer();
+            if(player instanceof FileAudioPlayer && player.getPosition() == player.getDuration() && switchedIndex != player.getIndex())
             {
-                //If we're in here, the song's current position is at it's end.
-                //Player gets stopped, song gets changed, player gets started. 
-                CowLiteAudioPlayer.player.stop();
-                CowLiteAudioPlayer.player.changeSong(1);
-                CowLiteAudioPlayer.player.play();
-                SliderListener.click = false;
-                GraphicalInterface.timeSlider.setMaximum(-1);
-                
+                switchedIndex = player.getIndex();
+                player.stop();
+                player.changeSong(1);
+                player.play();
             }
-            GraphicalInterface.songlist.setSelectedIndex(CowLiteAudioPlayer.player.getIndex());
-        }catch(Exception g){g.printStackTrace();} 
+        }catch(Exception e){
+        }
     }
     
-    private void updateTime()
+    private void updateSongInfo()
     {
-        System.out.println("Checking time...");
-            try{
-                //The timeslider gets updated on the interface.
-                SliderListener.click = false;
-                //Duration currentDuration = CowLiteAudioPlayer.player.;
-                //Duration songDuration = mediaplayer.getMedia().getDuration();
-                
-                int duration = CowLiteAudioPlayer.player.getDuration();
-                int position = CowLiteAudioPlayer.player.getPosition();
-                if(GraphicalInterface.timeSlider.getMaximum() != duration || GraphicalInterface.timeSlider.getValue() == -1)
-                    GraphicalInterface.timeSlider.setMaximum(duration);
-                GraphicalInterface.timeSlider.setValue(position);
-                
-                //Crafts a m'm':s's' | mm:ss string which will be displayed
-                //on top of the timeslider.
-                String totalTime = minutes(duration) + ":" + seconds(duration);
-                String currentTime = minutes(position) + ":" + seconds(position);
-                GraphicalInterface.time = currentTime + "|" + totalTime;
-            }catch(Exception e){
-                SliderListener.click = true;
-                e.printStackTrace();
-            }
+        try{
+            AudioPlayer player = AUDIO.getPlayer();
+            String time;
+            if(player.isPlaying())
+                time = minutes(player.getPosition()) + ":" + seconds(player.getPosition()) + "|" + minutes(player.getDuration()) + ":" + seconds(player.getDuration());
+            else
+                time = "";
+            
+            GUI.getGui().updateOverlay(time, player.getSongInfo(), player.getVolume());
+            GUI.getGui().setTimeSliderPosition(player.getPosition(), player.getDuration());
+        }catch(Exception e){
+           // e.printStackTrace();
+        }
     }
+    
     private String seconds(int duration)
     {
         String str;
@@ -158,98 +95,77 @@ public class CoreTime implements ActionListener
         return str;
     }
     
-    private void  updateFrame() throws Exception
+    private void  updatePlaylistInfo()
     {
-        //updates the MainFrame if playlists have changed in AudioPlayer class.
-        if(!GraphicalInterface.uptodate)
-        {
-            if(CowLiteAudioPlayer.player instanceof FileAudioPlayer)
+        try{
+            if(AUDIO.getPlayer() == null)
+                return;
+            if(playlist == null)
+                playlist = AUDIO.getPlayer().getList();
+            else if(playlist.equals(AUDIO.getPlayer().getList()))
+                return;
+            else
+                playlist = AUDIO.getPlayer().getList();
+
+            if(AUDIO.getPlayer() instanceof FileAudioPlayer)
                 updateForFiles();
             else
                 updateForYoutube();
+        }catch(Exception e){
+            
         }
-        
-        //Updates the mainframe if a completely new playlist has been saved
-        if(!GraphicalInterface.uptodate2)
-        {
-            GraphicalInterface.savedmodel = new DefaultListModel();
-            try
-            {
-                FileReader red = new FileReader(CowLiteAudioPlayer.docPath + "CowLite Audio Player\\resources\\launchersettings\\savedlists.txt");
-                BufferedReader bufred = new BufferedReader(red);
-                String line = null;
-                
-                while((line = bufred.readLine()) != null)
-                {
-                    while(line.contains("\\"))
-                    {
-                        line = line.substring(line.indexOf("\\") + 1);
-                    }
-                    GraphicalInterface.savedmodel.addElement(line);
-                }
-                red.close();
-                bufred.close();
-                GraphicalInterface.savedListText.setModel(GraphicalInterface.savedmodel);
-                GraphicalInterface.uptodate2 = true;
-            }catch(Exception f){f.printStackTrace();}
-        }
-        
-        if(!GUIListener.needupdate)
-            update = false;
     }
         
     private void updateForFiles()
     {
-        ArrayList<MetaData> list = (ArrayList<MetaData>) CowLiteAudioPlayer.player.getList();
-        songlistmodel = new DefaultListModel();
-        artistlistmodel = new DefaultListModel();
-        albumlistmodel = new DefaultListModel();
         try
         {
+            ArrayList<MetaData> list = (ArrayList<MetaData>) AUDIO.getPlayer().getList();
+            DefaultListModel songs = new DefaultListModel();
+            DefaultListModel artists = new DefaultListModel();
+            DefaultListModel albums = new DefaultListModel();
+            
             for(int i = 0; i < list.size(); i++)
             {
-                songlistmodel.addElement(list.get(i).getSongName());
-                artistlistmodel.addElement(list.get(i).getArtist());
-                albumlistmodel.addElement(list.get(i).getAlbum());
+                songs.addElement(list.get(i).getSongName());
+                artists.addElement(list.get(i).getArtist());
+                albums.addElement(list.get(i).getAlbum());
             }
 
-            GraphicalInterface.songlist.setModel(songlistmodel);
-            GraphicalInterface.artistlist.setModel(artistlistmodel);
-            GraphicalInterface.albumlist.setModel(albumlistmodel);
+            GUI.getGui().setPlaylistModels(songs, artists, albums);
 
-            GUIHandler.frame.repaint();
-            GUIHandler.frame.revalidate();
-            if(GraphicalInterface.songlist.getSelectedIndex() != CowLiteAudioPlayer.player.getIndex())
-                GraphicalInterface.songlist.setSelectedIndex(CowLiteAudioPlayer.player.getIndex());
-            GraphicalInterface.uptodate = true;
-        }catch(Exception f){f.printStackTrace();}
+            GUI.getGui().revalidate();
+            GUI.getGui().repaint();
+          //  if(GraphicalInterface.songlist.getSelectedIndex() != CowLiteAudioPlayer.player.getIndex())
+           //     GraphicalInterface.songlist.setSelectedIndex(CowLiteAudioPlayer.player.getIndex());
+        }catch(Exception f){}
     }
     
     private void updateForYoutube()
     {
-        List<?> list = CowLiteAudioPlayer.player.getList();
-        songlistmodel = new DefaultListModel();
-        artistlistmodel = new DefaultListModel();
-        albumlistmodel = new DefaultListModel();
         try
         {
+            List<?> list = AUDIO.getPlayer().getList();
+            DefaultListModel songs = new DefaultListModel();
+            DefaultListModel artists = new DefaultListModel();
+            DefaultListModel albums = new DefaultListModel();
+            
             for(int i = 0; i < list.size(); i++)
             {
-                songlistmodel.addElement(list.get(i));
+                songs.addElement(list.get(i));
             }
 
-            GraphicalInterface.songlist.setModel(songlistmodel);
-            GraphicalInterface.artistlist.setModel(artistlistmodel);
-            GraphicalInterface.albumlist.setModel(albumlistmodel);
+            GUI.getGui().setPlaylistModels(songs, artists, albums);
+            GUI.getGui().revalidate();
+            GUI.getGui().repaint();
             if(list.isEmpty())
                 return;
 
-            GUIHandler.frame.repaint();
-            GUIHandler.frame.revalidate();
-            if(GraphicalInterface.songlist.getSelectedIndex() != CowLiteAudioPlayer.player.getIndex())
-                GraphicalInterface.songlist.setSelectedIndex(CowLiteAudioPlayer.player.getIndex());
-            System.out.println("updated");
-        }catch(Exception f){f.printStackTrace();}
+           // GUIHandler.frame.repaint();
+         //   GUIHandler.frame.revalidate();
+         //   if(GraphicalInterface.songlist.getSelectedIndex() != CowLiteAudioPlayer.player.getIndex())
+            //    GraphicalInterface.songlist.setSelectedIndex(CowLiteAudioPlayer.player.getIndex());
+        }catch(Exception f){}
     }
 }
 

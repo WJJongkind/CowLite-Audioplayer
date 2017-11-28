@@ -1,10 +1,6 @@
 package cap.core.audio;
 
-import cap.core.CoreTime;
-import cap.core.CowLiteAudioPlayer;
-import cap.gui.GUIHandler;
-import cap.gui.GraphicalInterface;
-import cap.util.InterfaceIO;
+import cap.util.IO;
 import java.io.BufferedReader;
 import javafx.scene.media.*;
 import java.util.ArrayList;
@@ -12,6 +8,7 @@ import java.util.Random;
 import java.io.*;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Map;
 import javafx.util.Duration;
 
 /**
@@ -40,58 +37,34 @@ public class FileAudioPlayer implements AudioPlayer
     private MediaPlayer mediaplayer;
     private final int SORTSTYLE_LIMIT = 3, BY_SONG = 0, BY_ARTIST = 1, BY_ALBUM = 2;
     
+    //Settings
+    private final Map<String, String> SETTINGS;
     
     /**
      * retreives the settings for audioplayer and instantiates itself
      */
-    public FileAudioPlayer()
+    public FileAudioPlayer(Map<String, String> audioSettings)
     {
-        //Instantiates the audioplayer
-        ArrayList<String> settings = new ArrayList<>();
-        playing = false;
-        paused = false;
+        this.SETTINGS = audioSettings;
         
-        try
-        {
-            //Gathers it's required settings
-            String line = null;
-            FileReader red = new FileReader(CowLiteAudioPlayer.docPath + "\\CowLite Audio Player\\resources\\launchersettings\\LaunchSettings.txt");
-            BufferedReader bufred = new BufferedReader(red);
-            while((line = bufred.readLine()) != null)
-            {
-                settings.add(line);
-            }
-            red.close();
-            bufred.close();
+        list = new ArrayList<>();
+        playing = false;
+        paused = true;
+        
+        //Sets the settings relevant to this class
+        setVolume(Integer.parseInt(SETTINGS.get("volume")));
             
-            //Sets the settings relevant to this class
-            volume = Double.parseDouble(settings.get(1));
-            GraphicalInterface.volumeSlider.setValue((int)(volume * 100));
-            shuffled = Boolean.parseBoolean(settings.get(2));
-            alphabetical = Boolean.parseBoolean(settings.get(3));
-            sortStyle = Integer.parseInt(settings.get(4));
-            
-            //shuffled = false;
-            //alphabetical = true;
-            if(shuffled)
-                InterfaceIO.setShufflePressed();
-            if(alphabetical)
-                InterfaceIO.setAlphabeticPressed();
-            listIndex = 0;
-        }catch(Exception e){e.printStackTrace();}
+        listIndex = 0;
     }
 
     //Starts playing a song/video at selected index
+    @Override
     public void play()
     {
         try
         {
-            if(getList() == null || getList().size() == 0)
-                loadList(CowLiteAudioPlayer.playlists.get(1));
-            //Displays on the GUI which song/file is going to be played
-            GraphicalInterface.songlist.setSelectedIndex(listIndex);
-            GraphicalInterface.songlist.ensureIndexIsVisible(GraphicalInterface.songlist.getSelectedIndex());
-            GUIHandler.frame.repaint();
+            if(getList() == null)
+                return;
             
             //Creates the media that should be played
             Media media = null;
@@ -109,8 +82,8 @@ public class FileAudioPlayer implements AudioPlayer
             //Yay, we are playing
             mediaplayer.play();
             playing = true;
+            paused = false;
             media = null;
-            InterfaceIO.setPauseButton();
       }catch(Exception e){e.printStackTrace();}
     }
 
@@ -234,11 +207,6 @@ public class FileAudioPlayer implements AudioPlayer
         list = new ArrayList<>();
         shufflelist = new ArrayList<>();
         listIndex = 0;
-        
-        //Makes sure the frame gets updated accordingly
-        GraphicalInterface.songlist.setSelectedIndex(-1);
-        GraphicalInterface.uptodate = false;
-        CoreTime.update = true;
     }
     
     /**
@@ -249,14 +217,16 @@ public class FileAudioPlayer implements AudioPlayer
     {
         //A song has been added from the filepath. Makes sure this gets
         //displayed on the interface as well.
-        GraphicalInterface.uptodate = false;
         String pathUri = new File(path).toURI().toString();
         try{
             list.add(new MetaData(pathUri)); 
-            addShuffleSong(pathUri);
-            addAlphabeticSong(pathUri);
+            
+            if(shuffled)
+                addShuffleSong(pathUri);
+            
+            if(alphabetical)
+                addAlphabeticSong(pathUri);
         }catch(Exception e){System.out.println(e + "addSong");}
-        CoreTime.update = true;
     }
     
     private void addAlphabeticSong(String path)
@@ -290,15 +260,16 @@ public class FileAudioPlayer implements AudioPlayer
             mediaplayer.stop();
             mediaplayer.dispose();
             mediaplayer = null;
-        }catch(Exception e){}
-        
-        InterfaceIO.setPlayButton();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     
     /**
      * change the volume of the mediaplayer. Value should be percentage.
      * @param value percentage of volume (100% max, 0% min)
      */
+    @Override
     public void setVolume(int value)
     {
         //changes the volume to a percentage/100 (so between 0-1)
@@ -313,19 +284,21 @@ public class FileAudioPlayer implements AudioPlayer
      * change the volume with a given percentage
      * @param value percentage that should be added/subtracted
      */
+    @Override
     public void changeVolume(int value)
     {
         //Changes the volume to a point between 0-1 (1 = 100%)
         volume = mediaplayer.getVolume() + (double)value / 100.0;
         if(volume < 0) volume = 0;
         if(volume > 1) volume = 1;
-        GraphicalInterface.volumeSlider.setValue((int)(volume * 100));
+        
         try
         {
             mediaplayer.setVolume(volume);
         }catch(Exception e){} 
     }
     
+    @Override
     public double getVolume()
     {
         return volume;
@@ -334,6 +307,7 @@ public class FileAudioPlayer implements AudioPlayer
     /**
      * enable/disable shuffling
      */
+    @Override
     public void shuffle()
     {
         //checks if it is already shuffled. If so it doesn't shuffle.
@@ -357,17 +331,15 @@ public class FileAudioPlayer implements AudioPlayer
                 shufflelist.add(i, templist.get(index));
                 templist.remove(index);
             }
-            GraphicalInterface.uptodate = false;
         }
         else
         {
             shuffled = false;
             shufflelist = null;
-            GraphicalInterface.uptodate = false;
         }
-        CoreTime.update = true;
     }
     
+    @Override
     public void alphabetical()
     {
         if(!alphabetical || sortStyle < SORTSTYLE_LIMIT)
@@ -379,8 +351,6 @@ public class FileAudioPlayer implements AudioPlayer
             if(sortStyle == SORTSTYLE_LIMIT)
             {
                 alphabetical = false;
-                GraphicalInterface.uptodate = false;
-                CoreTime.update = true;
                 return;
             }
             alphabetical = true;
@@ -395,64 +365,59 @@ public class FileAudioPlayer implements AudioPlayer
         }
         else
             alphabetical = false;
-        GraphicalInterface.uptodate = false;
-        CoreTime.update = true;
     }
     
     private void sortAlphabetic()
     {
         Collections.sort(alphabeticList, new Comparator<MetaData>(){
-                @Override
-                public int compare(MetaData m1, MetaData m2){
-                    String s1;
-                    String s2;
-                    
-                    if(sortStyle == BY_SONG)
-                    {
-                        s1 = m1.getSongName();
-                        s2 = m2.getSongName();
-                    }
-                    else if(sortStyle == BY_ARTIST)
-                    {
-                        s1 = m1.getArtist();
-                        s2 = m2.getArtist();
-                    }
-                    else
-                    {
-                        s1 = m1.getAlbum();
-                        s2 = m2.getAlbum();
-                    }
-                    return s1.compareToIgnoreCase(s2);
+            @Override
+            public int compare(MetaData m1, MetaData m2){
+                String s1;
+                String s2;
+
+                if(sortStyle == BY_SONG)
+                {
+                    s1 = m1.getSongName();
+                    s2 = m2.getSongName();
                 }
-            });
+                else if(sortStyle == BY_ARTIST)
+                {
+                    s1 = m1.getArtist();
+                    s2 = m2.getArtist();
+                }
+                else
+                {
+                    s1 = m1.getAlbum();
+                    s2 = m2.getAlbum();
+                }
+                return s1.compareToIgnoreCase(s2);
+            }
+        });
     }
     
     /**
      * pause/unpause the mediaplayer
      * @param stat true is paused, false is unpaused
      */
+    @Override
     public void setPaused(boolean stat)
     {
         //Checks wether it should pause or not.
         if(stat)
-        {
-            paused = true;
             mediaplayer.pause();
-            InterfaceIO.setPlayButton();
-        }
-
-        else
-        {
-            paused = false;
+        else if(mediaplayer != null)
             mediaplayer.play();
-            InterfaceIO.setPauseButton();
-        }
+        else
+            play();
+        
+        paused = stat;
     }
     
     /**
      * load a playlist at the given path
      * @param listpath path to the playlist
      */
+    @Override
     public void loadList(String listpath)
     {
         
@@ -481,9 +446,9 @@ public class FileAudioPlayer implements AudioPlayer
                
             red.close();
             bufred.close();
-        }catch(Exception e){e.printStackTrace();}
-        GraphicalInterface.uptodate = false;
-        CoreTime.update = true;
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
     
     //Get the media that should be played
@@ -496,26 +461,31 @@ public class FileAudioPlayer implements AudioPlayer
             return shufflelist.get(listIndex).getPath();
     }*/
     
+    @Override
     public boolean getShuffled()
     {
         return shuffled;
     }
     
+    @Override
     public boolean getAlphabetical()
     {
         return alphabetical;
     }
     
+    @Override
     public int getAlphabeticalType()
     {
         return sortStyle;
     }
     
+    @Override
     public boolean isPlaying()
     {
         return playing;
     }
     
+    @Override
     public boolean isPaused()
     {
         return paused;
@@ -543,6 +513,7 @@ public class FileAudioPlayer implements AudioPlayer
 
     @Override
     public void seek(int position) {
+        System.out.println("SEEK" + position);
         mediaplayer.seek(new Duration(position * 1000));
     }
 }

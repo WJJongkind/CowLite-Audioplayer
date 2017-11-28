@@ -1,14 +1,25 @@
 package cap.gui.settings;
 
 import cap.control.GlobalKeyListener;
+import cap.core.PropertiesManager;
+import cap.util.IO;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.util.Map;
 import javax.swing.*;
 
 /**
  * (c) Copyright
  * shows a menu presenting all the selected hotkeys
  */
-public class SettingsMenu
+public class SettingsMenu implements KeyListener, ActionListener
 {
     public static JFrame frame;
     public static JTextField playfield;
@@ -29,11 +40,17 @@ public class SettingsMenu
     public static JButton discard;
     //private GlobalKeyListener keyl = new GlobalKeyListener();
     
+    private final Map<String, String> hotkeys;
+    private final PropertiesManager properties;
+            
     /**
      * creates a frame with all the selected hotkeys
      */
-    public SettingsMenu()
+    public SettingsMenu(PropertiesManager properties)
     {   
+        this.hotkeys = properties.getControlProperties();
+        this.properties = properties;
+        
         frame = new  JFrame("Settings");
         frame.setSize(300,300);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -50,22 +67,21 @@ public class SettingsMenu
         });  
         
         //Initialise objects
-        playfield = new JTextField(GlobalKeyListener.play);
-        pausefield = new JTextField(GlobalKeyListener.pause);
-        stopfield = new JTextField(GlobalKeyListener.stop);
-        previousfield = new JTextField(GlobalKeyListener.previous);
-        nextfield = new JTextField(GlobalKeyListener.next);
-        volumeupfield = new JTextField(GlobalKeyListener.volumeup);
-        volumedownfield = new JTextField(GlobalKeyListener.volumedown);
+        playfield = new JTextField(hotkeys.get("play"));
+        pausefield = new JTextField(hotkeys.get("pause"));
+        stopfield = new JTextField(hotkeys.get("stop"));
+        previousfield = new JTextField(hotkeys.get("previous"));
+        nextfield = new JTextField(hotkeys.get("next"));
+        volumeupfield = new JTextField(hotkeys.get("volumeUp"));
+        volumedownfield = new JTextField(hotkeys.get("volumeDown"));
         
-        SettingsKeyListener listener = new SettingsKeyListener();
-        playfield.addKeyListener(listener);
-        pausefield.addKeyListener(listener);
-        stopfield.addKeyListener(listener);
-        volumeupfield.addKeyListener(listener);
-        volumedownfield.addKeyListener(listener);
-        nextfield.addKeyListener(listener);
-        previousfield.addKeyListener(listener);
+        playfield.addKeyListener(this);
+        pausefield.addKeyListener(this);
+        stopfield.addKeyListener(this);
+        volumeupfield.addKeyListener(this);
+        volumedownfield.addKeyListener(this);
+        nextfield.addKeyListener(this);
+        previousfield.addKeyListener(this);
         
         playlabel = new JLabel("Play Hotkey: ");
         pauselabel = new JLabel("Pause Hotkey: ");
@@ -77,9 +93,8 @@ public class SettingsMenu
         
         save = new JButton("save");
         discard = new JButton("discard");
-        SettingsListener actions = new SettingsListener();
-        save.addActionListener(actions);
-        discard.addActionListener(actions);
+        save.addActionListener(this);
+        discard.addActionListener(this);
         
         
         GridBagConstraints c = new GridBagConstraints();
@@ -135,4 +150,58 @@ public class SettingsMenu
        c.gridheight = gridheight;
        return c;
     }
+    
+    @Override
+    public void keyTyped(KeyEvent e)
+    {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e)
+    {
+        
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e)
+    {
+        if(frame.getFocusOwner() == SettingsMenu.playfield)
+            playfield.setText(GlobalKeyListener.lastPressed);
+        if(frame.getFocusOwner() == SettingsMenu.pausefield)
+            pausefield.setText(GlobalKeyListener.lastPressed);
+        if(frame.getFocusOwner() == SettingsMenu.stopfield)
+            stopfield.setText(GlobalKeyListener.lastPressed);
+        if(frame.getFocusOwner() == SettingsMenu.volumeupfield)
+            volumeupfield.setText(GlobalKeyListener.lastPressed);
+        if(frame.getFocusOwner() == SettingsMenu.volumedownfield)
+            volumedownfield.setText(GlobalKeyListener.lastPressed);
+        if(frame.getFocusOwner() == SettingsMenu.previousfield)
+            previousfield.setText(GlobalKeyListener.lastPressed);
+        if(frame.getFocusOwner() == SettingsMenu.nextfield)
+            nextfield.setText(GlobalKeyListener.lastPressed);
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+        if(e.getSource() == SettingsMenu.save)
+        {
+            hotkeys.replace("play", playfield.getText());
+            hotkeys.replace("pause", pausefield.getText());
+            hotkeys.replace("stop", stopfield.getText());
+            hotkeys.replace("volumeUp", volumeupfield.getText());
+            hotkeys.replace("volumeDown", volumedownfield.getText());
+            hotkeys.replace("next", nextfield.getText());
+            hotkeys.replace("previous", previousfield.getText());
+            
+            properties.storeProperties(hotkeys);
+            SettingsMenu.frame.dispatchEvent(new WindowEvent(SettingsMenu.frame, WindowEvent.WINDOW_CLOSING));
+        }
+        
+        if(e.getSource() == SettingsMenu.discard)
+        {
+            SettingsMenu.frame.dispatchEvent(new WindowEvent(SettingsMenu.frame, WindowEvent.WINDOW_CLOSING));
+        }
+    }
+    
 }

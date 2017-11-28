@@ -1,13 +1,11 @@
 package cap.control;
 
+import cap.core.ApplicationController;
 import cap.core.CowLiteAudioPlayer;
-import static cap.core.CowLiteAudioPlayer.player;
-import cap.gui.GraphicalInterface;
+import cap.core.audio.AudioPlayer;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.ArrayList;
+import java.util.Map;
 import org.jnativehook.keyboard.*;
 
 /**
@@ -17,45 +15,23 @@ import org.jnativehook.keyboard.*;
  */
 public class GlobalKeyListener implements NativeKeyListener
 {
-    public static String play;
-    public static String pause;
-    public static String stop;
-    public static String volumeup;
-    public static String volumedown;
-    public static String next;
-    public static String previous;
-    public static String lastpressed;
+    public static String lastPressed;
+    private final Map<String, String> CONTROLS;
     public static boolean settingsOn = false;
-    private boolean left, right, top, bottom, show, rotateText, rotateBack;
+    public static boolean left, right, top, bottom, show, rotateText, rotateBack;
     public static boolean alt;
     private int repositionCounter = 0;
-    public static final int TRESHOLD = 30, TRESHOLD2 = 60;
+    private final int TRESHOLD = 30, TRESHOLD2 = 60;
+    private final ApplicationController CONTROLLER;
+    
     /**
      * initializes the global key listener
      */
-    public GlobalKeyListener()
+    public GlobalKeyListener(Map<String, String> controls, ApplicationController controller)
     {
         Toolkit.getDefaultToolkit().setLockingKeyState(KeyEvent.VK_NUM_LOCK, true);
-        String line = null;
-        ArrayList<String> settings = new ArrayList<>();
-        
-        try{
-            FileReader red = new FileReader(CowLiteAudioPlayer.docPath + "\\CowLite Audio Player\\resources\\launchersettings\\controls.txt");
-            BufferedReader bufred = new BufferedReader(red);
-            while((line = bufred.readLine()) != null)
-            {
-                settings.add(line);
-            }
-            
-            play = settings.get(1);
-            pause = settings.get(2);
-            stop = settings.get(3);
-            volumeup = settings.get(4);
-            volumedown = settings.get(5);
-            next = settings.get(6);
-            previous = settings.get(7);
-            settings = null;
-        }catch(Exception e){System.out.println(e + "GlobalKeyListener");}
+        CONTROLS = controls;
+        CONTROLLER = controller;
     }
     
     @Override
@@ -81,26 +57,13 @@ public class GlobalKeyListener implements NativeKeyListener
         {
             reposition();
             toggleOverlay();
-            setOverlayColors();
-        }
-    }
-    
-    private void setOverlayColors()
-    {
-        if(alt)
-        {
-            if(rotateText)
-                CowLiteAudioPlayer.gui.getOverlay().rotateTextColor();
-            if(rotateBack)
-                CowLiteAudioPlayer.gui.getOverlay().toggleOverlayBackground();
-            CowLiteAudioPlayer.gui.getOverlay().repaint();
         }
     }
     
     private void toggleOverlay()
     {
         if(alt && show)
-            CowLiteAudioPlayer.gui.toggleOverlay();
+            CONTROLLER.toggleOverlay();
     }
     
     private void reposition()
@@ -129,7 +92,7 @@ public class GlobalKeyListener implements NativeKeyListener
                 repositionCounter++;
             else
                 repositionCounter = 0;
-            CowLiteAudioPlayer.gui.repositionOverlay(x, y);
+            CONTROLLER.repositionOverlay(x, y);
         }
     }
 
@@ -162,73 +125,30 @@ public class GlobalKeyListener implements NativeKeyListener
         
         if(!settingsOn)
         {
-            if(NativeKeyEvent.getKeyText(e.getKeyCode()).equals(play))
-            {
-               if(GraphicalInterface.savedListText.getSelectedIndex() == -1 && GraphicalInterface.songlist.getSelectedIndex() == -1)
-               {
-                   if(CowLiteAudioPlayer.player.getList() == null || CowLiteAudioPlayer.player.getList().size() == 0)
-                   {
-                       try{
-                           CowLiteAudioPlayer.player.loadList(CowLiteAudioPlayer.playlists.get(1));
-                           CowLiteAudioPlayer.player.play();
-                       }catch(Exception f){}
-                       return;
-                   }
-               }
-                if(player.isPlaying())
-                {
-                    if(player.isPaused())
-                        player.setPaused(false);
-                    else
-                        player.setPaused(true);
-                }
-                else
-                    player.play();
-            }
-            if(NativeKeyEvent.getKeyText(e.getKeyCode()).equals(stop))
-            {
-                CowLiteAudioPlayer.player.stop();
-                return;
-            }
-            if(NativeKeyEvent.getKeyText(e.getKeyCode()).equals(previous))
-            {
-                CowLiteAudioPlayer.player.stop();
-                CowLiteAudioPlayer.player.changeSong(-1);
-                CowLiteAudioPlayer.player.play();
-                return;
-            }
-            if(NativeKeyEvent.getKeyText(e.getKeyCode()).equals(next))
-            {
-                CowLiteAudioPlayer.player.stop();
-                CowLiteAudioPlayer.player.changeSong(1);
-                CowLiteAudioPlayer.player.play();
-                GraphicalInterface.songlist.setSelectedIndex(CowLiteAudioPlayer.player.getIndex());
-                return;
-            }
-            if(NativeKeyEvent.getKeyText(e.getKeyCode()).equals(pause))
-            {
-                if(player.isPlaying())
-                {
-                    if(player.isPaused())
-                        player.setPaused(false);
-                    else
-                        player.setPaused(true);
-                }
-                else
-                    player.play();
-            }
-            if(NativeKeyEvent.getKeyText(e.getKeyCode()).equals(volumedown))
-            {
-                CowLiteAudioPlayer.player.changeVolume(-5);
-            }
-            if(NativeKeyEvent.getKeyText(e.getKeyCode()).equals(volumeup))
-            {
-                CowLiteAudioPlayer.player.changeVolume(5);
-            }
+            if(NativeKeyEvent.getKeyText(e.getKeyCode()).equals(CONTROLS.get("play")))
+                CONTROLLER.playEvent();
+            
+            if(NativeKeyEvent.getKeyText(e.getKeyCode()).equals(CONTROLS.get("stop")))
+                CONTROLLER.stopEvent();
+            
+            if(NativeKeyEvent.getKeyText(e.getKeyCode()).equals(CONTROLS.get("previous")))
+                CONTROLLER.previousSongEvent();
+            
+            if(NativeKeyEvent.getKeyText(e.getKeyCode()).equals(CONTROLS.get("next")))
+                CONTROLLER.nextSongEvent();
+                
+            if(NativeKeyEvent.getKeyText(e.getKeyCode()).equals(CONTROLS.get("pause")))
+                CONTROLLER.pauseEvent();
+            
+            if(NativeKeyEvent.getKeyText(e.getKeyCode()).equals(CONTROLS.get("volumeDown")))
+                CONTROLLER.changeVolumeEvent(-5);
+            
+            if(NativeKeyEvent.getKeyText(e.getKeyCode()).equals(CONTROLS.get("volumeUp")))
+                CONTROLLER.changeVolumeEvent(5);
         }
         else
         {
-            lastpressed = NativeKeyEvent.getKeyText(e.getKeyCode());
+            lastPressed = NativeKeyEvent.getKeyText(e.getKeyCode());
         }
     }
 

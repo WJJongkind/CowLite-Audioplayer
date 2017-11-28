@@ -5,9 +5,7 @@
  */
 package cap.core.audio.youtube;
 
-import cap.core.CoreTime;
 import cap.core.audio.AudioPlayer;
-import cap.gui.GraphicalInterface;
 import com.google.api.services.youtube.model.PlaylistItem;
 import com.teamdev.jxbrowser.chromium.Browser;
 import com.teamdev.jxbrowser.chromium.JSArray;
@@ -49,6 +47,13 @@ public class YTAudioPlayer implements AudioPlayer
                         GET_INDEX = new Command("player.getPlaylistIndex"),
                         GET_DURATION = new Command("player.getDuration");
     
+    private final Map<String, String> SETTINGS;
+    
+    public YTAudioPlayer(Map<String, String> settings)
+    {
+        this.SETTINGS = settings;
+    }
+    
     private JSValue executeCommand(Command command) 
     {
         try{
@@ -71,8 +76,6 @@ public class YTAudioPlayer implements AudioPlayer
     @Override
     public List<String> getList() {
         JSValue result = executeCommand(GET_LIST);
-        if(result.equals(previousResult))
-            GraphicalInterface.uptodate = true;
         previousResult = result;
         
         JSArray list = result.asArray();
@@ -92,7 +95,10 @@ public class YTAudioPlayer implements AudioPlayer
 
     @Override
     public void changeSong(int value) {
-        executeCommand(NEXT);
+        if(value == 1)
+            executeCommand(NEXT);
+        else
+            executeCommand(PREVIOUS);
     }
 
     @Override
@@ -113,9 +119,6 @@ public class YTAudioPlayer implements AudioPlayer
         player = null;
         playing = false;
         paused = false;
-        GraphicalInterface.songlist.setSelectedIndex(-1);
-        GraphicalInterface.uptodate = false;
-        CoreTime.update = true;
     }
 
     @Override
@@ -143,6 +146,8 @@ public class YTAudioPlayer implements AudioPlayer
 
     @Override
     public void shuffle() {
+        shuffled = !shuffled;
+        SHUFFLE.addParameter(shuffled);
         executeCommand(SHUFFLE);
     }
 
@@ -247,7 +252,8 @@ public class YTAudioPlayer implements AudioPlayer
         }
         player = new Browser();
         player.loadHTML(html);
-        GraphicalInterface.uptodate = false;
+        playing = true;
+        setVolume(Integer.parseInt(SETTINGS.get("volume")));
     }
 
     @Override

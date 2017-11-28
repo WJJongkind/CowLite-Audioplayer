@@ -19,7 +19,7 @@ public class MetaData
 {
     private String artist, album, songname, path;
     private boolean found;
-    public static final String UNKNOWN = "Unknown", SONGNAME = "songname", ARTIST = "artist", ALBUM = "album";
+    private static final String UNKNOWN = "Unknown", SONGNAME = "songname", ARTIST = "artist", ALBUM = "album";
     
     public MetaData(String path)
     {
@@ -57,22 +57,13 @@ public class MetaData
     private String filterData(String raw)
     {
         try{
-        raw = raw.trim();
-        raw = URLDecoder.decode(raw, "UTF-8");
+            raw = raw.trim();
+            raw = URLDecoder.decode(raw, "UTF-8");
         if(raw.equals(""))
             return UNKNOWN;
         else
             return raw;
         }catch(Exception e){return UNKNOWN;}
-        /*try{
-        System.out.println(raw);
-        Pattern pattern = Pattern.compile("(\\s*[\\w\\.\\-\\_\\(\\)\\[\\]]+\\s*)+");
-        Matcher m = pattern.matcher(raw);
-        if(m.matches())
-            return raw;
-        else
-            return UNKNOWN;
-        }catch(Exception e){e.printStackTrace();return null;}*/
     }
     
     private ID3v1 getTag(String path)
@@ -133,9 +124,4 @@ public class MetaData
     {
         return found;
     }
-    
-    /*
-    
-            
-    */
 }

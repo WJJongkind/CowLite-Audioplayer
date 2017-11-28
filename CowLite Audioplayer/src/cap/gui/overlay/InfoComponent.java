@@ -6,6 +6,7 @@
 package cap.gui.overlay;
 
 import cap.core.CowLiteAudioPlayer;
+import cap.util.IO;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -27,7 +28,7 @@ public class InfoComponent extends JComponent
 {
     private String time, volume, song;
     private int offsetX, offsetY, textIndex, alphaMultiplier;
-    public static Color text1, text2, actualBackgroundColor, actualText, textBG;
+    private Color text1, text2, actualBackgroundColor, actualText, textBG;
     private boolean drawBackground, fixedwidth, ready;
     private ArrayList<Color> textColors;
     private HashMap<String, Sizes> sizes;
@@ -39,6 +40,7 @@ public class InfoComponent extends JComponent
             SMALL_PRIMARY_FONT = 14, LARGE_PRIMARY_FONT = 26, 
             MEDIUM_SECONDARY_FONT = 15, SMALL_SECONDARY_FONT = 11, 
             LARGE_SECONDARY_FONT = 20;
+    
     public static final String SPACER = "      ";
     
     public InfoComponent()
@@ -64,7 +66,7 @@ public class InfoComponent extends JComponent
         sizes.put("large", new Sizes(LARGEWIDTH, LARGE_PRIMARY_FONT, LARGE_SECONDARY_FONT));
         
         try{
-            BufferedReader red = new BufferedReader(new FileReader(CowLiteAudioPlayer.docPath + "\\CowLite Audio Player\\resources\\launchersettings\\overlay.txt"));
+            BufferedReader red = new BufferedReader(new FileReader(IO.getDocumentsFolder() + "\\CowLite Audio Player\\resources\\launchersettings\\overlay.txt"));
             activeSizes = sizes.get(red.readLine());
             red.close();
         }catch(Exception e){}

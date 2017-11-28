@@ -59,20 +59,4 @@ public class YouTubePlaylistLoader
         
         return playlistItemList;
     }
-    
-    public static void main(String[] args) throws Exception
-    {
-        YTAudioPlayer player = new YTAudioPlayer();
-        player.loadList("PL7aXwAD1wk5kdkuQOFBHY63R9Bhki7rCg");
-       // player.getList();
-        new JFrame().setVisible(true);
-        Scanner scanner = new Scanner(System.in);
-        scanner.nextLine();
-        player.getList();
-        scanner.nextLine();
-        player.selectSong(5);
-        scanner.nextLine();
-        player.setVolume(50);
-        
-    }
 }

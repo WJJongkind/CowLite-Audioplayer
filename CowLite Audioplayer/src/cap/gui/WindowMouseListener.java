@@ -5,7 +5,6 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import static cap.gui.GUIHandler.frame;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -31,6 +30,13 @@ public class WindowMouseListener implements MouseMotionListener, MouseListener
     private boolean se = false, sw = false, ne = false, nw = false, n = false, ee = false, w = false, s = false;
     private int addXC, addYC, addXZ, addYZ;
 
+    private final GraphicalInterface frame;
+    
+    public WindowMouseListener(GraphicalInterface frame)
+    {
+        this.frame = frame;
+    }
+    
     @Override
     public void mouseClicked(MouseEvent e)
     {
@@ -49,8 +55,8 @@ public class WindowMouseListener implements MouseMotionListener, MouseListener
     @Override
     public void mouseReleased(MouseEvent e)
     {
-        GUIHandler.frame.repaint();
-        GUIHandler.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        frame.repaint();
+        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         GraphicalInterface theFrame = (GraphicalInterface) frame;
         theFrame.orderDividers();
         resizing = false;
@@ -69,7 +75,7 @@ public class WindowMouseListener implements MouseMotionListener, MouseListener
     public void mouseExited(MouseEvent e)
     {
         if(!resizing)
-            GUIHandler.frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
 
     /**
@@ -83,10 +89,10 @@ public class WindowMouseListener implements MouseMotionListener, MouseListener
             Point p = e.getPoint();
             int x = (int)(frame.getX() + (p.getX() - initialclick.getX()));
             int y = (int)(frame.getY() + (p.getY() - initialclick.getY()));
-            if(!resizing && initialclick.getX() > B && initialclick.getX() < GUIHandler.frame.getWidth() - B && initialclick.getY() > B && initialclick.getY() < GUIHandler.frame.getHeight() - B)
+            if(!resizing && initialclick.getX() > B && initialclick.getX() < frame.getWidth() - B && initialclick.getY() > B && initialclick.getY() < frame.getHeight() - B)
             {
                 frame.setLocation(x, y);
-                GraphicalInterface.oldPoint.setLocation(GUIHandler.frame.getLocation());
+                frame.setOldLocation(frame.getLocation());
             }
             else
             {
@@ -96,7 +102,7 @@ public class WindowMouseListener implements MouseMotionListener, MouseListener
                     frame.setSize(579,frame.getHeight());
                 if(frame.getHeight() < H)
                     frame.setSize(frame.getWidth(),264);
-                GraphicalInterface.oldDimension.setSize(frame.getSize());
+                frame.setOldSize(frame.getSize());
             }
         }catch(Exception f){/*System.out.println(f);*/}
     }
@@ -263,7 +269,7 @@ public class WindowMouseListener implements MouseMotionListener, MouseListener
         
         if(x >= frame.getWidth() - B && y >= frame.getHeight() - B)
         {
-            GUIHandler.frame.setCursor(new Cursor(Cursor.SE_RESIZE_CURSOR));
+            frame.setCursor(new Cursor(Cursor.SE_RESIZE_CURSOR));
             return;
         }
         if(x < B && y < B)
@@ -271,7 +277,7 @@ public class WindowMouseListener implements MouseMotionListener, MouseListener
             frame.setCursor(new Cursor(Cursor.NW_RESIZE_CURSOR));
             return;
         }
-        if(x < B && y >= GUIHandler.frame.getHeight() - B)
+        if(x < B && y >= frame.getHeight() - B)
         {
             frame.setCursor(new Cursor(Cursor.SW_RESIZE_CURSOR));
             return;

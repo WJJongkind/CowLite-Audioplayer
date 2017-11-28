@@ -1,7 +1,7 @@
 package cap.core;
 
+import cap.core.audio.AudioController;
 import cap.core.audio.FileAudioPlayer;
-import cap.gui.GraphicalInterface;
 import java.awt.datatransfer.*;
 import java.awt.dnd.*;
 import java.io.File;
@@ -19,25 +19,32 @@ import java.util.List;
  */
 public class DragDropListener implements DropTargetListener
 {
-        @Override
-        public void dragEnter(DropTargetDragEvent dtde) {}
+    private final AudioController controller;
+    public DragDropListener(AudioController controller)
+    {
+        this.controller = controller;
+    }
+    
+    @Override
+    public void dragEnter(DropTargetDragEvent dtde) {}
 
-        @Override
-        public void dragOver(DropTargetDragEvent dtde) {}
+    @Override
+    public void dragOver(DropTargetDragEvent dtde) {}
 
-        @Override
-        public void dropActionChanged(DropTargetDragEvent dtde) {}
+    @Override
+    public void dropActionChanged(DropTargetDragEvent dtde) {}
 
-        @Override
-        public void dragExit(DropTargetEvent dte) {}
+    @Override
+    public void dragExit(DropTargetEvent dte) {}
 
-        /**
-         * for when a file has been dropped on the linked JFrame
-         * @param dtde dropevent
-         */
-        @Override
-        public void drop(DropTargetDropEvent dtde) {
-        
+    /**
+     * for when a file has been dropped on the linked JFrame
+     * @param dtde dropevent
+     */
+    @Override
+    public void drop(DropTargetDropEvent dtde) 
+    {
+
         // Accept copy drops
         dtde.acceptDrop(DnDConstants.ACTION_COPY);
 
@@ -62,10 +69,11 @@ public class DragDropListener implements DropTargetListener
                     for (Object file: files) {
 
                         File theFile = (File) file;
-                        System.out.println(theFile);
+
+                        if(!(controller.getPlayer() instanceof FileAudioPlayer))
+                            controller.loadFileAudioPlayer();
                         // Print out the file path
-                        if(CowLiteAudioPlayer.player instanceof FileAudioPlayer)
-                            ((FileAudioPlayer)CowLiteAudioPlayer.player).addSong(theFile.getAbsolutePath());
+                        ((FileAudioPlayer) controller.getPlayer()).addSong(theFile.getAbsolutePath());
 
                     }
 
@@ -80,10 +88,8 @@ public class DragDropListener implements DropTargetListener
         }
 
         // Inform that the drop is complete
-        GraphicalInterface.uptodate = false;
-        CoreTime.update = true;
         dtde.dropComplete(true);
-        }
+    }
             
 }
 
