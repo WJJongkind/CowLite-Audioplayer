@@ -5,7 +5,6 @@ import cap.core.audio.AudioPlayer;
 import cap.core.audio.FileAudioPlayer;
 import cap.core.audio.MetaData;
 import cap.gui.GUIHandler;
-import cap.gui.GraphicalInterface;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +34,16 @@ public class CoreTime implements ActionListener
         checkSongChange();
         updatePlaylistInfo();
         updateSongInfo();
+        updateButtons();
+    }
+    
+    private void updateButtons()
+    {
+        AudioPlayer player = AUDIO.getPlayer();
+        if(player == null || !player.isPlaying() || player.isPaused())
+            GUI.getGui().setPlayButton();
+        else
+            GUI.getGui().setPauseButton();
     }
     
     private void checkSongChange()

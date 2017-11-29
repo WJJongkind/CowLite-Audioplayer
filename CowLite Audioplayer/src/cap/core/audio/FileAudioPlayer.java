@@ -49,12 +49,12 @@ public class FileAudioPlayer implements AudioPlayer
         
         list = new ArrayList<>();
         playing = false;
-        paused = true;
+        paused = false;
         
         //Sets the settings relevant to this class
         setVolume(Integer.parseInt(SETTINGS.get("volume")));
             
-        listIndex = 0;
+        listIndex = -1;
     }
 
     //Starts playing a song/video at selected index
@@ -250,6 +250,7 @@ public class FileAudioPlayer implements AudioPlayer
     /**
      * stop the mediaplayer
      */
+    @Override
     public void stop()
     {
         //sets boolean so that other classes know it's not playing.
@@ -503,6 +504,8 @@ public class FileAudioPlayer implements AudioPlayer
 
     @Override
     public int getPosition() {
+        if(mediaplayer == null)
+            return -1;
         return (int) Math.round(mediaplayer.getCurrentTime().toSeconds());
     }
 

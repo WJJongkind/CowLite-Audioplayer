@@ -47,6 +47,7 @@ public class GraphicalInterface extends JFrame
             setGraphics, setOverlay;
     private JPanel top, left, right, bottom;
     private boolean maximized = false;
+    private boolean playSet = false;
     private Dimension oldDimension;
     private Point oldPoint;
     private GridBagConstraints c;
@@ -167,9 +168,9 @@ public class GraphicalInterface extends JFrame
         playButton.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(AUDIO.getPlayer() != null && AUDIO.getPlayer().isPaused())
+                if(AUDIO.getPlayer() != null && (AUDIO.getPlayer().isPaused() || !AUDIO.getPlayer().isPlaying()))
                     CONTROLLER.playEvent();
-                else if(AUDIO.getPlayer() != null)
+                else if(AUDIO.getPlayer() != null && AUDIO.getPlayer().isPlaying())
                     CONTROLLER.pauseEvent();
                 else
                     CONTROLLER.playEvent();
@@ -215,8 +216,12 @@ public class GraphicalInterface extends JFrame
                     AUDIO.getPlayer().clearList();
                 }
                 
+                setPlaylistModels(new DefaultListModel(), new DefaultListModel(), new DefaultListModel());
                 savedListText.clearSelection();
+                timeSlider.setValue(-1);
                 setPlayButton();
+                revalidate();
+                repaint();
             } 
         });
         
@@ -282,6 +287,7 @@ public class GraphicalInterface extends JFrame
             public void actionPerformed(ActionEvent e) {
                 AUDIO.getPlayer().stop();
                 AUDIO.getPlayer().shuffle();
+                AUDIO.getPlayer().selectSong(0);
                 AUDIO.getPlayer().play();
 
                 if(AUDIO.getPlayer().getShuffled()) 
@@ -307,6 +313,7 @@ public class GraphicalInterface extends JFrame
             public void actionPerformed(ActionEvent e) {
                 AUDIO.getPlayer().stop();
                 AUDIO.getPlayer().alphabetical();
+                AUDIO.getPlayer().selectSong(0);
                 AUDIO.getPlayer().play();
                 
                 if(AUDIO.getPlayer().getAlphabetical())
@@ -400,6 +407,14 @@ public class GraphicalInterface extends JFrame
         songlist = new JList();
         artistlist = new JList();
         albumlist = new JList();
+        
+        /*ChangeListener songChange = new ChangeListener(){
+            @Override
+            public void stateChanged(ChangeEvent e)
+            {
+                if()
+            }
+        };*/
         artists = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, artistlist, albumlist);
         artists.setUI(new BasicSplitPaneUI(){
            public BasicSplitPaneDivider createDefaultdivider()
@@ -536,6 +551,12 @@ public class GraphicalInterface extends JFrame
         
         tf = new TranslucentFrame();
         tf.setAlwaysOnTop(true);
+        try{
+            Image image = ImageIO.read(new File(IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\Cow32.png"));
+            tf.setIconImage(image);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         if(graphics.get("showOverlay").equals("true"))
             tf.setVisible(true);
         tf.getInfoComponent().setActiveSizes((String)graphics.get("overlaySize"));
@@ -668,7 +689,6 @@ public class GraphicalInterface extends JFrame
             @Override
             public void valueChanged(ListSelectionEvent e)
             {
-                
                 if(!locked)
                 {
                     locked = true;
@@ -703,7 +723,11 @@ public class GraphicalInterface extends JFrame
                             
                     
                     if(songlist.getSelectedIndex() > -1 && songlist.getSelectedIndex() != AUDIO.getPlayer().getIndex())
+                    {
+                        timeSlider.setValue(-1);
                         AUDIO.getPlayer().selectSong(songlist.getSelectedIndex());
+                    }
+                   
                     locked = false;
                 }
             }
@@ -723,8 +747,14 @@ public class GraphicalInterface extends JFrame
             @Override
             public void valueChanged(ListSelectionEvent e)
             {
+                System.out.println(savedListText.getSelectedIndex());
                 if(savedListText.getSelectedIndex() != -1)
+                {
                     AUDIO.loadPlaylist((String) savedListText.getSelectedValue());
+                    setPauseButton();
+                    savedListText.clearSelection();
+                    timeSlider.setValue(0);
+                }
             }
         });
     }
@@ -918,15 +948,21 @@ public class GraphicalInterface extends JFrame
      */
     public void setPlayButton()
     {
+        if(playSet)
+            return;
         try{
             switchImage(playButton, IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\play.png", RECTBUTTON, RECTBUTTON);
+            playSet = true;
         }catch(Exception e){}
     }
     
     public void setPauseButton()
     {
+        if(!playSet)
+            return;
         try{
             switchImage(playButton, IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\pause.png", RECTBUTTON, RECTBUTTON);
+            playSet = false;
         }catch(Exception f){System.out.println(f);}
     }
     
@@ -1011,7 +1047,6 @@ public class GraphicalInterface extends JFrame
     {
         InfoComponent info = tf.getInfoComponent();
         info.setSong(song);
-        System.out.println(time);
         info.setTime(time);
         info.setVolume(volume);
         tf.repaint();

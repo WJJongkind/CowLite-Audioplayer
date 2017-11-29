@@ -1,16 +1,18 @@
 package cap.gui;
 
 import cap.core.ApplicationController;
-import cap.gui.overlay.TranslucentFrame;
 import cap.core.DragDropListener;
 import cap.core.PropertiesManager;
 import cap.core.audio.AudioController;
-import cap.gui.overlay.InfoComponent;
 import cap.util.IO;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.dnd.DropTarget;
 import java.io.*;
 import java.util.Map;
-import javax.swing.ImageIcon;
+import javax.imageio.ImageIO;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 /**
@@ -76,10 +78,11 @@ public class GUIHandler
 
         //CowLite logo.
         try{
-            ImageIcon image = new ImageIcon(IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\Cow32.png");
-            frame.setIconImage(image.getImage());
-            image = null;
-        }catch(Exception e){System.out.println(e + "window closing");}
+            Image image = ImageIO.read(new File(IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\Cow32.png"));
+            frame.setIconImage(image);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         frame.setVisible(true);
         GraphicalInterface theFrame = (GraphicalInterface) frame;
         theFrame.orderDividers();

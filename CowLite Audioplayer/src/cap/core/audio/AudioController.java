@@ -40,9 +40,11 @@ public class AudioController
     
     public void loadPlaylist(String playlist)
     {
-        if(playlist.equals(loadedList))
+        System.out.println("Load event");
+        if(player != null && playlist.equals(loadedList) && !player.getList().isEmpty())
             return;
         
+        System.out.println("loading...");
         loadedList = playlist;
         
         if(player != null)
@@ -65,6 +67,7 @@ public class AudioController
     
     public void loadFileAudioPlayer()
     {
+        loadedList = null;
         if(player != null)
             player.stop();
         player = new FileAudioPlayer(SETTINGS);

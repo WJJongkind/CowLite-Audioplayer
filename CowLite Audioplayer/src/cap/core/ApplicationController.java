@@ -8,8 +8,6 @@ package cap.core;
 import cap.core.audio.AudioController;
 import cap.core.audio.AudioPlayer;
 import cap.gui.GUIHandler;
-import java.util.ArrayList;
-import java.util.Random;
 
 /**
  *
@@ -51,18 +49,30 @@ public class ApplicationController
         System.out.println("playevent");
         AudioPlayer player = audio.getPlayer();
         
-        if(player != null && player.isPlaying())
+        
+        if(player != null && player.isPaused())
         {
-            audio.getPlayer().stop();
-            audio.getPlayer().play();
-        }
-        else if(player != null && player.isPaused())
-        {
+            System.out.println("infirst");
             player.setPaused(false);
             gui.getGui().setPauseButton();
         }
+        else if(player != null && player.getIndex() > -1)
+        {
+            System.out.println("insecond");
+            player.stop();
+            player.play();
+            gui.getGui().setPauseButton();
+        }
+        else if(player != null)
+        {
+            System.out.println("selecting...");
+            player.selectSong(0);
+            System.out.println("playing...");
+            player.play();
+        }
         else
         {
+            System.out.println("Random list time");
             audio.loadRandomList();
             gui.getGui().setPauseButton();
         }

@@ -35,8 +35,8 @@ public class IO
             FileSystemView fw = fr.getFileSystemView();
             try{ docPath = fw.getDefaultDirectory().toURI().toURL().toString();}catch(Exception e){}
 
-            docPath = docPath.replace("/", "\\\\");
-            docPath = docPath.replace("file:\\\\", "");
+            docPath = docPath.replace("file:/", "");
+            docPath = docPath.replace("/", "\\");
         }
         
         return docPath;

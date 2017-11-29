@@ -9,12 +9,15 @@ import cap.core.audio.AudioPlayer;
 import com.google.api.services.youtube.model.PlaylistItem;
 import com.teamdev.jxbrowser.chromium.BeforeSendHeadersParams;
 import com.teamdev.jxbrowser.chromium.Browser;
+import com.teamdev.jxbrowser.chromium.Callback;
 import com.teamdev.jxbrowser.chromium.JSArray;
 import com.teamdev.jxbrowser.chromium.JSValue;
+import com.teamdev.jxbrowser.chromium.swing.BrowserView;
 import com.teamdev.jxbrowser.chromium.javafx.DefaultNetworkDelegate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JFrame;
 
 /**
  *
@@ -79,6 +82,9 @@ public class YTAudioPlayer implements AudioPlayer
     public List<String> getList() {
         JSValue result = executeCommand(GET_LIST);
         previousResult = result;
+        
+        if(result == null)
+            return new ArrayList<>();
         
         JSArray list = result.asArray();
         ArrayList<String> playlist = new ArrayList<>();
@@ -222,8 +228,10 @@ public class YTAudioPlayer implements AudioPlayer
         "    });\n" +
         "  }\n" +
         "  function onPlayerReady(event) {\n" +
-        "      player.setVolume(volume); " +
         "     event.target.playVideo();\n" +
+        "     //player.setVolume(volume + 1);\n" +
+        "     //player.setVolume(volume - 1);\n" +
+        "     //player.setVolume(volume);\n" +
         "      //event.target.nextVideo();\n" +
         "  }\n" +
         "    \n" +
@@ -241,9 +249,10 @@ public class YTAudioPlayer implements AudioPlayer
         "    \n" +
         "    function stateChange(event)\n" +
         "    {\n" +
-        "       // player.setVolume(volume + 1);\n" +
-        "       // player.setVolume(volume - 1);\n" +
-        "      //  player.setVolume(volume);\n" +
+        "         // player.setVolume(volume); " +
+        "         // player.setVolume(volume + 1);\n" +
+        "         // player.setVolume(volume - 1);\n" +
+        "         // player.setVolume(volume);\n" +
         "    }\n" +
         "</script>\n" +
         "  </body>\n" +
@@ -257,6 +266,12 @@ public class YTAudioPlayer implements AudioPlayer
         }
         
         player = new Browser();
+        /*BrowserView view = new BrowserView(player);
+        
+        JFrame frame = new JFrame();
+        frame.add(view);
+        frame.setSize(1280, 720);
+        frame.setVisible(true);*/
         
         //Setup the refere header so that YouTube WMG does not block videos
         player.getContext().getNetworkService().setNetworkDelegate(new DefaultNetworkDelegate(){
@@ -266,7 +281,12 @@ public class YTAudioPlayer implements AudioPlayer
                  params.getHeadersEx().setHeader("Referer", "http://www.cowlite.nl");
             }
         });
-        player.loadHTML(html);
+        Browser.invokeAndWaitFinishLoadingMainFrame(player, new Callback<Browser>() {
+            @Override
+            public void invoke(Browser value) {
+                player.loadHTML(html);
+            }
+        });
         playing = true;
         System.out.println(SETTINGS.get("volume"));
         setVolume(Integer.parseInt(SETTINGS.get("volume")));
