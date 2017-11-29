@@ -1,9 +1,12 @@
+Installation
+============
 In order to run the program you are required to take the following steps:
 -Copy the contents of the 'Install Files' folder to your 'my documents' folder. Do not place it in a subfolder or any other folder.
 -If the libraries aren't loaded into your project automatically, load all the libraries in the lib folder
 
 
-
+Becoming a collaborator
+=======================
 If you wish to be added as a contributor for this project, please email wessel.jongkind@gmail.com. Provide the following information:
 -Your name (aliasses are allowed)
 -Your Github name
