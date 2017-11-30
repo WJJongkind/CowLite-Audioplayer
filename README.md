@@ -17,3 +17,9 @@ If you wish to be added as a contributor for this project, please email wessel.j
 -	A .zip file with atleast one (but preferably more) of the eddited .java files that you would like to commit. This commit will be reviewed.
 
 If we have verified your application and we trust you with becoming a collaborator, you will be added to the project.
+
+
+JxBrowser
+=========
+CowLite Audioplayer uses JxBrowser https://www.teamdev.com/jxbrowser, which is a proprietary software. The use of JxBrowser is governed by the JxBrowser Product Licence Agreement https://www.teamdev.com/jxbrowser/licence-agreement.
+If you would like to use JxBrowser in your development, please contact TeamDev.
