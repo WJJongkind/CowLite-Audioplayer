@@ -7,7 +7,7 @@ In order to run the program you are required to take the following steps:
 
 Becoming a collaborator
 =======================
-If you wish to be added as a contributor for this project, please email wessel.jongkind@gmail.com. Provide the following information:
+If you wish to be added as a contributor for this project, please email cowlite@cowlite.nl. Provide the following information:
 -	Your name (aliasses are allowed)
 -	Your Github name
 -	Your timezone
@@ -23,3 +23,10 @@ JxBrowser
 =========
 CowLite Audioplayer uses JxBrowser https://www.teamdev.com/jxbrowser, which is a proprietary software. The use of JxBrowser is governed by the JxBrowser Product Licence Agreement https://www.teamdev.com/jxbrowser/licence-agreement.
 If you would like to use JxBrowser in your development, please contact TeamDev.
+
+
+Contact
+=======
+You can reach us on email by mailing: cowlite@cowlite.nl.
+Website: http://www.cowlite.nl
+Facebook: https://www.facebook.com/CowLite
