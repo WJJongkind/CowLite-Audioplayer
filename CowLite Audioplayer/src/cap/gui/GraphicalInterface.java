@@ -45,7 +45,7 @@ public class GraphicalInterface extends JFrame
     private JMenu filemenu, helpmenu, settingsmenu;
     private JMenuItem help, about, setHotkeys, saveList, removeList, importYoutube,
             setGraphics, setOverlay;
-    private JPanel top, left, right, bottom;
+    //private JPanel top, left, right, bottom;
     private boolean maximized = false;
     private boolean playSet = false;
     private Dimension oldDimension;
@@ -872,10 +872,10 @@ public class GraphicalInterface extends JFrame
         volumeSlider.setBackground(c);
         timeSlider.setBackground(c);
         splitpane.setBackground(c);
-        bottom.setBackground(c);
+        /*bottom.setBackground(c);
         left.setBackground(c);
         top.setBackground(c);
-        right.setBackground(c);
+        right.setBackground(c);*/
         menufile.setBackground(c);
     }
     

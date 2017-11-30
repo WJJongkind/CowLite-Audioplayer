@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import javax.swing.JFrame;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -16,7 +17,7 @@ import java.awt.event.MouseMotionListener;
  *
  * @author Wessel
  */
-public class WindowMouseListener implements MouseMotionListener, MouseListener
+public class DefaultWindowMouseListener implements MouseMotionListener, MouseListener
 {
     private boolean resizing = false;
     private Point initialclick;
@@ -30,11 +31,11 @@ public class WindowMouseListener implements MouseMotionListener, MouseListener
     private boolean se = false, sw = false, ne = false, nw = false, n = false, ee = false, w = false, s = false;
     private int addXC, addYC, addXZ, addYZ;
 
-    private final GraphicalInterface frame;
+    private final DefaultWindow window;
     
-    public WindowMouseListener(GraphicalInterface frame)
+    public DefaultWindowMouseListener(DefaultWindow frame)
     {
-        this.frame = frame;
+        this.window = frame;
     }
     
     @Override
@@ -55,6 +56,7 @@ public class WindowMouseListener implements MouseMotionListener, MouseListener
     @Override
     public void mouseReleased(MouseEvent e)
     {
+        JFrame frame = window.getWindow();
         frame.repaint();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         GraphicalInterface theFrame = (GraphicalInterface) frame;
@@ -74,6 +76,7 @@ public class WindowMouseListener implements MouseMotionListener, MouseListener
     @Override
     public void mouseExited(MouseEvent e)
     {
+        JFrame frame = window.getWindow();
         if(!resizing)
             frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
@@ -86,13 +89,14 @@ public class WindowMouseListener implements MouseMotionListener, MouseListener
     public void mouseDragged(MouseEvent e) {
         try
         {
+            JFrame frame = window.getWindow();
             Point p = e.getPoint();
             int x = (int)(frame.getX() + (p.getX() - initialclick.getX()));
             int y = (int)(frame.getY() + (p.getY() - initialclick.getY()));
             if(!resizing && initialclick.getX() > B && initialclick.getX() < frame.getWidth() - B && initialclick.getY() > B && initialclick.getY() < frame.getHeight() - B)
             {
                 frame.setLocation(x, y);
-                frame.setOldLocation(frame.getLocation());
+                window.setOldLocation(frame.getLocation());
             }
             else
             {
@@ -102,13 +106,14 @@ public class WindowMouseListener implements MouseMotionListener, MouseListener
                     frame.setSize(579,frame.getHeight());
                 if(frame.getHeight() < H)
                     frame.setSize(frame.getWidth(),264);
-                frame.setOldSize(frame.getSize());
+                window.setOldSize(frame.getSize());
             }
         }catch(Exception f){/*System.out.println(f);*/}
     }
     
     private void changeFrame()
     {
+        JFrame frame = window.getWindow();
         frame.setSize(frame.getSize().width + addXZ, frame.getSize().height + addYZ);
         frame.setLocation(frame.getLocation().x + addXC, frame.getLocation().y + addYC);
     }
@@ -121,6 +126,8 @@ public class WindowMouseListener implements MouseMotionListener, MouseListener
      */
     private void resize(int x, int y, MouseEvent e)
     {
+        JFrame frame = window.getWindow();
+        
         //We're resizing
         resizing = true;
         
@@ -264,6 +271,8 @@ public class WindowMouseListener implements MouseMotionListener, MouseListener
     @Override
     public void mouseMoved(MouseEvent e)
     {
+        JFrame frame = window.getWindow();
+        
         int x = (int) e.getPoint().getX();
         int y = (int) e.getPoint().getY();
         
