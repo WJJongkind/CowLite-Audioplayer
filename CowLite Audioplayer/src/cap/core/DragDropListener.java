@@ -5,6 +5,7 @@ import cap.core.audio.FileAudioPlayer;
 import java.awt.datatransfer.*;
 import java.awt.dnd.*;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -64,17 +65,23 @@ public class DragDropListener implements DropTargetListener
 
                     // Get all of the dropped files
                     List files = (List) transferable.getTransferData(flavor);
+                    ArrayList<String> paths = new ArrayList<>();
 
                     // Loop them through
                     for (Object file: files) {
 
                         File theFile = (File) file;
+                        collectFiles(theFile, paths);
+                    }
+                    
+                    if(!(controller.getPlayer() instanceof FileAudioPlayer))
+                        controller.loadFileAudioPlayer();
 
-                        if(!(controller.getPlayer() instanceof FileAudioPlayer))
-                            controller.loadFileAudioPlayer();
+                    for(String path : paths)
+                    {
+                        System.out.println(path);
                         // Print out the file path
-                        ((FileAudioPlayer) controller.getPlayer()).addSong(theFile.getAbsolutePath());
-
+                        ((FileAudioPlayer) controller.getPlayer()).addSong(path);
                     }
 
                 }
@@ -89,6 +96,20 @@ public class DragDropListener implements DropTargetListener
 
         // Inform that the drop is complete
         dtde.dropComplete(true);
+    }
+    
+    private List<String> collectFiles(File f, List<String> collected)
+    {
+        if(f.isFile())
+            collected.add(f.getAbsolutePath());
+        else if(f.isDirectory())
+        {
+            File[] files = f.listFiles();
+            for(File file : files)
+                collectFiles(file, collected);
+        }
+        
+        return collected;
     }
             
 }
