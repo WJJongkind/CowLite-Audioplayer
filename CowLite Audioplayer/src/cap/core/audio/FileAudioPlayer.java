@@ -129,6 +129,13 @@ public class FileAudioPlayer implements AudioPlayer
             listIndex = list.size() - 1;
         if(listIndex > list.size() - 1)
             listIndex = 0;
+        
+        try{
+            stop();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        play();
     }
     
     /**
@@ -253,17 +260,15 @@ public class FileAudioPlayer implements AudioPlayer
     @Override
     public void stop()
     {
-        //sets boolean so that other classes know it's not playing.
-        playing = false;
-        paused = false;
-        try
+        if(playing)
         {
             mediaplayer.stop();
             mediaplayer.dispose();
             mediaplayer = null;
-        }catch(Exception e){
-            e.printStackTrace();
         }
+        
+        playing = false;
+        paused = false;
     }
     
     /**
