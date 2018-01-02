@@ -34,11 +34,13 @@ public class ApplicationController
         AudioPlayer player = audio.getPlayer();
         if(player.isPaused())
         {
+            System.out.println("unpausing");
             player.setPaused(false);
             gui.getGui().setPauseButton();
         }
         else
         {
+            System.out.println("pausing");
             player.setPaused(true);
             gui.getGui().setPlayButton();
         }
@@ -68,7 +70,6 @@ public class ApplicationController
             System.out.println("selecting...");
             player.selectSong(0);
             System.out.println("playing...");
-            player.play();
         }
         else
         {

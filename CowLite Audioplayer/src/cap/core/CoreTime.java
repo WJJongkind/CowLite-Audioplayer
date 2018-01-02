@@ -53,9 +53,7 @@ public class CoreTime implements ActionListener
             if(player instanceof FileAudioPlayer && player.getPosition() == player.getDuration() && switchedIndex != player.getIndex())
             {
                 switchedIndex = player.getIndex();
-                player.stop();
                 player.changeSong(1);
-                player.play();
             }
         }catch(Exception e){
         }

@@ -61,8 +61,11 @@ public class FileAudioPlayer implements AudioPlayer
     @Override
     public void play()
     {
+        System.out.println("STARTING PLAYER");
         try
         {
+            stop();
+            
             if(getList() == null)
                 return;
             
@@ -118,7 +121,7 @@ public class FileAudioPlayer implements AudioPlayer
     }
     
     /**
-     * Change the song/video with x spots in the playlist
+     * the song/video with x spots in the playlist
      * @param value amount of places in the list it should move
      */
     public void changeSong(int value)
