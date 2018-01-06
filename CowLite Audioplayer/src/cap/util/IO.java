@@ -39,93 +39,69 @@ public class IO
             docPath = docPath.replace("/", "\\");
         }
         
-        return docPath;
+        return docPath + "CowLite Audioplayer";
     }
     
-    public static void saveFile(AudioController controller)
+    public static void saveFile(AudioController controller, String name) throws Exception
     {
-        JFileChooser filechooser = new JFileChooser();
-        filechooser.showSaveDialog(null);
+        String path = getDocumentsFolder() + "\\resources\\playlists\\" + name;
+        if(controller.playlistExists(name, path))
+            throw new Exception("Playlistname not unique");
 
-        try
+        PrintStream out = new PrintStream(new FileOutputStream(new File(path)));
+
+        List<MetaData> playlist = (List<MetaData>)controller.getPlayer().getList();
+        for(int i = 0; i < playlist.size(); i++)
+            out.println(playlist.get(i).getPath());
+
+        FileReader red = new FileReader(getDocumentsFolder() + "\\resources\\launchersettings\\savedlists.txt");
+        BufferedReader bufred = new BufferedReader(red);
+        String line = null;
+        ArrayList<String> playlists = new ArrayList<>();
+        playlists.add(name + "=:" +path);
+        controller.addPlaylist(name, path);
+        String empty = bufred.readLine();
+        while((line = bufred.readLine()) != null)
         {
-            String path = null;
-            String name = null;
-            do{
-                path = null;
-                path = filechooser.getSelectedFile().getPath();
-                name = JOptionPane.showInputDialog("What is the name for your playlist?");
-            }while(controller.playlistExists(name, path));
-                    
-            //String path = MainFrame.filechooser.getSelectedFile().toURI().toURL().toString();
-            //path = path.replace("/", "\\\\");
-            //path = path.replace("file:\\\\", "");
-            //path = path.replace("%20", " ");
-            PrintStream out = new PrintStream(new FileOutputStream(new File(path)));
+            if(!line.equals(path))
+                playlists.add(line);
+        }
+        out = new PrintStream(new FileOutputStream(new File(getDocumentsFolder() + "\\resources\\launchersettings\\savedlists.txt")));
 
-            List<MetaData> playlist = (List<MetaData>)controller.getPlayer().getList();
-            for(int i = 0; i < playlist.size(); i++)
-                out.println(playlist.get(i).getPath());
-
-            FileReader red = new FileReader(getDocumentsFolder() + "CowLite Audio Player\\resources\\launchersettings\\savedlists.txt");
-            BufferedReader bufred = new BufferedReader(red);
-            String line = null;
-            ArrayList<String> playlists = new ArrayList<>();
-            playlists.add(name + "=:" +path);
-            controller.addPlaylist(name, path);
-            String empty = bufred.readLine();
-            while((line = bufred.readLine()) != null)
-            {
-                if(!line.equals(path))
-                    playlists.add(line);
-            }
-            out = new PrintStream(new FileOutputStream(new File(getDocumentsFolder() + "CowLite Audio Player\\resources\\launchersettings\\savedlists.txt")));
-
-            out.println(empty);
-            for(int i = 0; i < playlists.size(); i++)
-            {
-                out.println(playlists.get(i));
-            }
-            out.close();
-        }catch(Exception f){System.out.println(f + "savefile");}
-        
+        out.println(empty);
+        for(int i = 0; i < playlists.size(); i++)
+        {
+            out.println(playlists.get(i));
+        }
+        out.close();
     }
     
-    public static void importYoutube(AudioController controller)
+    public static void importYoutube(AudioController controller, String id, String name) throws Exception
     {
-        try{
-            String name, id;
-            do{
-                id = JOptionPane.showInputDialog("Enter the ID of the YouTube playlist, please.");
-                name = JOptionPane.showInputDialog("Enter the name that you want to assign to the playlist, please.");
-            }while(controller.playlistExists(name, id));
+        if(controller.playlistExists(name, id))
+            throw new Exception("Playlist already exists!");
             
-            FileReader red = new FileReader(getDocumentsFolder() + "CowLite Audio Player\\resources\\launchersettings\\savedlists.txt");
-            BufferedReader bufred = new BufferedReader(red);
-            
-            String line = null;
-            ArrayList<String> playlists = new ArrayList<>();
-            playlists.add(name + "=:" + id);
-            controller.addPlaylist(name, id);
-            
-            String empty = bufred.readLine();
-            while((line = bufred.readLine()) != null)
-            {
-                if(!line.equals(name + "=:" + id))
-                    playlists.add(line);
-            }
-            
-            PrintStream out = new PrintStream(new FileOutputStream(new File(getDocumentsFolder() + "CowLite Audio Player\\resources\\launchersettings\\savedlists.txt")));
+        FileReader red = new FileReader(getDocumentsFolder() + "\\resources\\launchersettings\\savedlists.txt");
+        BufferedReader bufred = new BufferedReader(red);
 
-            out.println(empty);
-            for(int i = 0; i < playlists.size(); i++)
-                out.println(playlists.get(i));
-            
-            out.close();
-            controller.loadPlaylist(name);
-        }catch(Exception e){
-            e.printStackTrace();
+        String line = null;
+        ArrayList<String> playlists = new ArrayList<>();
+        playlists.add(name + "=:" + id);
+        controller.addPlaylist(name, id);
+        
+        while((line = bufred.readLine()) != null)
+        {
+            if(!line.equals(name + "=:" + id))
+                playlists.add(line);
         }
+
+        PrintStream out = new PrintStream(new FileOutputStream(new File(getDocumentsFolder() + "\\resources\\launchersettings\\savedlists.txt")));
+
+        for(int i = 0; i < playlists.size(); i++)
+            out.println(playlists.get(i));
+
+        out.close();
+        controller.loadPlaylist(name);
     }
     
     /**
@@ -145,7 +121,7 @@ public class IO
         try
         {
             audio.removePlaylist(name);
-            PrintStream out = new PrintStream(new FileOutputStream(new File(getDocumentsFolder() + "CowLite Audio Player\\resources\\launchersettings\\savedlists.txt")));
+            PrintStream out = new PrintStream(new FileOutputStream(new File(getDocumentsFolder() + "\\resources\\launchersettings\\savedlists.txt")));
 
             Map<String, String> playlists = audio.getPlaylists();
             for(Map.Entry<String, String> entry : playlists.entrySet())

@@ -507,6 +507,9 @@ public class FileAudioPlayer implements AudioPlayer
 
     @Override
     public int getDuration() {
+        if(mediaplayer == null || mediaplayer.getMedia() == null)
+            return -1;
+        
         return (int) Math.round(mediaplayer.getMedia().getDuration().toSeconds());
     }
 

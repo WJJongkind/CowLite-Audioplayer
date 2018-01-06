@@ -40,7 +40,6 @@ public class AudioController
     
     public void loadPlaylist(String playlist)
     {
-        System.out.println("Load event");
         if(player != null && playlist.equals(loadedList) && !player.getList().isEmpty())
             return;
         

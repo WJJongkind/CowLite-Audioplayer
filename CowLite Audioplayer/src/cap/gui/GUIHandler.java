@@ -78,7 +78,7 @@ public class GUIHandler
 
         //CowLite logo.
         try{
-            Image image = ImageIO.read(new File(IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\Cow32.png"));
+            Image image = ImageIO.read(new File(IO.getDocumentsFolder() + "\\resources\\graphics\\Cow32.png"));
             frame.setIconImage(image);
         }catch(Exception e){
             e.printStackTrace();

@@ -1,5 +1,6 @@
 package cap.gui;
 
+import cap.core.PropertiesManager;
 import cap.util.IO;
 import java.awt.Color;
 import java.awt.Container;
@@ -24,53 +25,49 @@ import javax.swing.JPanel;
 import sun.java2d.SunGraphicsEnvironment;
 
 
-public class DefaultWindow
+public class DefaultWindow extends JFrame
 {
     private boolean maximized = false;
-    private final JFrame window;
-    private JButton exitButton, maximizeButton;
+    private final JButton exitButton, maximizeButton;
+    private final JPanel contentHolder;
     private JPanel content;
     private Dimension oldDimension;
     private Point oldPoint;
-    private Color BACKGROUND = new Color(0x333333);
-    private Color FOREGROUND = new Color(0x333333);
-    private Color CONTENTBG = new Color(0x8E9191);
-    private Color MENUTEXTCOLOR = new Color(0x8E9191);
     private static ImageIcon exit, maximize;
     
     public static int CONTENT_START_X = 2, CONTENT_START_Y = 2, CONTENT_END_X = 3, CONTENT_END_Y = 3;
     
-    public DefaultWindow() throws Exception
+   /* public static void main(String[] args) throws Exception
     {
-        window = new JFrame();
-        //Setting the correct color values (or uses defaults if not specified in saved file)
-        /*try{
-            BACKGROUND = (Color) GRAPHICS.get("background");
-            LISTBG = (Color) GRAPHICS.get("listbg");
-            PLAYLISTTEXT = (Color) GRAPHICS.get("listtext");
-            MENUTEXTCOLOR = (Color) GRAPHICS.get("menutext");
-        }catch(Exception e){}*/
-        
-        //For maximization
-        GraphicsConfiguration config = window.getGraphicsConfiguration();
+        PropertiesManager manager = new PropertiesManager();
+        DefaultWindow window = new DefaultWindow(manager.getGraphicsProperties());
+        window.setSize(1280, 720);
+        window.setDefaultCloseOperation(window.EXIT_ON_CLOSE);
+        window.setContentPanel(new YTImportPanel(manager.getGraphicsProperties()));
+        window.setVisible(true);
+    }*/
+    
+    public DefaultWindow(Map<String, Object> graphics) throws Exception
+    {
+        GraphicsConfiguration config = getGraphicsConfiguration();
         Rectangle usableBounds = SunGraphicsEnvironment.getUsableBounds(config.getDevice());
-        window.setMaximizedBounds(usableBounds);
+        setMaximizedBounds(usableBounds);
         
-        window.setUndecorated(true);
+        setUndecorated(true);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         
-        //For resizing the interface
-        //DefaultWindowMouseListener wndw = new DefaultWindowMouseListener(this);
-       // window.getContentPane().addMouseListener(wndw);
-       // window.getContentPane().addMouseMotionListener(wndw);
+        setLayout(new GridBagLayout());
         
-        window.setLayout(new GridBagLayout());
+        DefaultWindowMouseListener listener = new DefaultWindowMouseListener(this);
+        addMouseListener(listener);
+        addMouseMotionListener(listener);
         
-        JFrame src = window;
         exitButton = new JButton();
+        JFrame src = this;
         exitButton.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                window.dispatchEvent(new WindowEvent(src, WindowEvent.WINDOW_CLOSING));
+                dispatchEvent(new WindowEvent(src, WindowEvent.WINDOW_CLOSING));
             }
         });
         exitButton.setPreferredSize(new Dimension(35,30));
@@ -80,11 +77,11 @@ public class DefaultWindow
         exitButton.setContentAreaFilled(false);
         exitButton.setBorderPainted(false);
         exitButton.setOpaque(false);
-        exitButton.setBackground(BACKGROUND);
+        exitButton.setBackground((Color)graphics.get("background"));
         
         if(this.exit == null)
         {
-            Image exit = ImageIO.read(new File(IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\" + "exit" + ".png"));
+            Image exit = ImageIO.read(new File(IO.getDocumentsFolder() + "\\resources\\graphics\\" + "exit" + ".png"));
             this.exit = new ImageIcon(exit.getScaledInstance(12 - (12 / 10),12 - (12 / 10),50));
         }
         exitButton.setIcon(this.exit);
@@ -96,16 +93,16 @@ public class DefaultWindow
             public void actionPerformed(ActionEvent e) {
                 if(!maximized)
                 {
-                    oldDimension = new Dimension(window.getWidth(), window.getHeight());
-                    oldPoint = new Point(window.getLocation());
-                    window.setExtendedState(MAXIMIZED_BOTH); 
+                    oldDimension = new Dimension(getWidth(), getHeight());
+                    oldPoint = new Point(getLocation());
+                    setExtendedState(MAXIMIZED_BOTH); 
                     maximized = true;
                 }
                 else
                 {
                     maximized = false;
-                    window.setSize(oldDimension);
-                    window.setLocation(oldPoint);
+                    setSize(oldDimension);
+                    setLocation(oldPoint);
                 }
             }
         });
@@ -116,50 +113,37 @@ public class DefaultWindow
         maximizeButton.setContentAreaFilled(false);
         maximizeButton.setBorderPainted(false);
         maximizeButton.setOpaque(false);
-        maximizeButton.setBackground(BACKGROUND);
+        maximizeButton.setBackground((Color) graphics.get("background"));
         
         if(this.maximize == null)
         {
-            Image maximizeImage = ImageIO.read(new File(IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\" + "maximize" + ".png"));
+            Image maximizeImage = ImageIO.read(new File(IO.getDocumentsFolder() + "\\resources\\graphics\\" + "maximize" + ".png"));
             this.maximize = new ImageIcon(maximizeImage.getScaledInstance(12 - (12 / 10),12 - (12 / 10),50));
         }
         maximizeButton.setIcon(this.maximize);
         
-        content = new JPanel();
-        content.setBackground(CONTENTBG);
+        contentHolder = new JPanel();
+        contentHolder.setBackground((Color) graphics.get("listbg"));
         
         //Add components to the interface
-        Container controller = window.getContentPane();
-        controller.setBackground(BACKGROUND);
+        Container controller = getContentPane();
+        controller.setBackground((Color) graphics.get("background"));
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.RELATIVE;
         
-        /*
-        private GridBagConstraints insertComponent(GridBagConstraints c, int fill, int gridx, int gridy, double weightx, double weighty, int gridwidth, int gridheight)
-        {
-           c.fill = fill;
-           c.gridx = gridx;
-           c.gridy = gridy;
-           c.weightx = weightx;
-           c.weighty = weighty;
-           c.gridwidth = gridwidth;
-           c.gridheight = gridheight;
-           return c;
-        }
-        */
         JPanel topLeft = new JPanel();
         topLeft.setMinimumSize(new Dimension(30, 30));
         topLeft.setMaximumSize(new Dimension(30, 30));
         topLeft.setPreferredSize(new Dimension(30, 30));
         topLeft.setSize(new Dimension(30, 30));
-        topLeft.setBackground(BACKGROUND);
+        topLeft.setBackground((Color) graphics.get("background"));
         
         JPanel bottomLeft = new JPanel();
         bottomLeft.setMinimumSize(new Dimension(30, 30));
         bottomLeft.setMaximumSize(new Dimension(30, 30));
         bottomLeft.setPreferredSize(new Dimension(30, 30));
         bottomLeft.setSize(new Dimension(30, 30));
-        bottomLeft.setBackground(BACKGROUND);
+        bottomLeft.setBackground((Color) graphics.get("background"));
         
         c.fill = c.NONE;
         c.gridx = 1;
@@ -168,19 +152,19 @@ public class DefaultWindow
         c.weighty = 0;
         c.gridwidth = 1;
         c.gridheight = 1;
-        window.add(topLeft, c);
+        add(topLeft, c);
         
         c.gridx++;
         
         c.anchor = GridBagConstraints.LINE_END;
         
-        window.add(maximizeButton, c);
+        add(maximizeButton, c);
         
         c.gridx++;
         
         c.anchor = c.CENTER;
         
-        window.add(exitButton, c);
+        add(exitButton, c);
         
         c.gridy++;
         c.gridx = 2;
@@ -188,7 +172,7 @@ public class DefaultWindow
         c.weightx = 1;
         c.weighty = 1;
         
-        window.add(content, c);
+        add(contentHolder, c);
         
         c.gridy++;
         c.gridx = 1;
@@ -196,17 +180,25 @@ public class DefaultWindow
         c.weighty = 0;
         c.fill = c.NONE;
         
-        window.add(bottomLeft, c);
+        add(bottomLeft, c);
     }
     
-    public DefaultWindow(Map<String, Object> graphics)
+    public void setContentPanel(DefaultPanel content)
     {
-        window = new JFrame();
-    }
-    
-    public JFrame getWindow()
-    {
-        return window;
+        contentHolder.removeAll();
+        contentHolder.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        
+        c.gridx = 1;
+        c.gridy = 1;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.fill = c.BOTH;
+        
+        contentHolder.add(content, c);
+        content.setParent(this);
     }
     
     public JPanel getContentPanel()
@@ -222,5 +214,10 @@ public class DefaultWindow
     public void setOldLocation(Point location)
     {
         oldPoint = location;
+    }
+    
+    public void exit()
+    {
+        dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
 }

@@ -56,11 +56,9 @@ public class DefaultWindowMouseListener implements MouseMotionListener, MouseLis
     @Override
     public void mouseReleased(MouseEvent e)
     {
-        JFrame frame = window.getWindow();
+        JFrame frame = window;
         frame.repaint();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        GraphicalInterface theFrame = (GraphicalInterface) frame;
-        theFrame.orderDividers();
         resizing = false;
         se = false; sw = false; ne = false; nw = false; n = false; ee = false; w = false; s = false;
     }
@@ -76,7 +74,7 @@ public class DefaultWindowMouseListener implements MouseMotionListener, MouseLis
     @Override
     public void mouseExited(MouseEvent e)
     {
-        JFrame frame = window.getWindow();
+        JFrame frame = window;
         if(!resizing)
             frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
@@ -89,7 +87,7 @@ public class DefaultWindowMouseListener implements MouseMotionListener, MouseLis
     public void mouseDragged(MouseEvent e) {
         try
         {
-            JFrame frame = window.getWindow();
+            JFrame frame = window;
             Point p = e.getPoint();
             int x = (int)(frame.getX() + (p.getX() - initialclick.getX()));
             int y = (int)(frame.getY() + (p.getY() - initialclick.getY()));
@@ -113,7 +111,7 @@ public class DefaultWindowMouseListener implements MouseMotionListener, MouseLis
     
     private void changeFrame()
     {
-        JFrame frame = window.getWindow();
+        JFrame frame = window;
         frame.setSize(frame.getSize().width + addXZ, frame.getSize().height + addYZ);
         frame.setLocation(frame.getLocation().x + addXC, frame.getLocation().y + addYC);
     }
@@ -126,7 +124,7 @@ public class DefaultWindowMouseListener implements MouseMotionListener, MouseLis
      */
     private void resize(int x, int y, MouseEvent e)
     {
-        JFrame frame = window.getWindow();
+        JFrame frame = window;
         
         //We're resizing
         resizing = true;
@@ -271,7 +269,7 @@ public class DefaultWindowMouseListener implements MouseMotionListener, MouseLis
     @Override
     public void mouseMoved(MouseEvent e)
     {
-        JFrame frame = window.getWindow();
+        JFrame frame = window;
         
         int x = (int) e.getPoint().getX();
         int y = (int) e.getPoint().getY();

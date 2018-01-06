@@ -30,8 +30,7 @@ import sun.java2d.SunGraphicsEnvironment;
  * & added to the interface of CowLite Audio Player.
  */
 public class GraphicalInterface extends JFrame
-{   
-    private DefaultListModel savedmodel = new DefaultListModel();
+{
     private JScrollPane playlist, savedLists;
     private JList songlist, artistlist, albumlist, savedListText;
     private JButton maximizeButton, exitButton, playButton, stopButton,
@@ -48,6 +47,8 @@ public class GraphicalInterface extends JFrame
     //private JPanel top, left, right, bottom;
     private boolean maximized = false;
     private boolean playSet = false;
+    private boolean  focusSavedlists = false;
+    
     private Dimension oldDimension;
     private Point oldPoint;
     private GridBagConstraints c;
@@ -159,7 +160,7 @@ public class GraphicalInterface extends JFrame
         });
         
         filechooser = new JFileChooser();
-        filechooser.setCurrentDirectory(new File(IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\playlists\\"));
+        filechooser.setCurrentDirectory(new File(IO.getDocumentsFolder() + "\\resources\\playlists\\"));
         
         makeMenu();
         
@@ -242,7 +243,7 @@ public class GraphicalInterface extends JFrame
         exitButton.setOpaque(false);
         exitButton.setBackground(BACKGROUND);
         
-        Image play = ImageIO.read(new File(IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\" + "exit" + ".png"));
+        Image play = ImageIO.read(new File(IO.getDocumentsFolder() + "\\resources\\graphics\\" + "exit" + ".png"));
         ImageIcon icon = new ImageIcon(play.getScaledInstance(12 - (12 / 10),12 - (12 / 10),50));
         exitButton.setIcon(icon);
         play.flush();
@@ -275,7 +276,7 @@ public class GraphicalInterface extends JFrame
         maximizeButton.setOpaque(false);
         maximizeButton.setBackground(BACKGROUND);
         
-        Image maximizeImage = ImageIO.read(new File(IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\" + "maximize" + ".png"));
+        Image maximizeImage = ImageIO.read(new File(IO.getDocumentsFolder() + "\\resources\\graphics\\" + "maximize" + ".png"));
         ImageIcon maximizeIcon = new ImageIcon(maximizeImage.getScaledInstance(12 - (12 / 10),12 - (12 / 10),50));
         maximizeButton.setIcon(maximizeIcon);
         maximizeImage.flush();
@@ -351,9 +352,8 @@ public class GraphicalInterface extends JFrame
         button2.setBackground(BACKGROUND);
         
         Border border = BorderFactory.createEmptyBorder( 0, 0, 0, 0 );
-        for(Map.Entry<String, String> entry : AUDIO.getPlaylists().entrySet())
-            savedmodel.addElement(entry.getKey());
-        savedListText = new JList(savedmodel);
+        savedListText = new JList();
+        updatePlaylists();
         savedListText.addKeyListener(new KeyListener(){
             @Override
             public void keyTyped(KeyEvent e) {
@@ -365,7 +365,7 @@ public class GraphicalInterface extends JFrame
 
             @Override
             public void keyReleased(KeyEvent e) {
-                if(KeyEvent.VK_DELETE == e.getKeyCode() && savedListText.getSelectedIndex() > -1)
+                if(KeyEvent.VK_DELETE == e.getKeyCode() && focusSavedlists)
                 {
                     try{
                         File f = new File(AUDIO.getPlaylistPath((String)savedListText.getSelectedValue()));
@@ -552,7 +552,7 @@ public class GraphicalInterface extends JFrame
         tf = new TranslucentFrame();
         tf.setAlwaysOnTop(true);
         try{
-            Image image = ImageIO.read(new File(IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\Cow32.png"));
+            Image image = ImageIO.read(new File(IO.getDocumentsFolder() + "\\resources\\graphics\\Cow32.png"));
             tf.setIconImage(image);
         }catch(Exception e){
             e.printStackTrace();
@@ -619,7 +619,7 @@ public class GraphicalInterface extends JFrame
         
         //Adding the correct images to the button
         try{
-            Image play = ImageIO.read(new File(IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\" + type + ".png"));
+            Image play = ImageIO.read(new File(IO.getDocumentsFolder() + "\\resources\\graphics\\" + type + ".png"));
             ImageIcon icon = new ImageIcon(play.getScaledInstance(x - (x / 10),y - (y / 10),50));
             button.setIcon(icon);
             play.flush();
@@ -630,7 +630,7 @@ public class GraphicalInterface extends JFrame
             public void mousePressed(MouseEvent e)
             {
                 try{
-                Image play = ImageIO.read(new File(IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\" + type + "pressed.png"));
+                Image play = ImageIO.read(new File(IO.getDocumentsFolder() + "\\resources\\graphics\\" + type + "pressed.png"));
                 ImageIcon icon = new ImageIcon(play.getScaledInstance(x - (x / 10),y - (y / 10),50));
                 button.setIcon(icon);
                 play.flush();
@@ -640,7 +640,7 @@ public class GraphicalInterface extends JFrame
             public void mouseReleased(MouseEvent e)
             {
                 try{
-                Image play = ImageIO.read(new File(IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\" + type + ".png"));
+                Image play = ImageIO.read(new File(IO.getDocumentsFolder() + "\\resources\\graphics\\" + type + ".png"));
                 ImageIcon icon = new ImageIcon(play.getScaledInstance(x - (x / 10),y - (y / 10),50));
                 button.setIcon(icon);
                 play.flush();
@@ -735,6 +735,62 @@ public class GraphicalInterface extends JFrame
         albumlist.addListSelectionListener(listener);
         songlist.addListSelectionListener(listener);
         artistlist.addListSelectionListener(listener);
+        
+        MouseListener mouseListener = new MouseListener(){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                focusSavedlists = false;
+                System.out.println("unfocussed");
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        };
+        
+        albumlist.addMouseListener(mouseListener);
+        artistlist.addMouseListener(mouseListener);
+        songlist.addMouseListener(mouseListener);
+        
+        KeyListener keys = new KeyListener(){
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(KeyEvent.VK_DELETE == e.getKeyCode() && !focusSavedlists)
+                {
+                    try{
+                        System.out.println("removing song...");
+                        AUDIO.getPlayer().removeSong(AUDIO.getPlayer().getIndex());
+                        
+                    }catch(Exception ex){
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        };
+        
+        albumlist.addKeyListener(keys);
+        songlist.addKeyListener(keys);
+        artistlist.addKeyListener(keys);
     }
     
     /**
@@ -747,15 +803,41 @@ public class GraphicalInterface extends JFrame
             @Override
             public void valueChanged(ListSelectionEvent e)
             {
-                System.out.println(savedListText.getSelectedIndex());
+                //savedListText.getSele
+                System.out.println("VALUE CHANGED: " + savedListText.getSelectedIndex());
+                System.out.println(savedListText.getSelectedValue());
                 if(savedListText.getSelectedIndex() != -1)
                 {
                     AUDIO.loadPlaylist((String) savedListText.getSelectedValue());
                     setPauseButton();
-                    savedListText.clearSelection();
                     timeSlider.setValue(0);
                 }
             }
+        });
+        
+        savedListText.addMouseListener(new MouseListener(){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                focusSavedlists = true;
+                System.out.println("focussed");
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+            
         });
     }
     
@@ -782,7 +864,16 @@ public class GraphicalInterface extends JFrame
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(AUDIO.getPlayer() instanceof FileAudioPlayer)
-                    IO.saveFile(AUDIO);
+                {
+                    try{
+                        DefaultWindow window = new DefaultWindow(GRAPHICS);
+                        window.setSize(400, 300);
+                        window.setContentPanel(new SavePanel(GRAPHICS, AUDIO));
+                        window.setVisible(true);
+                    }catch(Exception f){
+                        f.printStackTrace();
+                    }
+                }
             }
         });
         removeList.addActionListener(new ActionListener(){
@@ -795,7 +886,14 @@ public class GraphicalInterface extends JFrame
         importYoutube.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                IO.importYoutube(AUDIO);
+                try{
+                    DefaultWindow window = new DefaultWindow(GRAPHICS);
+                    window.setContentPanel(new YTImportPanel(GRAPHICS, AUDIO));
+                    window.setSize(400, 300);
+                    window.setVisible(true);
+                }catch(Exception f){
+                    f.printStackTrace();
+                }
             }
         });
         filemenu.add(removeList);
@@ -833,7 +931,7 @@ public class GraphicalInterface extends JFrame
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
-                    Desktop.getDesktop().edit(new File(IO.getDocumentsFolder() + "/CowLite Audio Player/resources/infofiles/about.txt"));
+                    Desktop.getDesktop().edit(new File(IO.getDocumentsFolder() + "\\resources\\infofiles\\about.txt"));
                 }catch(Exception ex){
                     ex.printStackTrace();
                 }
@@ -843,7 +941,7 @@ public class GraphicalInterface extends JFrame
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
-                    Desktop.getDesktop().edit(new File(IO.getDocumentsFolder() + "/CowLite Audio Player/resources/infofiles/controls.txt"));
+                    Desktop.getDesktop().edit(new File(IO.getDocumentsFolder() + "\\resources\\infofiles\\controls.txt"));
                 }catch(Exception ex){
                     ex.printStackTrace();
                 }
@@ -943,6 +1041,11 @@ public class GraphicalInterface extends JFrame
         }
     }
     
+    public void setSelectedSong(int index)
+    {
+        songlist.setSelectedIndex(index);
+    }
+    
     /**
      * change the playbutton to have a play icon
      */
@@ -951,7 +1054,7 @@ public class GraphicalInterface extends JFrame
         if(playSet)
             return;
         try{
-            switchImage(playButton, IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\play.png", RECTBUTTON, RECTBUTTON);
+            switchImage(playButton, IO.getDocumentsFolder() + "\\resources\\graphics\\play.png", RECTBUTTON, RECTBUTTON);
             playSet = true;
         }catch(Exception e){}
     }
@@ -961,7 +1064,7 @@ public class GraphicalInterface extends JFrame
         if(!playSet)
             return;
         try{
-            switchImage(playButton, IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\pause.png", RECTBUTTON, RECTBUTTON);
+            switchImage(playButton, IO.getDocumentsFolder() + "\\resources\\graphics\\pause.png", RECTBUTTON, RECTBUTTON);
             playSet = false;
         }catch(Exception f){System.out.println(f);}
     }
@@ -969,14 +1072,14 @@ public class GraphicalInterface extends JFrame
     public void setPlayButtonPressed()
     {
         try{
-            switchImage(playButton, IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\playpressed.png", RECTBUTTON, RECTBUTTON);
+            switchImage(playButton, IO.getDocumentsFolder() + "\\resources\\graphics\\playpressed.png", RECTBUTTON, RECTBUTTON);
         }catch(Exception e){}
     }
     
     public void setPauseButtonPressed()
     {
         try{
-            switchImage(playButton, IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\pausepressed.png", RECTBUTTON, RECTBUTTON);
+            switchImage(playButton, IO.getDocumentsFolder() + "\\resources\\graphics\\pausepressed.png", RECTBUTTON, RECTBUTTON);
         }catch(Exception f){System.out.println(f);}
     }
     
@@ -987,7 +1090,7 @@ public class GraphicalInterface extends JFrame
     {
         setAlphabeticInactive();
         try{
-            switchImage(shuffleButton, IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\shufflepressed.png", RECTBUTTON / 0.75, RECTBUTTON / 0.75);
+            switchImage(shuffleButton, IO.getDocumentsFolder() + "\\resources\\graphics\\shufflepressed.png", RECTBUTTON / 0.75, RECTBUTTON / 0.75);
         }catch(Exception f){System.out.println(f);}
     }
     
@@ -997,7 +1100,7 @@ public class GraphicalInterface extends JFrame
     public void setShuffleInactive()
     {
         try{
-            switchImage(shuffleButton, IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\shuffle.png", RECTBUTTON / 0.75, RECTBUTTON / 0.75);
+            switchImage(shuffleButton, IO.getDocumentsFolder() + "\\resources\\graphics\\shuffle.png", RECTBUTTON / 0.75, RECTBUTTON / 0.75);
         }catch(Exception f){System.out.println(f);}
     }    
     
@@ -1005,14 +1108,14 @@ public class GraphicalInterface extends JFrame
     {
         setShuffleInactive();
         try{
-            switchImage(alphabeticButton, IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\AlphabeticEnabled.png", RECTBUTTON / 0.65, RECTBUTTON / 0.65);
+            switchImage(alphabeticButton, IO.getDocumentsFolder() + "\\resources\\graphics\\AlphabeticEnabled.png", RECTBUTTON / 0.65, RECTBUTTON / 0.65);
         }catch(Exception f){System.out.println(f);}
     }
     
     public void setAlphabeticInactive()
     {
         try{
-            switchImage(alphabeticButton, IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\AlphabeticDisabled.png", RECTBUTTON / 0.65, RECTBUTTON / 0.65);
+            switchImage(alphabeticButton, IO.getDocumentsFolder() + "\\resources\\graphics\\AlphabeticDisabled.png", RECTBUTTON / 0.65, RECTBUTTON / 0.65);
         }catch(Exception f){System.out.println(f);}
     }
     
@@ -1084,6 +1187,14 @@ public class GraphicalInterface extends JFrame
         albumlist.setModel(albums);
     }
     
+    public void updatePlaylists()
+    {
+        DefaultListModel savedmodel = new DefaultListModel();
+        for(Map.Entry<String, String> entry : AUDIO.getPlaylists().entrySet())
+            savedmodel.addElement(entry.getKey());
+        savedListText.setModel(savedmodel);
+    }
+    
     private class OverlaySettings extends JFrame implements ActionListener
     {
         private final JButton okay;
@@ -1116,7 +1227,7 @@ public class GraphicalInterface extends JFrame
         private void setSettings()
         {
             try{
-                BufferedReader red = new BufferedReader(new FileReader(IO.getDocumentsFolder() + "\\CowLite Audio Player\\resources\\launchersettings\\overlay.txt"));
+                BufferedReader red = new BufferedReader(new FileReader(IO.getDocumentsFolder() + "\\resources\\launchersettings\\overlay.txt"));
                 selectSize.setSelectedItem(red.readLine());
 
                 isDefault = Boolean.parseBoolean(red.readLine());
@@ -1164,7 +1275,7 @@ public class GraphicalInterface extends JFrame
                 setOverlaySettings((String)selectSize.getSelectedItem());
                 tf.setVisible(isDefault);
                 try{
-                    PrintStream out = new PrintStream(IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\launchersettings\\overlay.txt");
+                    PrintStream out = new PrintStream(IO.getDocumentsFolder() + "\\resources\\launchersettings\\overlay.txt");
                     out.println((String)selectSize.getSelectedItem());
                     out.println(isDefault);
                     this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));

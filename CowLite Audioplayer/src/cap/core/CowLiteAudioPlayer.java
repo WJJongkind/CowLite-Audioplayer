@@ -3,6 +3,8 @@ package cap.core;
 import cap.control.GlobalKeyListener;
 import cap.core.audio.AudioController;
 import cap.gui.GUIHandler;
+import java.io.File;
+import java.io.PrintWriter;
 import javafx.embed.swing.JFXPanel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,14 +25,26 @@ public class CowLiteAudioPlayer
      * is started, the mediaplayer is located here.
      * @param args 
      */
-    public static void main(String[] args) throws Exception
+    public static void main(String[] args)
     {
-        //Save a buttload of RAM on some systems
-        System.setProperty("sun.java2d.noddraw", "true");
-        //Initialize the JFX thread (important, otherwise MediaPlayer in FileAudioPlayer won't work.
-        new JFXPanel();
-        
-        new CowLiteAudioPlayer();
+        try{
+            //Save a buttload of RAM on some systems
+            System.setProperty("sun.java2d.noddraw", "true");
+            //Initialize the JFX thread (important, otherwise MediaPlayer in FileAudioPlayer won't work.
+            new JFXPanel();
+
+            new CowLiteAudioPlayer();
+        }catch(Exception e){
+            try{
+                File f = new File("C:\\Users\\Wessel\\Documents\\log.txt");
+                PrintWriter out = new PrintWriter(f);
+                for(StackTraceElement s : e.getStackTrace())
+                    out.println(s.toString());
+                out.close();
+            }catch(Exception f){
+                
+            }
+        }
     }
     
     public CowLiteAudioPlayer() throws Exception

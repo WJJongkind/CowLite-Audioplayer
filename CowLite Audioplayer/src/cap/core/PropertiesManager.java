@@ -35,10 +35,10 @@ public class PropertiesManager
         CONTROLS = new HashMap<>();
         AUDIO = new HashMap<>();
         loadGraphics();
-        standardLoad(PLAYLISTS, IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\launchersettings\\savedlists.txt");
+        standardLoad(PLAYLISTS, IO.getDocumentsFolder() + "\\resources\\launchersettings\\savedlists.txt");
         System.out.println("PLAYLISTS: " + PLAYLISTS.size());
-        standardLoad(CONTROLS, IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\launchersettings\\controls.txt");
-        standardLoad(AUDIO, IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\launchersettings\\audiosettings.txt");
+        standardLoad(CONTROLS, IO.getDocumentsFolder() + "\\resources\\launchersettings\\controls.txt");
+        standardLoad(AUDIO, IO.getDocumentsFolder() + "\\resources\\launchersettings\\audiosettings.txt");
     }
     
     private void standardLoad(Map<String, String> target, String path)
@@ -78,7 +78,7 @@ public class PropertiesManager
             
             Matcher matcher;
             String line = null;
-            FileReader red = new FileReader(new File(IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\launchersettings\\graphicssettings.txt"));
+            FileReader red = new FileReader(new File(IO.getDocumentsFolder() + "\\resources\\launchersettings\\graphicssettings.txt"));
             BufferedReader bufred = new BufferedReader(red);
             while((line = bufred.readLine()) != null)
             {
@@ -130,13 +130,13 @@ public class PropertiesManager
         try{
             String path = null;
             if(properties.equals(PLAYLISTS))
-                path = IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\launchersettings\\savedlists.txt";
+                path = IO.getDocumentsFolder() + "\\resources\\launchersettings\\savedlists.txt";
             if(properties.equals(CONTROLS))
-                path = IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\launchersettings\\controls.txt";
+                path = IO.getDocumentsFolder() + "\\resources\\launchersettings\\controls.txt";
             if(properties.equals(AUDIO))
-                path = IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\launchersettings\\audiosettings.txt";
+                path = IO.getDocumentsFolder() + "\\resources\\launchersettings\\audiosettings.txt";
             if(properties.equals(GRAPHICS))
-                path = IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\launchersettings\\graphicssettings.txt";
+                path = IO.getDocumentsFolder() + "\\resources\\launchersettings\\graphicssettings.txt";
             
             PrintStream out = new PrintStream(new FileOutputStream(new File(path)));
             for(Map.Entry<String, ?> entry: properties.entrySet())

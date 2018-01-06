@@ -66,7 +66,7 @@ public class InfoComponent extends JComponent
         sizes.put("large", new Sizes(LARGEWIDTH, LARGE_PRIMARY_FONT, LARGE_SECONDARY_FONT));
         
         try{
-            BufferedReader red = new BufferedReader(new FileReader(IO.getDocumentsFolder() + "\\CowLite Audio Player\\resources\\launchersettings\\overlay.txt"));
+            BufferedReader red = new BufferedReader(new FileReader(IO.getDocumentsFolder() + "\\resources\\launchersettings\\overlay.txt"));
             activeSizes = sizes.get(red.readLine());
             red.close();
         }catch(Exception e){}

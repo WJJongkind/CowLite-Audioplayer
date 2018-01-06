@@ -8,6 +8,7 @@ import cap.gui.GUIHandler;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.swing.*;
 
 /**
@@ -21,6 +22,8 @@ public class CoreTime implements ActionListener
     private final GUIHandler GUI;
     private int switchedIndex = -1;
     private List<?> playlist;
+    private int playlistsize = -1, playlistsSize = -1;
+    private Map<String, String> playlists;
     
     public CoreTime(GUIHandler handler, AudioController controller)
     {
@@ -33,6 +36,7 @@ public class CoreTime implements ActionListener
     {
         checkSongChange();
         updatePlaylistInfo();
+        updatePlaylists();
         updateSongInfo();
         updateButtons();
     }
@@ -50,12 +54,14 @@ public class CoreTime implements ActionListener
     {
         try{
             AudioPlayer player = AUDIO.getPlayer();
+            
             if(player instanceof FileAudioPlayer && player.getPosition() == player.getDuration() && switchedIndex != player.getIndex())
             {
                 switchedIndex = player.getIndex();
                 player.changeSong(1);
             }
         }catch(Exception e){
+            e.printStackTrace();
         }
     }
     
@@ -63,6 +69,10 @@ public class CoreTime implements ActionListener
     {
         try{
             AudioPlayer player = AUDIO.getPlayer();
+            
+            if(player == null)
+                return;
+            
             String time;
             if(player.isPlaying())
                 time = minutes(player.getPosition()) + ":" + seconds(player.getPosition()) + "|" + minutes(player.getDuration()) + ":" + seconds(player.getDuration());
@@ -71,8 +81,9 @@ public class CoreTime implements ActionListener
             
             GUI.getGui().updateOverlay(time, player.getSongInfo(), player.getVolume());
             GUI.getGui().setTimeSliderPosition(player.getPosition(), player.getDuration());
+            GUI.getGui().setSelectedSong(player.getIndex());
         }catch(Exception e){
-           // e.printStackTrace();
+           e.printStackTrace();
         }
     }
     
@@ -108,18 +119,37 @@ public class CoreTime implements ActionListener
             if(AUDIO.getPlayer() == null)
                 return;
             if(playlist == null)
+            {
                 playlist = AUDIO.getPlayer().getList();
-            else if(playlist.equals(AUDIO.getPlayer().getList()))
+                playlistsize = playlist.size();
+            }
+            else if(playlist.equals(AUDIO.getPlayer().getList()) && AUDIO.getPlayer().getList().size() == playlistsize)
                 return;
             else
+            {
                 playlist = AUDIO.getPlayer().getList();
+                playlistsize = playlist.size();
+            }
 
             if(AUDIO.getPlayer() instanceof FileAudioPlayer)
                 updateForFiles();
             else
                 updateForYoutube();
         }catch(Exception e){
-            
+            e.printStackTrace();
+        }
+    }
+    
+    private void updatePlaylists()
+    {
+        if(playlists == null || !playlists.equals(AUDIO.getPlaylists()) || AUDIO.getPlaylists().size() != playlistsSize)
+        {
+            playlists = AUDIO.getPlaylists();
+            playlistsSize = playlists.size();
+            GUI.getGui().updatePlaylists();
+
+            GUI.getGui().revalidate();
+            GUI.getGui().repaint();
         }
     }
         
@@ -145,7 +175,9 @@ public class CoreTime implements ActionListener
             GUI.getGui().repaint();
           //  if(GraphicalInterface.songlist.getSelectedIndex() != CowLiteAudioPlayer.player.getIndex())
            //     GraphicalInterface.songlist.setSelectedIndex(CowLiteAudioPlayer.player.getIndex());
-        }catch(Exception f){}
+        }catch(Exception f){
+            f.printStackTrace();
+        }
     }
     
     private void updateForYoutube()
@@ -172,7 +204,9 @@ public class CoreTime implements ActionListener
          //   GUIHandler.frame.revalidate();
          //   if(GraphicalInterface.songlist.getSelectedIndex() != CowLiteAudioPlayer.player.getIndex())
             //    GraphicalInterface.songlist.setSelectedIndex(CowLiteAudioPlayer.player.getIndex());
-        }catch(Exception f){}
+        }catch(Exception f){
+            f.printStackTrace();
+        }
     }
 }
 

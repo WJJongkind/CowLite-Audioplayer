@@ -24,7 +24,6 @@ import javax.swing.plaf.metal.MetalSliderUI;
  */
 public class TimeSlider extends MetalSliderUI
 {
-    private Image knobImage;
     private final float[] fractions = {0.0f, 0.5f};
     private Color[] fillColors = {
       new Color(0x0000ff),
@@ -53,7 +52,6 @@ public class TimeSlider extends MetalSliderUI
         //super(b);
         this.AUDIO = controller;
         try{
-            knobImage = ImageIO.read(new File(IO.getDocumentsFolder() + "CowLite Audio Player\\resources\\graphics\\timeknob.png"));
             setPrimaryBack((Color) graphics.get("sliderbackprim"));
             setSecondaryBack((Color) graphics.get("sliderbacksec"));
             
@@ -66,15 +64,6 @@ public class TimeSlider extends MetalSliderUI
     @Override
     public void paintThumb(Graphics g)
     {
-        g.drawImage(this.knobImage, thumbRect.x, thumbRect.y - 4, 25,25,null);
-        try{
-        g.setColor(timecolor);
-        
-        int duration = AUDIO.getPlayer().getDuration();
-        int position = AUDIO.getPlayer().getPosition();
-        String totalTime = minutes(duration) + ":" + seconds(duration);
-        String currentTime = minutes(position) + ":" + seconds(position);
-        g.drawString(currentTime + "|" + totalTime, trackRect.width / 2, trackRect.height - 3);}catch(Exception e){}
     }
     
     private String seconds(int duration)
