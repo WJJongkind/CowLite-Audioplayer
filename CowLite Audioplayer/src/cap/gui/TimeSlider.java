@@ -1,6 +1,7 @@
 package cap.gui;
 
 import cap.core.audio.AudioController;
+import cap.core.audio.AudioPlayer;
 import cap.util.IO;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -24,6 +25,7 @@ import javax.swing.plaf.metal.MetalSliderUI;
  */
 public class TimeSlider extends MetalSliderUI
 {
+    private Image knobImage;
     private final float[] fractions = {0.0f, 0.5f};
     private Color[] fillColors = {
       new Color(0x0000ff),
@@ -52,6 +54,7 @@ public class TimeSlider extends MetalSliderUI
         //super(b);
         this.AUDIO = controller;
         try{
+            knobImage = ImageIO.read(new File(IO.getDocumentsFolder() + "\\resources\\graphics\\timeknob.png"));
             setPrimaryBack((Color) graphics.get("sliderbackprim"));
             setSecondaryBack((Color) graphics.get("sliderbacksec"));
             
@@ -64,6 +67,18 @@ public class TimeSlider extends MetalSliderUI
     @Override
     public void paintThumb(Graphics g)
     {
+        g.drawImage(this.knobImage, thumbRect.x, thumbRect.y - 4, 25,25,null);
+        try{
+            g.setColor(timecolor);
+            
+            AudioPlayer player = AUDIO.getPlayer();
+            int duration = player.getDuration();
+            int pos = player.getPosition();
+            String totalTime = minutes(duration) + ":" + seconds(duration);
+            String currentTime = minutes(pos) + ":" + seconds(pos);
+            String combined = currentTime + "|" + totalTime;
+            g.drawString(combined, trackRect.width / 2 - g.getFontMetrics().stringWidth(combined) / 2, trackRect.height - 3);
+        }catch(Exception e){}
     }
     
     private String seconds(int duration)
