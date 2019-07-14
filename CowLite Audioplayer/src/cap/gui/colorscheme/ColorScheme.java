@@ -13,7 +13,9 @@ import java.awt.Color;
  */
 public interface ColorScheme {
     public Color backgroundColor();
-    public Color foregroundColor();
+    public Color frameColor();
     public Color textColor();
-    
+    public Color timeSliderColor();
+    public Color volumeColor();
+    public GUIImageSet imageSet();
 }

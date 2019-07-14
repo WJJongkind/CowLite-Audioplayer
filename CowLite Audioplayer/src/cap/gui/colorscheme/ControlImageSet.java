@@ -11,8 +11,25 @@ import java.awt.image.BufferedImage;
  *
  * @author Wessel
  */
-public interface ControlImageSet {
-    public BufferedImage defaultImage();
-    public BufferedImage highlightedImage();
-    public BufferedImage disabledImage();
+public class ControlImageSet {
+    
+    private final BufferedImage defaultImage, pressedImage, disabledImage;
+    
+    public ControlImageSet(BufferedImage defaultImage, BufferedImage pressedImage, BufferedImage disabledImage) {
+        this.defaultImage = defaultImage;
+        this.pressedImage = pressedImage;
+        this.disabledImage = disabledImage;
+    }
+    
+    public BufferedImage defaultImage() {
+        return defaultImage;
+    }
+    
+    public BufferedImage pressedImage() {
+        return pressedImage;
+    }
+    
+    public BufferedImage disabledImage() {
+        return disabledImage;
+    }
 }

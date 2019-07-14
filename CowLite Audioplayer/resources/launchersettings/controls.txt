@@ -1,0 +1,7 @@
+play=:NumPad 5
+next=:NumPad 6
+volumeDown=:NumPad Subtract
+stop=:NumPad 9
+previous=:NumPad 4
+volumeUp=:NumPad Add
+pause=:NumPad 7

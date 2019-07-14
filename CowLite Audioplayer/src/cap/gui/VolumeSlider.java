@@ -1,6 +1,7 @@
 package cap.gui;
 
 
+import cap.gui.colorscheme.ColorScheme;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -11,7 +12,6 @@ import java.awt.Paint;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import javax.swing.plaf.metal.MetalSliderUI;
-import java.util.Map;
 
 /**
  * (c) Copyright
@@ -40,15 +40,15 @@ public class VolumeSlider extends MetalSliderUI
     private static Stroke roundEndStroke = new BasicStroke(8,
             BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL);
     
-    public VolumeSlider(Map<String, Object> graphics) 
+    public VolumeSlider(ColorScheme colorScheme) 
     {
         try
         {
-            setPrimaryBack((Color) graphics.get("sliderbackprim"));
-            setSecondaryBack((Color) graphics.get("sliderbacksec"));
-            
-            setPrimary((Color) graphics.get("volumeprim"));
-            setSecondary((Color) graphics.get("volumesec"));
+//            setPrimaryBack((Color) graphics.get("sliderbackprim"));
+//            setSecondaryBack((Color) graphics.get("sliderbacksec"));
+//            
+//            setPrimary((Color) graphics.get("volumeprim"));
+//            setSecondary((Color) graphics.get("volumesec"));
         }catch(Exception e){}
     }
     

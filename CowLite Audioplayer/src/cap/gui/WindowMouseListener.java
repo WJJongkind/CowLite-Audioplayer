@@ -58,7 +58,7 @@ public class WindowMouseListener implements MouseMotionListener, MouseListener
         frame.repaint();
         frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         GraphicalInterface theFrame = (GraphicalInterface) frame;
-        theFrame.orderDividers();
+      //  theFrame.orderDividers();
         resizing = false;
         se = false; sw = false; ne = false; nw = false; n = false; ee = false; w = false; s = false;
     }
@@ -92,7 +92,7 @@ public class WindowMouseListener implements MouseMotionListener, MouseListener
             if(!resizing && initialclick.getX() > B && initialclick.getX() < frame.getWidth() - B && initialclick.getY() > B && initialclick.getY() < frame.getHeight() - B)
             {
                 frame.setLocation(x, y);
-                frame.setOldLocation(frame.getLocation());
+              //  frame.setOldLocation(frame.getLocation());
             }
             else
             {
@@ -102,7 +102,7 @@ public class WindowMouseListener implements MouseMotionListener, MouseListener
                     frame.setSize(579,frame.getHeight());
                 if(frame.getHeight() < H)
                     frame.setSize(frame.getWidth(),264);
-                frame.setOldSize(frame.getSize());
+              //  frame.setOldSize(frame.getSize());
             }
         }catch(Exception f){/*System.out.println(f);*/}
     }

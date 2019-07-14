@@ -32,9 +32,6 @@ public class TranslucentFrame extends JFrame
         c.anchor = GridBagConstraints.NORTH;
         info = new InfoComponent();
         info.setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
-        OverlayListener listener = new OverlayListener(info);
-        info.addMouseListener(listener);
-        info.addMouseMotionListener(listener);
         
         add(info, c);
     }
