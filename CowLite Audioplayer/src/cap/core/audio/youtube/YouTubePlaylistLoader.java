@@ -15,8 +15,6 @@ import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
-import javax.swing.JFrame;
 
 /**
  *

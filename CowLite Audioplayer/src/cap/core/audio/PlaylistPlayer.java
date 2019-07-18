@@ -6,8 +6,6 @@
 package cap.core.audio;
 
 import cap.core.audio.Playlist.PlaylistMode;
-import cap.core.audio.SongPlayer.SongPlayerObserver;
-import java.lang.ref.WeakReference;
 import javax.swing.Timer;
 
 /**

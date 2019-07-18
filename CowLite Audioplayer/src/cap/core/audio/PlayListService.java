@@ -80,9 +80,7 @@ public class PlayListService {
                         case YouTube:
                             try {
                                 song = new YouTubeSong(songUrl);
-                            }catch(IOException e) {
-                                
-                            }
+                            }catch(Exception e) {}
                             break;
                     }
                     if(song != null) {

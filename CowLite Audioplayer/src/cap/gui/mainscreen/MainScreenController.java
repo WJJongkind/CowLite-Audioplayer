@@ -12,6 +12,7 @@ import cap.core.audio.Song;
 import cap.core.audio.SongPlayer;
 import cap.core.audio.SongPlayer.SongPlayerObserver;
 import cap.core.audio.files.FileSong;
+import cap.core.audio.youtube.YouTubeService;
 import cap.core.audio.youtube.YouTubeSong;
 import cap.gui.ViewController;
 import cap.gui.colorscheme.ColorScheme;
@@ -27,11 +28,8 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
@@ -47,7 +45,6 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
     
     private static class Consants {
         public static final int updateInterval = 50;
-        public static final Pattern ytVideoIdPattern = Pattern.compile("\\?v=([a-zA-Z-_\\d]+)&?");
     }
     
     // MARK: - Private properties
@@ -55,11 +52,15 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
     private final MainScreen mainScreen;
     private final PlaylistPlayer playlistPlayer;
     private final Timer timer;
+    private final YouTubeService youTubeService;
     private DropTarget dropTarget;
     
     // MARK: - Initialisers
     
-    public MainScreenController(ColorScheme colorScheme, PlaylistPlayer playlistPlayer) {
+    public MainScreenController(ColorScheme colorScheme, PlaylistPlayer playlistPlayer, YouTubeService youTubeService) {
+        // YT Service
+        this.youTubeService = youTubeService;
+        
         // Setting up the main screen
         this.mainScreen = new MainScreen(colorScheme);
         this.mainScreen.getVolumeSlider().setValue(playlistPlayer.getPlayer().getVolume());
@@ -279,18 +280,14 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
                     if(pastedData != null) {
                         String text = (String) pastedData;
                         
-                        Matcher regexMatcher = Consants.ytVideoIdPattern.matcher(text);
-                        while(regexMatcher.find()) {
-                            String videoId = regexMatcher.group(1);
-                            YouTubeSong song = new YouTubeSong(new URL("https://www.youtube.com/watch?v=" + videoId));
-                            playlistPlayer.getPlaylist().addSong(song);
-                            playlistPlayer.refresh();
-                            
-                            // TODO replace duplicate code
-                            List<Song> songs = playlistPlayer.getPlaylist().getSongs();
-                            mainScreen.getPlaylistPane().setSongs(songs);
-                            mainScreen.getPlaylistPane().setActiveSong(nilCoalesce(playlistPlayer.getPlayer().getSong(), songs.get(0)));
+                        List<YouTubeSong> foundSongs = youTubeService.readUrl(text);
+                        for(YouTubeSong foundSong : foundSongs) {
+                            playlistPlayer.getPlaylist().addSong(foundSong);
                         }
+                        
+                        playlistPlayer.refresh();
+                        mainScreen.getPlaylistPane().setSongs(playlistPlayer.getPlaylist().getSongs());
+                        mainScreen.getPlaylistPane().repaint();
                     }
                 } catch (Exception ex) {
                     // TODO show some user feedback?

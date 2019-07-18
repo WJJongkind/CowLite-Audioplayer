@@ -2,8 +2,6 @@ package cap.core;
 
 import cap.control.HotkeyListener;
 import cap.control.HotkeyListener.Control;
-import cap.gui.ApplicationCoordinator;
-import cap.gui.Coordinator;
 import cap.gui.MainWindow;
 import cap.gui.Window;
 import cap.gui.colorscheme.ColorScheme;

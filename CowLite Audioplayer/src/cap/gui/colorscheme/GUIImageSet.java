@@ -18,4 +18,7 @@ public interface GUIImageSet {
     public ControlImageSet clearButton();
     public ControlImageSet nextButton();
     public ControlImageSet previousButton();
+    public ControlImageSet minimizeScreenButton();
+    public ControlImageSet stretchScreenButton();
+    public ControlImageSet closeScreenButton();
 }

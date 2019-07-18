@@ -5,6 +5,9 @@
  */
 package cap.gui;
 
+import java.awt.Dimension;
+import java.awt.Point;
+
 /**
  *
  * @author Wessel
@@ -12,4 +15,8 @@ package cap.gui;
 public interface Window {
     public void presentViewController(ViewController viewController);
     public void setVisible(boolean visible);
+    public void setSize(Dimension size);
+    public Dimension getSize();
+    public void setLocation(Point location);
+    public Point getLocation();
 }

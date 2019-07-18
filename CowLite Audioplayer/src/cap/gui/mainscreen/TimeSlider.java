@@ -26,8 +26,8 @@ public class TimeSlider extends Slider {
     
     public TimeSlider(ColorScheme colorScheme) {
         super(Orientation.horizontal);
-        super.setBackground(colorScheme.backgroundColor());
-        super.setForeground(colorScheme.timeSliderColor());
+        super.setBackground(colorScheme.timeSliderColor().backgroundColor());
+        super.setForeground(colorScheme.timeSliderColor().fillColor());
         super.setMinimumValue(0);
         super.setMaximumValue(1);
         super.setValue(0);

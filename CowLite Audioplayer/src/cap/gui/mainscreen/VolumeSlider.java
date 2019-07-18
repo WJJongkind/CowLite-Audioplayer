@@ -28,8 +28,8 @@ public class VolumeSlider extends Slider {
     
     public VolumeSlider(ColorScheme colorScheme) {
         super(Orientation.vertical);
-        super.setBackground(colorScheme.backgroundColor());
-        super.setForeground(colorScheme.volumeColor());
+        super.setBackground(colorScheme.volumeColor().backgroundColor());
+        super.setForeground(colorScheme.volumeColor().fillColor());
         super.setMinimumValue(0);
         super.setMaximumValue(1);
         super.setValue(0.5);

@@ -6,18 +6,13 @@
 package cap.core.audio.youtube;
 
 import cap.core.audio.Song;
-import cap.util.QueryReader;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.Video;
-import com.google.api.services.youtube.model.VideoListResponse;
 import java.io.IOException;
 import java.net.URL;
-import java.time.Duration;
-import java.util.Map;
 
 /**
  *
@@ -46,32 +41,27 @@ public class YouTubeSong implements Song {
     private final URL url;
     private final String videoId;
     
-    // MARK: - Initialisers
+    // MARK: - Public Initialisers
     
-    public YouTubeSong(URL url) throws IOException {
+    public YouTubeSong(URL url) throws IOException, VideoNotEmbeddableException {
+        YouTubeSong info = new YouTubeService().getYouTubeSongByUrl(url);
+        this.duration = info.duration;
+        this.songName = info.songName;
+        this.albumName = info.albumName;
+        this.artistName = info.artistName;
+        this.url = info.url;
+        this.videoId = info.videoId;
+    }
+    
+    // MARK: - Package-private initialisers
+
+    YouTubeSong(URL url, String songName, String artistName, String videoId, long duration) {
+        this.songName = songName;
+        this.artistName = artistName;
+        this.duration = duration;
+        this.videoId = videoId;
+        this.albumName = unknownPlaceholder;
         this.url = url;
-        albumName = unknownPlaceholder;
-        
-        String query = url.toString().substring(url.toString().indexOf("?") + 1);
-        Map<String, String> queryParts = QueryReader.readQuery(query);
-        videoId = queryParts.get("v");
-        
-        YouTube.Videos.List list = youTube.videos().list("snippet,contentDetails, status");
-        list.setFields("items(snippet/title,snippet/description,snippet/channelTitle,contentDetails/duration,status/embeddable)");
-        list.setId(videoId);
-        list.setKey("AIzaSyC2_YRcTE9916fsmA0_KRnef43GbLzz8m0");
-        VideoListResponse response = list.execute();
-        
-        Video video = response.getItems().get(0);
-        
-        if(video.getStatus().getEmbeddable()) {
-            songName = video.getSnippet().getTitle();
-            artistName = video.getSnippet().getChannelTitle();
-            duration = Duration.parse(video.getContentDetails().getDuration()).toMillis();
-            System.out.println("Loaded with: " + songName + ", " + artistName + ", " + duration);
-        } else {
-            throw new IllegalArgumentException("Video is not embeddable");
-        }
     }
     
     // MARK: - YouTubeSong specific methods

@@ -45,15 +45,15 @@ public class SavedPlaylistsPane extends JScrollPane {
         playlistPane = new JList();
         playlistListModel = new DefaultListModel<>();
         
-        playlistPane.setBackground(colorScheme.backgroundColor());
-        playlistPane.setForeground(colorScheme.textColor());
+        playlistPane.setBackground(colorScheme.savedLists().backgroundColor());
+        playlistPane.setForeground(colorScheme.savedLists().textColor());
         playlistPane.addListSelectionListener(e -> didSelectPlaylist(e.getFirstIndex()));
         playlistPane.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
         playlistPane.setModel(playlistListModel);
                 
         super.setViewport(super.createViewport());
         super.getViewport().add(playlistPane);
-        super.getViewport().setBackground(colorScheme.backgroundColor());
+        super.getViewport().setBackground(colorScheme.savedLists().backgroundColor());
         super.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         super.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         super.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));

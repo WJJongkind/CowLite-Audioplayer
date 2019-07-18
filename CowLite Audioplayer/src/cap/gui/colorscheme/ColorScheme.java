@@ -12,10 +12,11 @@ import java.awt.Color;
  * @author Wessel
  */
 public interface ColorScheme {
-    public Color backgroundColor();
     public Color frameColor();
-    public Color textColor();
-    public Color timeSliderColor();
-    public Color volumeColor();
+    public MenuColorScheme menu();
+    public PlaylistPaneColorScheme playlist();
+    public SavedListsPaneColorScheme savedLists();
+    public SliderColorScheme timeSliderColor();
+    public SliderColorScheme volumeColor();
     public GUIImageSet imageSet();
 }

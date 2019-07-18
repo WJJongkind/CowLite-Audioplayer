@@ -40,9 +40,9 @@ public class FileSong implements Song {
             metaData = new FileSongMetaDataReader().readMetaData(mediaPlayer);
             
             if(metaData != null) {
-                this.songName = metaData.song;
-                this.albumName = metaData.album;
-                this.artistName = metaData.artist;
+                this.songName = parseMetadataValue(metaData.song);
+                this.albumName = parseMetadataValue(metaData.album);
+                this.artistName = parseMetadataValue(metaData.artist);
                 this.duration = metaData.duration;
             } else {
                 this.songName = file.getName();
@@ -50,6 +50,14 @@ public class FileSong implements Song {
                 this.artistName = unknownPlaceholder;
                 this.duration = mediaPlayer.media().info().duration();
             }
+        }
+    }
+    
+    private String parseMetadataValue(String value) {
+        if(value == null || value.trim().equals("")) {
+            return unknownPlaceholder;
+        } else {
+            return value;
         }
     }
 
