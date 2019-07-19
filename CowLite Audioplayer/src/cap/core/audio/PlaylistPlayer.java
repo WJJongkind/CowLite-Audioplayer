@@ -38,8 +38,13 @@ public class PlaylistPlayer {
     public void setPlaylist(Playlist playlist) {
         player.stop();
         this.playlist = playlist;
-        player.setSong(playlist.getSongs().get(0));
-        currentSongIndex = 0;
+        if(playlist.getSongs().isEmpty()) {
+            currentSongIndex = -1;
+            player.setSong(null);
+        } else {
+            player.setSong(playlist.getSongs().get(0));
+            currentSongIndex = 0;
+        }
     }
     
     public Playlist getPlaylist() {

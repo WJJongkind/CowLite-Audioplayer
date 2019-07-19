@@ -168,4 +168,8 @@ public class MainScreen extends JPanel {
         return volumeSlider;
     }
     
+    public MusicControlPane getControlPane() {
+        return controlPane;
+    }
+    
 }

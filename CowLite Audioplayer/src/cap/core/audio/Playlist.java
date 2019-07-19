@@ -103,7 +103,7 @@ public class Playlist {
             Song sortedSong = alphabeticallySortedSongs.get(i);
             if(song.getSongName().compareTo(sortedSong.getSongName()) < 0) {
                 alphabeticallySortedSongs.add(i, song);
-                break;
+                return;
             }
         }
         

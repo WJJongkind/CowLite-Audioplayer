@@ -101,6 +101,8 @@ public class DynamicSongPlayer implements SongPlayer<Song> {
         } else if(song instanceof YouTubeSong) {
             ytSongPlayer.setSong((YouTubeSong) song);
             activePlayer = ytSongPlayer;
+        } else if(song == null) {
+            activePlayer.setSong(null);
         }
         
         unwrappedPerform(observers, observer -> observer.songChanged(this, song));

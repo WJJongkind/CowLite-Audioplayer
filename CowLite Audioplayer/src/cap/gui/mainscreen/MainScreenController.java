@@ -126,7 +126,7 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
 
     @Override
     public void didPressPauseButton(MusicControlPane sender) {
-        playlistPlayer.getPlayer().pause();
+        playlistPlayer.getPlayer().pause(); // TODO make sure that play button is set.
    }
 
     @Override
@@ -145,21 +145,29 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
     }
 
     @Override
-    public void didPressShuffleButton(MusicControlPane sender) {
+    public boolean didPressShuffleButton(MusicControlPane sender) {
         PlaylistMode currentMode = playlistPlayer.getPlaylist().getMode();
         playlistPlayer.getPlaylist().setMode(currentMode == PlaylistMode.shuffled ? PlaylistMode.normal : PlaylistMode.shuffled);
+        mainScreen.getPlaylistPane().setSongs(playlistPlayer.getPlaylist().getSongs());
+        playlistPlayer.getPlayer().setSong(playlistPlayer.getPlaylist().getSong(0));
+        return playlistPlayer.getPlaylist().getMode() == PlaylistMode.shuffled;
     }
 
     @Override
-    public void didPressAlphabeticSortButton(MusicControlPane sender) {
+    public boolean didPressAlphabeticSortButton(MusicControlPane sender) {
         PlaylistMode currentMode = playlistPlayer.getPlaylist().getMode();
         playlistPlayer.getPlaylist().setMode(currentMode == PlaylistMode.alphabetic ? PlaylistMode.normal : PlaylistMode.alphabetic);
+        mainScreen.getPlaylistPane().setSongs(playlistPlayer.getPlaylist().getSongs());
+        playlistPlayer.getPlayer().setSong(playlistPlayer.getPlaylist().getSong(0));
+        return playlistPlayer.getPlaylist().getMode() == PlaylistMode.alphabetic;
     }
 
     @Override
     public void didPressClearButton(MusicControlPane sender) {
         playlistPlayer.getPlayer().stop();
         playlistPlayer.setPlaylist(new Playlist());
+        mainScreen.getPlaylistPane().setSongs(playlistPlayer.getPlaylist().getSongs());
+        mainScreen.getPlaylistPane().repaint();
     }
 
     @Override

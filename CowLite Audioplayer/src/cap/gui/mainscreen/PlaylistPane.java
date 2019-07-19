@@ -126,6 +126,10 @@ public class PlaylistPane<SongType extends Song> extends JScrollPane {
             songTableModel.addRow(newRow);
         }
         
+        if(songs.size() == 0) {
+            return;
+        }
+        
         songTable.setRowSelectionInterval(0, 0);
         songTable.getSelectionModel().addListSelectionListener(songSelectionListener);
     }
@@ -141,7 +145,12 @@ public class PlaylistPane<SongType extends Song> extends JScrollPane {
         
         songTable.getSelectionModel().removeListSelectionListener(songSelectionListener);
         int index = songs.indexOf(song);
-        songTable.setRowSelectionInterval(index, index);
+        
+        if(index != -1) {
+            songTable.setRowSelectionInterval(index, index);
+        } else {
+            songTable.clearSelection();
+        }
         
         songTable.getSelectionModel().addListSelectionListener(songSelectionListener);
     }
