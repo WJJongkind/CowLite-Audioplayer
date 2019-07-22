@@ -91,9 +91,7 @@ public class DynamicSongPlayer implements SongPlayer<Song> {
 
     @Override
     public void setSong(Song song) {
-        if(activePlayer != null) {
-            activePlayer.stop();
-        }
+        stop();
         
         if(song instanceof FileSong) {
             fileSongPlayer.setSong((FileSong) song);

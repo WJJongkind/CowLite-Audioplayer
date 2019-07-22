@@ -12,6 +12,8 @@ import java.awt.Color;
  * @author Wessel
  */
 public interface MenuColorScheme {
-    public Color textColor();
-    public Color borderColor();
+    public Color menuBarTextColor();
+    public Color menuBarBorderColor();
+    public Color menuTextColor();
+    public Color menuBackgroundColor();
 }

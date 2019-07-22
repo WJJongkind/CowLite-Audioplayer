@@ -43,12 +43,22 @@ public class DarkMode implements ColorScheme {
     public MenuColorScheme menu() {
         return new MenuColorScheme() {
             @Override
-            public Color textColor() {
+            public Color menuBarTextColor() {
                 return new Color(0x909090);
             }
 
             @Override
-            public Color borderColor() {
+            public Color menuBarBorderColor() {
+                return new Color(0x909090);
+            }
+
+            @Override
+            public Color menuTextColor() {
+                return new Color(0x333333);
+            }
+
+            @Override
+            public Color menuBackgroundColor() {
                 return new Color(0x909090);
             }
         };

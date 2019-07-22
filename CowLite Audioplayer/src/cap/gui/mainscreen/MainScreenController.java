@@ -81,7 +81,13 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
 
     @Override
     public void stateChanged(SongPlayer<Song> player, SongPlayer.PlayerState state) {
-        // TODO show play/pause button
+        System.out.println("State changed");
+        switch(state) {
+            case playing:
+                mainScreen.getControlPane().enablePauseButton();
+            default:
+                mainScreen.getControlPane().enablePlayButton();
+        }
     }
 
     @Override

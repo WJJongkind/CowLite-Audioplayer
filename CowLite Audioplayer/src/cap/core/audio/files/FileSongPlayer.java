@@ -85,16 +85,19 @@ public class FileSongPlayer implements SongPlayer<FileSong> {
 
     @Override
     public void setSong(FileSong song) {
+        stop();
+        
         if(song == null) {
             double volume = getVolume();
             mediaPlayer.release();
             mediaPlayer = new MediaPlayerFactory().mediaPlayers().newMediaPlayer();
             setVolume(volume);
-            return;
+        } else {
+            mediaPlayer.media().prepare(song.getUrl().getProtocol() + "://" + song.getUrl().getPath());
+            this.activeSong = song;
         }
-        mediaPlayer.media().prepare(song.getUrl().getProtocol() + "://" + song.getUrl().getPath());
-        this.activeSong = song;
-        state = PlayerState.stopped;
+        
+        unwrappedPerform(observers, observer -> observer.songChanged(this, song));
     }
 
     @Override

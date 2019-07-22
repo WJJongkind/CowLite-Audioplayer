@@ -56,7 +56,7 @@ public class WindowActionsPane extends JPanel {
         super.setBorder(new AbstractBorder() {
             @Override
             public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-                g.setColor(colorScheme.menu().borderColor());
+                g.setColor(colorScheme.menu().menuBarBorderColor());
                 g.drawLine(x, y + height - 1, x + width, y + height - 1);
             }
         });

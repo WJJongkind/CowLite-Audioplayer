@@ -138,20 +138,30 @@ public class MusicControlPane extends JPanel {
         return button;
     }
     
+    // MARK: - Public functions
+    
+    public void enablePlayButton() {
+        playButton.setVisible(true);
+        pauseButton.setVisible(false);
+        invalidate();
+        repaint();
+    }
+    
+    public void enablePauseButton() {
+        playButton.setVisible(false);
+        pauseButton.setVisible(true);
+        invalidate();
+        repaint();
+    }
+    
     // MARK: - Private functions
     
     private void didPressPlay(MusicControlPaneDelegate delegate) {
         if(delegate.didPressPlayButton(this)) {
-        System.out.println("Is playing");
-            playButton.setVisible(false);
-            pauseButton.setVisible(true);
+            enablePauseButton();
         } else {
-        System.out.println("Is not playing");
-            playButton.setVisible(true);
-            pauseButton.setVisible(false);
+            enablePlayButton();
         }
-        invalidate();
-        repaint();
     }
     
     private void didPressShuffle(MusicControlPaneDelegate delegate) {

@@ -20,12 +20,16 @@ public class SugarySyntax {
     
     public static <T> void unwrappedPerform(WeakReference<T> target, TargetedAction<T> action) {
         if(target == null) {
+            System.out.println("target is null");
             return;
         }
         
         T strongDelegate = target.get();
         if(strongDelegate != null) {
+            System.out.println("Performing on: " + strongDelegate);
             action.perform(strongDelegate);
+        } else {
+            System.out.println("delegate is null");
         }
     }
     

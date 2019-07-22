@@ -93,6 +93,8 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
 
     @Override
     public void setSong(YouTubeSong song) {
+        stop();
+        
         currentSong = song;
         String html = videoPlayerHtml.replace("#VIDEO_PLACEHOLDER#", song.getId()).replace("#VOLUME_PLACEHOLDER#", "" + (int)(volume * 100));
         Browser.invokeAndWaitFinishLoadingMainFrame(browser, new Callback<Browser>() {
