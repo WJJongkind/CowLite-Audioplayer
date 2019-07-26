@@ -6,15 +6,18 @@
 package cap.gui.mainscreen;
 
 import cap.core.audio.Playlist;
-import cap.core.audio.Song;
 import cap.gui.colorscheme.ColorScheme;
+import cap.gui.colorscheme.SavedListsPaneColorScheme;
+import java.awt.Component;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 /**
  *
@@ -50,6 +53,7 @@ public class SavedPlaylistsPane extends JScrollPane {
         playlistPane.addListSelectionListener(e -> didSelectPlaylist(e.getFirstIndex()));
         playlistPane.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
         playlistPane.setModel(playlistListModel);
+        playlistPane.setCellRenderer(new ListCellRenderer(colorScheme.savedLists()));
                 
         super.setViewport(super.createViewport());
         super.getViewport().add(playlistPane);
@@ -85,6 +89,42 @@ public class SavedPlaylistsPane extends JScrollPane {
         if(strongDelegate != null) {
             strongDelegate.didSelectPlayList(playlists.get(index));
         }
+    }
+    
+    // MARK: - Private associated types
+    
+    private class ListCellRenderer extends DefaultListCellRenderer {
+        
+        // MARK: - Private properties
+        
+        private final SavedListsPaneColorScheme colorScheme;
+        
+        // MARK: - Initialisers
+        
+        public ListCellRenderer(SavedListsPaneColorScheme colorScheme) {
+            this.colorScheme = colorScheme;
+        }
+        
+        // MARK: - DefaultTableCellRenderer
+        
+        @Override
+        public Component getListCellRendererComponent(
+                JList<?> list,
+                Object value,
+                int index,
+                boolean isSelected,
+                boolean cellHasFocus) {
+            Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            setBorder(noFocusBorder);
+            if(isSelected) {
+                c.setBackground(colorScheme.highlightBackgroundColor());
+                c.setForeground(colorScheme.highlightTextColor());
+            } else {
+                c.setForeground(colorScheme.textColor());
+                c.setBackground(getBackground());
+            }
+            return c;
+        };
     }
     
 }

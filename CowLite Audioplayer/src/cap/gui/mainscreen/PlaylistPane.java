@@ -33,41 +33,6 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane {
         public void didSelectSong(SongType song);
     }
     
-    private class AlternatingRowRenderer extends DefaultTableCellRenderer {
-        
-        // MARK: - Private properties
-        
-        private final PlaylistPaneColorScheme colorScheme;
-        
-        // MARK: - Initialisers
-        
-        public AlternatingRowRenderer(PlaylistPaneColorScheme colorScheme) {
-            this.colorScheme = colorScheme;
-        }
-        
-        // MARK: - DefaultTableCellRenderer
-        
-        @Override
-        public Component getTableCellRendererComponent(JTable table, 
-                                                       Object value, 
-                                                       boolean isSelected, 
-                                                       boolean hasFocus,
-                                                       int row, 
-                                                       int column) {
-            Component c = super.getTableCellRendererComponent(table, 
-                value, isSelected, hasFocus, row, column);
-            setBorder(noFocusBorder);
-            if(isSelected) {
-                c.setBackground(colorScheme.highlightBackgroundColor());
-                c.setForeground(colorScheme.highlightTextColor());
-            } else {
-                c.setForeground(colorScheme.textColor());
-                c.setBackground(row%2==0 ? colorScheme.firstBackgroundColor() : colorScheme.secondBackgroundColor());
-            }
-            return c;
-        };
-    }
-    
     // MARK: - UI elements
     
     private final JTable songTable;
@@ -172,6 +137,43 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane {
         if(delegate != null) {
             strongDelegate.didSelectSong(songs.get(songTable.getSelectedRow()));
         }
+    }
+    
+    // MARK: - Private associated types
+    
+    private class AlternatingRowRenderer extends DefaultTableCellRenderer {
+        
+        // MARK: - Private properties
+        
+        private final PlaylistPaneColorScheme colorScheme;
+        
+        // MARK: - Initialisers
+        
+        public AlternatingRowRenderer(PlaylistPaneColorScheme colorScheme) {
+            this.colorScheme = colorScheme;
+        }
+        
+        // MARK: - DefaultTableCellRenderer
+        
+        @Override
+        public Component getTableCellRendererComponent(JTable table, 
+                                                       Object value, 
+                                                       boolean isSelected, 
+                                                       boolean hasFocus,
+                                                       int row, 
+                                                       int column) {
+            Component c = super.getTableCellRendererComponent(table, 
+                value, isSelected, hasFocus, row, column);
+            setBorder(noFocusBorder);
+            if(isSelected) {
+                c.setBackground(colorScheme.highlightBackgroundColor());
+                c.setForeground(colorScheme.highlightTextColor());
+            } else {
+                c.setForeground(colorScheme.textColor());
+                c.setBackground(row%2==0 ? colorScheme.firstBackgroundColor() : colorScheme.secondBackgroundColor());
+            }
+            return c;
+        };
     }
     
 }

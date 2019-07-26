@@ -14,4 +14,6 @@ import java.awt.Color;
 public interface SavedListsPaneColorScheme {
     public Color backgroundColor();
     public Color textColor();
+    public Color highlightBackgroundColor();
+    public Color highlightTextColor();
 }

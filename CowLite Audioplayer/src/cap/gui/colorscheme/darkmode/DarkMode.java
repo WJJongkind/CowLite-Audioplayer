@@ -106,6 +106,16 @@ public class DarkMode implements ColorScheme {
             public Color textColor() {
                 return new Color(0x333333);
             }
+
+            @Override
+            public Color highlightBackgroundColor() {
+                return new Color(0xb00012);
+            }
+
+            @Override
+            public Color highlightTextColor() {
+                return Color.white;
+            }
         };
     }
 

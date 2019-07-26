@@ -28,10 +28,6 @@ public class PlaylistsSplitPane extends JSplitPane {
                 return new BasicSplitPaneDivider(this) {
                     @Override
                     public void setBorder(Border b){}
-//                    @Override
-//                    public void paint(Graphics g) {
-//                        g.setColor(colorScheme.frameColor());
-//                    }
                 };
             }
         });
