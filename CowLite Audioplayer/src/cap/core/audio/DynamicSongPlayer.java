@@ -36,6 +36,7 @@ public class DynamicSongPlayer implements SongPlayer<Song> {
     public boolean play() {
         PlayerState oldState = getPlayerState();
         boolean result = activePlayer == null ? false : activePlayer.play();
+        System.out.println(getPlayerState() + "   " + oldState);
         if(getPlayerState() != oldState) {
             unwrappedPerform(observers, observer -> observer.stateChanged(this, getPlayerState()));
         }

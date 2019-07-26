@@ -6,21 +6,21 @@
 package cap.core;
 
 import cap.control.HotkeyListener;
-import cap.core.audio.DynamicSongPlayer;
 import cap.core.audio.PlaylistPlayer;
 import cap.core.audio.SongPlayer;
 import cap.core.audio.youtube.YouTubeService;
+import cap.core.services.PlaylistStoreInterface;
+import cap.gui.menu.Menu;
 import cap.gui.Window;
 import cap.gui.colorscheme.ColorScheme;
 import cap.gui.mainscreen.MainScreenController;
 import java.io.IOException;
-import org.jnativehook.GlobalScreen;
 
 /**
  *
  * @author Wessel
  */
-public class ApplicationCoordinator implements HotkeyListener.HotkeyListenerDelegate, Coordinator {
+public class ApplicationCoordinator implements Coordinator, HotkeyListener.HotkeyListenerDelegate, Menu.MenuDelegate {
     
     // MARK: - Constants
     
@@ -28,14 +28,14 @@ public class ApplicationCoordinator implements HotkeyListener.HotkeyListenerDele
     
     // MARK: - Private properties
     
-    private MainScreenController mainScreenController;
-    private PlaylistPlayer playlistPlayer;
+    private final MainScreenController mainScreenController;
+    private final PlaylistPlayer playlistPlayer;
     
     // MARK: - Initialisers
     
-    public ApplicationCoordinator(ColorScheme colorScheme, HotkeyListener hotkeyListener) throws IOException {
-        playlistPlayer = new PlaylistPlayer(new DynamicSongPlayer());
-        mainScreenController = new MainScreenController(colorScheme, playlistPlayer, new YouTubeService());
+    public ApplicationCoordinator(ColorScheme colorScheme, HotkeyListener hotkeyListener, PlaylistPlayer playlistPlayer, PlaylistStoreInterface playlistStore) throws IOException {
+        this.playlistPlayer = playlistPlayer;
+        mainScreenController = new MainScreenController(colorScheme, playlistPlayer, new YouTubeService(), playlistStore);
         
         // Catch global hotkey events
         hotkeyListener.setDelegate(this);
@@ -78,25 +78,21 @@ public class ApplicationCoordinator implements HotkeyListener.HotkeyListenerDele
     @Override
     public void didPressPrevious() {
         playlistPlayer.playPreviousSong();
-        // TODO update ui
     }
 
     @Override
     public void didPressNext() {
         playlistPlayer.playNextSong();
-        // TODO update ui
     }
 
     @Override
     public void didPressVolumeUp() {
         playlistPlayer.getPlayer().setVolume(playlistPlayer.getPlayer().getVolume() + volumeChangeAmount);
-        // TODO update ui
     }
 
     @Override
     public void didPressVolumeDown() {
         playlistPlayer.getPlayer().setVolume(playlistPlayer.getPlayer().getVolume() - volumeChangeAmount);
-        // TODO update ui
     }
 
     @Override
@@ -112,6 +108,33 @@ public class ApplicationCoordinator implements HotkeyListener.HotkeyListenerDele
     @Override
     public void toggleOverlay() {
         // TODO 
+    }
+    
+    // MARK: - MenuDelegate
+
+    @Override
+    public void didPressSavePlaylist(Menu sender) {
+        
+    }
+
+    @Override
+    public void didPressDeletePlaylist(Menu sender) {
+    }
+
+    @Override
+    public void didPressLayout(Menu sender) {
+    }
+
+    @Override
+    public void didPressHotkeys(Menu sender) {
+    }
+
+    @Override
+    public void didPressAbout(Menu sender) {
+    }
+
+    @Override
+    public void didPressFeatures(Menu sender) {
     }
     
 }

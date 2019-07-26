@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cap.gui;
+package cap.gui.menu;
 
 import cap.gui.colorscheme.ColorScheme;
 import static cap.util.SugarySyntax.unwrappedPerform;

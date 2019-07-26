@@ -5,6 +5,7 @@
  */
 package cap.gui;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 /**
@@ -12,5 +13,5 @@ import javax.swing.JPanel;
  * @author Wessel
  */
 public interface ViewController {
-    public JPanel getView();
+    public JComponent getView();
 }

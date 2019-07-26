@@ -5,14 +5,17 @@
  */
 package cap.gui;
 
+import cap.core.audio.PlaylistService;
 import cap.gui.WindowActionsPane.WindowActionsPaneDelegate;
 import cap.gui.colorscheme.ColorScheme;
+import cap.gui.menu.MenuController;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import cap.gui.menu.MenuContextInterface;
 
 /**
  *
@@ -27,6 +30,7 @@ public class MainWindow extends JFrame implements Window, WindowActionsPaneDeleg
     
     // MARK: - Private properties
     
+    private final MenuController menuController; // TODO inject me
     private boolean maximizedState = false; // TODO inject & store me
     private Dimension normalSize = new Dimension(1280, 720); // TODO inject & store me
     private Point normalLocation = new Point(200, 200);
@@ -34,23 +38,22 @@ public class MainWindow extends JFrame implements Window, WindowActionsPaneDeleg
     // MARK: - UI elements
     
     private JPanel contentPane;
-    private Menu menu;
     private WindowActionsPane windowActionsPane;
     private ViewController presentedViewController;
     
     // MARK: - Initialisers
     
-    public MainWindow(ColorScheme colorScheme) {
+    public MainWindow(ColorScheme colorScheme, MenuContextInterface menuContext) {
         super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         super.setSize(normalSize);
         super.setBackground(colorScheme.frameColor());
         super.getContentPane().setBackground(colorScheme.frameColor());
         super.setUndecorated(true);
-        super.addMouseListener(windowManager); // TODO disable if is fullscreen
+        super.addMouseListener(windowManager);
         super.addMouseMotionListener(windowManager);
         super.setMinimumSize(minimumSize);
         
-        menu = new Menu(colorScheme);
+        menuController = new MenuController(colorScheme, menuContext, new PlaylistService(menuContext.getPlaylistStore()));
         windowActionsPane = new WindowActionsPane(colorScheme);
         windowActionsPane.setDelegate(this);
         
@@ -67,7 +70,7 @@ public class MainWindow extends JFrame implements Window, WindowActionsPaneDeleg
         c.weighty = 0;
         c.fill = c.BOTH;
 
-        contentPane.add(menu, c);
+        contentPane.add(menuController.getView(), c);
         
         c.gridx = 2;
         c.weightx = 0;

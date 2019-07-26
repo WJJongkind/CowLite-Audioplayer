@@ -2,6 +2,10 @@ package cap.core;
 
 import cap.control.HotkeyListener;
 import cap.control.HotkeyListener.Control;
+import cap.core.audio.DynamicSongPlayer;
+import cap.core.audio.PlaylistPlayer;
+import cap.core.audio.PlaylistService;
+import cap.core.services.PlaylistStore;
 import cap.gui.MainWindow;
 import cap.gui.Window;
 import cap.gui.colorscheme.ColorScheme;
@@ -14,6 +18,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jnativehook.GlobalScreen;
 import uk.co.caprica.vlcj.binding.RuntimeUtil;
+import java.io.File;
+import java.net.URISyntaxException;
 
 /**
  * (c) Copyright This class initializes CowLite Audio Player. Main class, yippy!
@@ -43,22 +49,38 @@ public class CowLiteAudioPlayer {
 
     // MARK: - Main
     
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, URISyntaxException {
+        // Configure the application-wide environment
         ConfigurationResult result = configureGlobalEnvironment();
         
+        // UI layout
         ColorScheme colorScheme = new DarkMode();
-        mainWindow = new MainWindow(colorScheme);
-        applicationCoordinator = new ApplicationCoordinator(colorScheme, result.hotkeyListener);
+        
+        // Music playback
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(new DynamicSongPlayer());
+        
+        // Storing playlists
+        PlaylistStore playlistStore = new PlaylistStore(new File("resources" + File.separatorChar + "infofiles" + File.separatorChar + "playlisstore"));
+        
+        // Initiate UI
+        mainWindow = new MainWindow(colorScheme, new MenuContext(playlistPlayer, playlistStore));
+        applicationCoordinator = new ApplicationCoordinator(colorScheme, result.hotkeyListener, playlistPlayer, playlistStore);
         applicationCoordinator.start(mainWindow);
         
         mainWindow.setVisible(true);
     }
     
     private static ConfigurationResult configureGlobalEnvironment() {
+        // JxBrowser preferences
         BrowserPreferences.setChromiumSwitches("--disable-web-security", "--allow-file-access-from-files", "--allow-file-access", "--autoplay-policy=no-user-gesture-required");
+        
+        // VLC for audio decoding support
         NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), "lib");
+        
+        // Decreases RAM & CPU usage on some systems
         System.setProperty("sun.java2d.noddraw", "true");
         
+        // Hotkey support
         HotkeyListener hotkeyListener = null;
         try{
             Logger l = Logger.getLogger(GlobalScreen.class.getPackage().getName());

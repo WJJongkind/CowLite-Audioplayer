@@ -5,8 +5,8 @@
  */
 package cap.core.audio;
 
-import cap.core.audio.youtube.YouTubeSong;
 import cap.core.audio.files.FileSong;
+import cap.core.audio.youtube.YouTubeSong;
 import filedatareader.FileDataReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,12 +23,14 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
+import cap.core.services.PlaylistStoreInterface;
+import java.net.MalformedURLException;
 
 /**
  *
  * @author Wessel
  */
-public class PlayListService {
+public class PlaylistService implements PlaylistServiceInterface {
     
     // MARK: - Associated types & constants
     
@@ -53,10 +55,20 @@ public class PlayListService {
     private static final Pattern songEntryRegex = Pattern.compile("([a-z][a-z])-(.+)");
     private static final JFileChooser fileChooser = new  JFileChooser();
     
+    // MARK: - Private properties
     
-    // MARK: - Factory methods
+    private final PlaylistStoreInterface playlistStore;
     
-    public static Playlist loadPlayList(File file) throws IOException{
+    // MARK: - Initialisers
+    
+    public PlaylistService(PlaylistStoreInterface playlistStore) {
+        this.playlistStore = playlistStore;
+    }
+    
+    // MARK: - Service methods
+    
+    @Override
+    public Playlist loadPlayList(File file) throws IOException{
         FileDataReader reader = new FileDataReader();
         reader.setPath(file);
         
@@ -87,7 +99,7 @@ public class PlayListService {
                         playlist.addSong(song);
                     }
                 } catch (URISyntaxException ex) {
-                    Logger.getLogger(PlayListService.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(PlaylistService.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -95,17 +107,30 @@ public class PlayListService {
         return playlist;
     }
     
-    public static void savePlayList(Playlist playList, File target) throws FileNotFoundException {
-        PrintWriter out = new PrintWriter(new FileOutputStream(target));
-
-        out.println(playList.getName());
-
-        for(Song song : playList.getSongs()) {
-            if(song instanceof FileSong) {
-                out.println(SongType.file.type + "-" + song.getUrl().toString());
-            } else if(song instanceof YouTubeSong) {
-                out.println(SongType.YouTube.type + "-" + song.getUrl().toString());
+    @Override
+    public void savePlayList(Playlist playList, File target) throws FileNotFoundException {
+        PrintWriter out = null;
+        try {
+            out = new PrintWriter(new FileOutputStream(target));
+            out.println(playList.getName());
+            for(Song song : playList.getSongs()) {
+                if(song instanceof FileSong) {
+                    out.println(SongType.file.type + "-" + song.getUrl().toString());
+                } else if(song instanceof YouTubeSong) {
+                    out.println(SongType.YouTube.type + "-" + song.getUrl().toString());
+                }
             }
+            out.flush();
+            playlistStore.addPlaylist(playList, target.toURI().toURL());
+        } catch (FileNotFoundException ex) {
+            throw ex;
+        } catch (MalformedURLException ex) {
+            // Should in theory never happen, as FileNotFoundException would've been thrown already.
+        } catch (IOException ex) {
+            // TODO show some usefull user feedback? For now StackTrace
+            ex.printStackTrace();
+        } finally {
+            out.close();
         }
     }
 }

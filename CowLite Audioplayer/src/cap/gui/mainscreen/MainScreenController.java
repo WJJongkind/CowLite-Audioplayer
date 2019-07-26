@@ -14,6 +14,7 @@ import cap.core.audio.SongPlayer.SongPlayerObserver;
 import cap.core.audio.files.FileSong;
 import cap.core.audio.youtube.YouTubeService;
 import cap.core.audio.youtube.YouTubeSong;
+import cap.core.services.PlaylistStoreInterface;
 import cap.gui.ViewController;
 import cap.gui.colorscheme.ColorScheme;
 import static cap.util.SugarySyntax.nilCoalesce;
@@ -42,7 +43,7 @@ import javax.swing.Timer;
  *
  * @author Wessel
  */
-public class MainScreenController implements SongPlayerObserver<Song>, MainScreen.MainScreenDelegate, ViewController, DropTargetListener {
+public class MainScreenController implements SongPlayerObserver<Song>, MainScreen.MainScreenDelegate, ViewController, DropTargetListener, PlaylistStoreInterface.PlaylistStoreObserver {
     
     // MARK: - Constants & associated types
     
@@ -62,17 +63,23 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
     private final PlaylistPlayer playlistPlayer;
     private final Timer timer;
     private final YouTubeService youTubeService;
+    private final PlaylistStoreInterface playlistStore;
     private DropTarget dropTarget;
     
     // MARK: - Initialisers
     
-    public MainScreenController(ColorScheme colorScheme, PlaylistPlayer playlistPlayer, YouTubeService youTubeService) {
+    public MainScreenController(ColorScheme colorScheme, PlaylistPlayer playlistPlayer, YouTubeService youTubeService, PlaylistStoreInterface playlistStore) {
         // YT Service
         this.youTubeService = youTubeService;
+        
+        // Playlist management
+        this.playlistStore = playlistStore;
+        playlistStore.addObserver(this);
         
         // Setting up the main screen
         this.mainScreen = new MainScreen(colorScheme);
         this.mainScreen.getVolumeSlider().setValue(playlistPlayer.getPlayer().getVolume());
+        this.mainScreen.getSavedPlaylistsPane().setPlayLists(playlistStore.getPlaylists());
         this.mainScreen.setDelegate(this);
         
         // Input handling
@@ -86,15 +93,17 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
         timer.start();
     }
     
-    // MARK: - PlaylistPlayerDelegate
+    // MARK: - SongPlayerDelegate
 
     @Override
     public void stateChanged(SongPlayer<Song> player, SongPlayer.PlayerState state) {
         switch(state) {
             case playing:
                 mainScreen.getControlPane().enablePauseButton();
+                break;
             default:
                 mainScreen.getControlPane().enablePlayButton();
+                break;
         }
     }
 
@@ -184,6 +193,7 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
     @Override
     public void didSelectPlayList(Playlist playlist) {
         playlistPlayer.setPlaylist(playlist);
+        mainScreen.getPlaylistPane().setSongs(playlist.getSongs());
     }
 
     @Override
@@ -284,6 +294,18 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
             for(File file : files)
                 collectFiles(file, collected);
         }
+    }
+    
+    // MARK: - PlaylistStoreObserver
+    
+    @Override
+    public void didRemovePlaylist(PlaylistStoreInterface sender, Playlist playlist) {
+        mainScreen.getSavedPlaylistsPane().setPlayLists(playlistStore.getPlaylists());
+    }
+
+    @Override
+    public void didAddPlaylist(PlaylistStoreInterface sender, Playlist playlist) {
+        mainScreen.getSavedPlaylistsPane().setPlayLists(playlistStore.getPlaylists());
     }
     
     // MARK: - Timer ActionListener
