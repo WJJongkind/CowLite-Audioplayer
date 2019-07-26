@@ -18,5 +18,6 @@ public interface ColorScheme {
     public SavedListsPaneColorScheme savedLists();
     public SliderColorScheme timeSliderColor();
     public SliderColorScheme volumeColor();
+    public Color scrollBar();
     public GUIImageSet imageSet();
 }

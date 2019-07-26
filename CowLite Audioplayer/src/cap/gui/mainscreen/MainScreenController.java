@@ -29,7 +29,10 @@ import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
@@ -45,6 +48,12 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
     
     private static class Consants {
         public static final int updateInterval = 50;
+        public static final Set<String> supportedFileTypes = new HashSet<>();
+        
+        static {
+            String[] supportedExtensions = {"3pg", "aac", "act", "aiff", "flac", "gsm", "m4a", "m4p", "mp3", "ogg", "oga", "mogg", "opus", "vox", "webm", "wma", "mp4", "avi", "wmv", "wav", "flv", "mov"};
+            supportedFileTypes.addAll(Arrays.asList(supportedExtensions));
+        }
     }
     
     // MARK: - Private properties
@@ -104,8 +113,6 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
     public void didSeek(SongPlayer<Song> player, long position) {
         double percentageDone = position / ((double) player.getDuration());
         mainScreen.getTrackPositionSlider().setValue(percentageDone);
-        mainScreen.getTrackPositionSlider().repaint();
-        mainScreen.getTrackPositionSlider().repaint();
     }
     
     // MARK: - MainScreenDelegate
@@ -172,7 +179,6 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
         playlistPlayer.getPlayer().stop();
         playlistPlayer.setPlaylist(new Playlist());
         mainScreen.getPlaylistPane().setSongs(playlistPlayer.getPlaylist().getSongs());
-        mainScreen.getPlaylistPane().repaint();
     }
 
     @Override
@@ -238,7 +244,10 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
                     
                     // Add new songs to the playlist
                     for(File f : collected) {
-                        playlistPlayer.getPlaylist().addSong(new FileSong(f));
+                        String fileType = getFileExtension(f);
+                        if(fileType != null && Consants.supportedFileTypes.contains(fileType.toLowerCase())) {
+                            playlistPlayer.getPlaylist().addSong(new FileSong(f));
+                        }
                     }
                     
                     // Notify the playlist player that new songs were added
@@ -250,12 +259,20 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
                     mainScreen.getPlaylistPane().setActiveSong(nilCoalesce(playlistPlayer.getPlayer().getSong(), songs.get(0)));
                 }
             } catch(Exception e) {
-                // Print out the error stack
                 e.printStackTrace();
-
             }
         }
 
+    }
+    
+    private String getFileExtension(File f) {
+        String fileName = f.getName();
+        int separatorIndex;
+        if((separatorIndex = fileName.lastIndexOf(".")) != -1 && fileName.length() - separatorIndex > 0) {
+            return fileName.substring(separatorIndex + 1);
+        } else {
+            return null;
+        }
     }
     
     private void collectFiles(File f, List<File> collected) {

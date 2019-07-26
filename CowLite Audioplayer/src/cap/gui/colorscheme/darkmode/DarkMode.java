@@ -138,5 +138,10 @@ public class DarkMode implements ColorScheme {
             }
         };
     }
+
+    @Override
+    public Color scrollBar() {
+        return new Color(0x333333);
+    }
     
 }

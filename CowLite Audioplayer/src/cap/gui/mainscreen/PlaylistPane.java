@@ -8,7 +8,6 @@ package cap.gui.mainscreen;
 import cap.core.audio.Song;
 import cap.gui.colorscheme.ColorScheme;
 import cap.gui.colorscheme.PlaylistPaneColorScheme;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.lang.ref.WeakReference;
@@ -26,7 +25,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Wessel
  */
-public class PlaylistPane<SongType extends Song> extends JScrollPane {
+public class PlaylistPane<SongType extends Song> extends SexyScrollPane {
     
     // MARK: - Associated types & constants
     
@@ -83,7 +82,7 @@ public class PlaylistPane<SongType extends Song> extends JScrollPane {
     // MARK: - Initialisers
     
     public PlaylistPane(ColorScheme colorScheme) {
-        super();
+        super(colorScheme);
         songTable = new JTable();
         songTableModel = new DefaultTableModel() {
             @Override
@@ -109,7 +108,7 @@ public class PlaylistPane<SongType extends Song> extends JScrollPane {
         super.getViewport().setBackground(colorScheme.playlist().firstBackgroundColor());
         super.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         super.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        super.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
+        super.setBorder(BorderFactory.createEmptyBorder());
         super.setPreferredSize(super.getMinimumSize());
     }
     
@@ -132,6 +131,8 @@ public class PlaylistPane<SongType extends Song> extends JScrollPane {
         
         songTable.setRowSelectionInterval(0, 0);
         songTable.getSelectionModel().addListSelectionListener(songSelectionListener);
+        super.revalidate();
+        super.repaint();
     }
     
     public void setDelegate(SongSelectionDelegate delegate) {
@@ -153,11 +154,16 @@ public class PlaylistPane<SongType extends Song> extends JScrollPane {
         }
         
         songTable.getSelectionModel().addListSelectionListener(songSelectionListener);
+        super.revalidate();
+        super.repaint();
     }
     
     // MARK: - ListSelectionListener
     
     private void didSelectSong(ListSelectionEvent event) {
+        super.revalidate();
+        super.repaint();
+        
         if(event.getValueIsAdjusting()) {
             return;
         }
