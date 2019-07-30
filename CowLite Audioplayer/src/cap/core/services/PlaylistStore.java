@@ -6,8 +6,6 @@
 package cap.core.services;
 
 import cap.core.audio.Playlist;
-import cap.core.audio.PlaylistService;
-import cap.core.audio.PlaylistServiceInterface;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import filedatareader.FileDataReader;
 import java.io.File;
@@ -46,7 +44,6 @@ public class PlaylistStore implements PlaylistStoreInterface {
             URL url = new URL(entry);
             Playlist playlist = playlistService.loadPlayList(new File(url.toURI()));
             playlists.add(new PlaylistReference(playlist, url));
-            System.out.println(url + "    " + playlist);
         }
     }
     

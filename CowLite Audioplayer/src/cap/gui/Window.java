@@ -13,10 +13,21 @@ import java.awt.Point;
  * @author Wessel
  */
 public interface Window {
+    
+    // MARK: - Associated types
+    
+    public interface WindowDelegate {
+        public void didPressCloseWindow(Window window);
+    }
+    
+    // MARK: - Interface
+    
     public void presentViewController(ViewController viewController);
+    public void setDelegate(WindowDelegate delegate);
     public void setVisible(boolean visible);
     public void setSize(Dimension size);
     public Dimension getSize();
     public void setLocation(Point location);
     public Point getLocation();
+    
 }

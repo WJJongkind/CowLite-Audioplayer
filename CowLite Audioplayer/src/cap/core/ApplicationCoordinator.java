@@ -20,7 +20,7 @@ import java.io.IOException;
  *
  * @author Wessel
  */
-public class ApplicationCoordinator implements Coordinator, HotkeyListener.HotkeyListenerDelegate, Menu.MenuDelegate {
+public class ApplicationCoordinator implements Coordinator, HotkeyListener.HotkeyListenerDelegate, Window.WindowDelegate {
     
     // MARK: - Constants
     
@@ -30,6 +30,7 @@ public class ApplicationCoordinator implements Coordinator, HotkeyListener.Hotke
     
     private final MainScreenController mainScreenController;
     private final PlaylistPlayer playlistPlayer;
+    private Window window;
     
     // MARK: - Initialisers
     
@@ -45,7 +46,9 @@ public class ApplicationCoordinator implements Coordinator, HotkeyListener.Hotke
     
     @Override
     public void start(Window window) {
+        this.window = window;
         window.presentViewController(mainScreenController);
+        window.setDelegate(this);
     }
     
     // MARK: - HotkeyListenerDelegate
@@ -110,31 +113,13 @@ public class ApplicationCoordinator implements Coordinator, HotkeyListener.Hotke
         // TODO 
     }
     
-    // MARK: - MenuDelegate
+    // MARK: - WindowDelegate
 
     @Override
-    public void didPressSavePlaylist(Menu sender) {
-        
-    }
-
-    @Override
-    public void didPressDeletePlaylist(Menu sender) {
-    }
-
-    @Override
-    public void didPressLayout(Menu sender) {
-    }
-
-    @Override
-    public void didPressHotkeys(Menu sender) {
-    }
-
-    @Override
-    public void didPressAbout(Menu sender) {
-    }
-
-    @Override
-    public void didPressFeatures(Menu sender) {
+    public void didPressCloseWindow(Window window) {
+        if(window == this.window) {
+            System.exit(0);
+        }
     }
     
 }

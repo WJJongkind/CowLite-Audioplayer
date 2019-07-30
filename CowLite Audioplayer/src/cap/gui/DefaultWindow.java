@@ -5,7 +5,7 @@
  */
 package cap.gui;
 
-import cap.core.audio.PlaylistService;
+import cap.core.services.PlaylistService;
 import cap.gui.WindowActionsPane.WindowActionsPaneDelegate;
 import cap.gui.colorscheme.ColorScheme;
 import cap.gui.menu.MenuController;
@@ -16,12 +16,14 @@ import java.awt.Point;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import cap.gui.menu.MenuContextInterface;
+import static cap.util.SugarySyntax.unwrappedPerform;
+import java.lang.ref.WeakReference;
 
 /**
  *
  * @author Wessel
  */
-public class MainWindow extends JFrame implements Window, WindowActionsPaneDelegate {
+public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDelegate {
     
     // MARK: - Constants and associated types
     
@@ -34,6 +36,7 @@ public class MainWindow extends JFrame implements Window, WindowActionsPaneDeleg
     private boolean maximizedState = false; // TODO inject & store me
     private Dimension normalSize = new Dimension(1280, 720); // TODO inject & store me
     private Point normalLocation = new Point(200, 200);
+    private WeakReference<WindowDelegate> delegate;
     
     // MARK: - UI elements
     
@@ -43,7 +46,7 @@ public class MainWindow extends JFrame implements Window, WindowActionsPaneDeleg
     
     // MARK: - Initialisers
     
-    public MainWindow(ColorScheme colorScheme, MenuContextInterface menuContext) {
+    public DefaultWindow(ColorScheme colorScheme, MenuContextInterface menuContext) {
         super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         super.setSize(normalSize);
         super.setBackground(colorScheme.frameColor());
@@ -100,12 +103,17 @@ public class MainWindow extends JFrame implements Window, WindowActionsPaneDeleg
         contentPane.add(viewController.getView(), c);
         this.presentedViewController = viewController;
     }
+
+    @Override
+    public void setDelegate(WindowDelegate delegate) {
+        this.delegate = new WeakReference<>(delegate);
+    }
     
     // MARK: - WindowActionsPaneDelegate
 
     @Override
     public void didPressCloseButton(WindowActionsPane sender) {
-        System.exit(0);
+        unwrappedPerform(delegate, delegate -> delegate.didPressCloseWindow(this));
     }
 
     @Override

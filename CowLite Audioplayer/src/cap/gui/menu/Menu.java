@@ -74,7 +74,7 @@ public class Menu extends JMenuBar {
         savePlaylist.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressSavePlaylist(this)));
         
         JMenuItem removePlaylist = makeMenuItem("Remove playlist", colorScheme);
-        removePlaylist.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressSavePlaylist(this)));
+        removePlaylist.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressDeletePlaylist(this)));
         
         menu.add(savePlaylist);
         menu.add(removePlaylist);

@@ -87,7 +87,7 @@ public class SavedPlaylistsPane extends JScrollPane {
         
         PlayListSelectionDelegate strongDelegate = delegate.get();
         if(strongDelegate != null) {
-            strongDelegate.didSelectPlayList(playlists.get(index));
+            strongDelegate.didSelectPlayList(index >= playlists.size() ? null : playlists.get(index));
         }
     }
     

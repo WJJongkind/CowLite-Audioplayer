@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cap.core.audio;
+package cap.core.services;
 
+import cap.core.audio.Playlist;
+import cap.core.audio.Song;
 import cap.core.audio.files.FileSong;
 import cap.core.audio.youtube.YouTubeSong;
 import filedatareader.FileDataReader;

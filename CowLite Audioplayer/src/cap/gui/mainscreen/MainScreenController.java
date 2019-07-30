@@ -192,8 +192,9 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
 
     @Override
     public void didSelectPlayList(Playlist playlist) {
-        playlistPlayer.setPlaylist(playlist);
-        mainScreen.getPlaylistPane().setSongs(playlist.getSongs());
+        Playlist newPlaylist = nilCoalesce(playlist, new Playlist());
+        playlistPlayer.setPlaylist(newPlaylist);
+        mainScreen.getPlaylistPane().setSongs(newPlaylist.getSongs());
     }
 
     @Override

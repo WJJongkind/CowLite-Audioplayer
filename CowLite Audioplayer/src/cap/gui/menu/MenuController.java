@@ -5,10 +5,13 @@
  */
 package cap.gui.menu;
 
-import cap.core.audio.PlaylistService;
+import cap.core.services.PlaylistService;
 import cap.gui.ViewController;
 import cap.gui.colorscheme.ColorScheme;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
@@ -66,6 +69,11 @@ public class MenuController implements ViewController, Menu.MenuDelegate {
 
     @Override
     public void didPressDeletePlaylist(Menu sender) {
+        try {
+            menuContext.getPlaylistStore().removePlaylist(menuContext.getCurrentPlaylist());
+        } catch (IOException ex) {
+            // TODO show some usefull user feedback
+        }
     }
 
     @Override
