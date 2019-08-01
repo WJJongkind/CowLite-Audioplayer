@@ -5,8 +5,8 @@
  */
 package cap.gui.mainscreen;
 
+import cap.gui.shared.SexyScrollPane;
 import cap.core.audio.Song;
-import cap.gui.colorscheme.ColorScheme;
 import cap.gui.colorscheme.PlaylistPaneColorScheme;
 import java.awt.Component;
 import java.awt.Font;
@@ -20,6 +20,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import cap.gui.colorscheme.UILayout;
 
 /**
  *
@@ -46,8 +47,8 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane {
     
     // MARK: - Initialisers
     
-    public PlaylistPane(ColorScheme colorScheme) {
-        super(colorScheme);
+    public PlaylistPane(UILayout colorScheme) {
+        super(colorScheme.frameColor());
         songTable = new JTable();
         songTableModel = new DefaultTableModel() {
             @Override

@@ -1,11 +1,11 @@
-package cap.gui.mainscreen;
+package cap.gui.shared;
 
-import cap.gui.colorscheme.ColorScheme;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
+import cap.gui.colorscheme.UILayout;
 
 /**
 * This is an implementation of a JScrollPane with a modern UI
@@ -24,9 +24,9 @@ public class SexyScrollPane extends JScrollPane {
     
     private final Color indicatorColor;
 
-    public SexyScrollPane(ColorScheme colorScheme) {
+    public SexyScrollPane(Color indicatorColor) {
         super.setBorder(null);
-        indicatorColor = colorScheme.scrollBar();
+        this.indicatorColor = indicatorColor;
 
         // Set ScrollBar UI
         verticalScrollBar.setOpaque(false);

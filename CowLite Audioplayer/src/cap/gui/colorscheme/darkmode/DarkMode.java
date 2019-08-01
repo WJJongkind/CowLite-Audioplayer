@@ -5,21 +5,21 @@
  */
 package cap.gui.colorscheme.darkmode;
 
-import cap.gui.colorscheme.ColorScheme;
-import cap.gui.colorscheme.ControlImageSet;
-import cap.gui.colorscheme.GUIImageSet;
+import cap.gui.colorscheme.ButtonColorScheme;
 import cap.gui.colorscheme.MenuColorScheme;
 import cap.gui.colorscheme.PlaylistPaneColorScheme;
 import cap.gui.colorscheme.SavedListsPaneColorScheme;
 import cap.gui.colorscheme.SliderColorScheme;
 import java.awt.Color;
 import java.io.IOException;
+import cap.gui.colorscheme.UILayout;
+import cap.gui.colorscheme.UIImageSet;
 
 /**
  *
  * @author Wessel
  */
-public class DarkMode implements ColorScheme {
+public class DarkMode implements UILayout {
     
     private static DarkModeImageSet imageSet;
     
@@ -35,18 +35,18 @@ public class DarkMode implements ColorScheme {
     }
 
     @Override
-    public GUIImageSet imageSet() {
+    public Color defaultContentColor() {
+        return new Color(0x909090);
+    }
+
+    @Override
+    public UIImageSet imageSet() {
         return imageSet;
     }
 
     @Override
     public MenuColorScheme menu() {
         return new MenuColorScheme() {
-            @Override
-            public Color menuBarTextColor() {
-                return new Color(0x909090);
-            }
-
             @Override
             public Color menuBarBorderColor() {
                 return new Color(0x909090);
@@ -150,8 +150,23 @@ public class DarkMode implements ColorScheme {
     }
 
     @Override
-    public Color scrollBar() {
-        return new Color(0x333333);
+    public ButtonColorScheme defaultButtonColorScheme() {
+        return new ButtonColorScheme() {
+            @Override
+            public Color pressedBackgroundColor() {
+                return new Color(0x707070);
+            }
+
+            @Override
+            public Color backgroundColor() {
+                return new Color(0x909090);
+            }
+
+            @Override
+            public Color textColor() {
+                return new Color(0x333333);
+            }
+        };
     }
     
 }

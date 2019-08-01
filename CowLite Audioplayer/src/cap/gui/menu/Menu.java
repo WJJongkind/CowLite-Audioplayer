@@ -5,7 +5,6 @@
  */
 package cap.gui.menu;
 
-import cap.gui.colorscheme.ColorScheme;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -15,6 +14,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.border.AbstractBorder;
+import cap.gui.colorscheme.UILayout;
 
 /**
  *
@@ -40,7 +40,7 @@ public class Menu extends JMenuBar {
     
     // MARK: - Initialisers
     
-    public Menu(ColorScheme colorScheme) {
+    public Menu(UILayout colorScheme) {
         super.setBackground(colorScheme.frameColor());
         super.setBorder(new AbstractBorder() {
             @Override
@@ -67,7 +67,7 @@ public class Menu extends JMenuBar {
     
     // MARK: - Private functions - Menu initialisation
     
-    private JMenu makeFileMenu(ColorScheme colorScheme) {
+    private JMenu makeFileMenu(UILayout colorScheme) {
         JMenu menu = makeMenu("File", colorScheme);
         
         JMenuItem savePlaylist = makeMenuItem("Save playlist", colorScheme);
@@ -82,7 +82,7 @@ public class Menu extends JMenuBar {
         return menu;
     }
     
-    private JMenu makeSettingsMenu(ColorScheme colorScheme) {
+    private JMenu makeSettingsMenu(UILayout colorScheme) {
         JMenu menu = makeMenu("Settings", colorScheme);
         
         JMenuItem savePlaylist = makeMenuItem("Layout", colorScheme);
@@ -97,7 +97,7 @@ public class Menu extends JMenuBar {
         return menu;
     }
     
-    private JMenu makeHelpMenu(ColorScheme colorScheme) {
+    private JMenu makeHelpMenu(UILayout colorScheme) {
         JMenu menu = makeMenu("Help", colorScheme);
         
         JMenuItem savePlaylist = makeMenuItem("About", colorScheme);
@@ -112,17 +112,17 @@ public class Menu extends JMenuBar {
         return menu;
     }
     
-    private JMenu makeMenu(String title, ColorScheme colorScheme) {
+    private JMenu makeMenu(String title, UILayout colorScheme) {
         JMenu menu = new JMenu(title);
         menu.setBorderPainted(false);
         menu.getPopupMenu().setBorder(BorderFactory.createLineBorder(colorScheme.frameColor()));
-        menu.setForeground(colorScheme.menu().menuBarTextColor());
+        menu.setForeground(colorScheme.defaultContentColor());
         menu.setBackground(colorScheme.frameColor());
         
         return menu;
     }
     
-    private JMenuItem makeMenuItem(String title, ColorScheme colorScheme) {
+    private JMenuItem makeMenuItem(String title, UILayout colorScheme) {
         JMenuItem menuItem = new JMenuItem(title);
         menuItem.setBackground(colorScheme.menu().menuBackgroundColor());
         menuItem.setForeground(colorScheme.menu().menuTextColor());

@@ -5,9 +5,7 @@
  */
 package cap.gui.mainscreen;
 
-import cap.gui.colorscheme.ColorScheme;
 import cap.gui.colorscheme.ControlImageSet;
-import cap.gui.colorscheme.GUIImageSet;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Image;
@@ -18,6 +16,8 @@ import javax.swing.JToggleButton;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
+import cap.gui.colorscheme.UILayout;
+import cap.gui.colorscheme.UIImageSet;
 
 /**
  *
@@ -55,7 +55,7 @@ public class MusicControlPane extends JPanel {
     // MARK: - Private properties
     
     private WeakReference<MusicControlPaneDelegate> delegate;
-    private GUIImageSet imageSet;
+    private UIImageSet imageSet;
     
     private JToggleButton playButton, 
                           pauseButton,
@@ -66,7 +66,7 @@ public class MusicControlPane extends JPanel {
                           shuffleButton, 
                           alphabeticButton;
     
-    public MusicControlPane(ColorScheme colorScheme) {
+    public MusicControlPane(UILayout colorScheme) {
         imageSet = colorScheme.imageSet();
         makeButtons(colorScheme);
         
@@ -92,7 +92,7 @@ public class MusicControlPane extends JPanel {
     
     // MARK: - Private methods
     
-    private void makeButtons(ColorScheme colorScheme) {
+    private void makeButtons(UILayout colorScheme) {
         playButton = makeButton(colorScheme.imageSet().playButton(), Layout.playButtonSize);
         playButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> didPressPlay(delegate)));
         

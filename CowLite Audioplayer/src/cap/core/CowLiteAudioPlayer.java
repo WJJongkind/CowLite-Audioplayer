@@ -7,7 +7,6 @@ import cap.core.audio.PlaylistPlayer;
 import cap.core.services.PlaylistStore;
 import cap.gui.DefaultWindow;
 import cap.gui.Window;
-import cap.gui.colorscheme.ColorScheme;
 import cap.gui.colorscheme.darkmode.DarkMode;
 import com.sun.jna.NativeLibrary;
 import com.teamdev.jxbrowser.chromium.BrowserPreferences;
@@ -19,6 +18,7 @@ import org.jnativehook.GlobalScreen;
 import uk.co.caprica.vlcj.binding.RuntimeUtil;
 import java.io.File;
 import java.net.URISyntaxException;
+import cap.gui.colorscheme.UILayout;
 
 /**
  * (c) Copyright This class initializes CowLite Audio Player. Main class, yippy!
@@ -53,7 +53,7 @@ public class CowLiteAudioPlayer {
         ConfigurationResult result = configureGlobalEnvironment();
         
         // UI layout
-        ColorScheme colorScheme = new DarkMode();
+        UILayout colorScheme = new DarkMode();
         
         // Music playback
         PlaylistPlayer playlistPlayer = new PlaylistPlayer(new DynamicSongPlayer());

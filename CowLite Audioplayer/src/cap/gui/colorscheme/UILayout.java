@@ -11,13 +11,14 @@ import java.awt.Color;
  *
  * @author Wessel
  */
-public interface ColorScheme {
+public interface UILayout {
     public Color frameColor();
+    public Color defaultContentColor();
+    public ButtonColorScheme defaultButtonColorScheme();
     public MenuColorScheme menu();
     public PlaylistPaneColorScheme playlist();
     public SavedListsPaneColorScheme savedLists();
     public SliderColorScheme timeSliderColor();
     public SliderColorScheme volumeColor();
-    public Color scrollBar();
-    public GUIImageSet imageSet();
+    public UIImageSet imageSet();
 }

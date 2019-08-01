@@ -6,7 +6,6 @@
 package cap.gui.mainscreen;
 
 import cap.core.audio.Playlist;
-import cap.gui.colorscheme.ColorScheme;
 import cap.gui.colorscheme.SavedListsPaneColorScheme;
 import java.awt.Component;
 import java.lang.ref.WeakReference;
@@ -18,6 +17,7 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import cap.gui.colorscheme.UILayout;
 
 /**
  *
@@ -44,7 +44,7 @@ public class SavedPlaylistsPane extends JScrollPane {
     
     // MARK: - Initialiser
     
-    public SavedPlaylistsPane(ColorScheme colorScheme) {
+    public SavedPlaylistsPane(UILayout colorScheme) {
         playlistPane = new JList();
         playlistListModel = new DefaultListModel<>();
         

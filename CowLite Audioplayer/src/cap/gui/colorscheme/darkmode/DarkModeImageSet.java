@@ -6,17 +6,17 @@
 package cap.gui.colorscheme.darkmode;
 
 import cap.gui.colorscheme.ControlImageSet;
-import cap.gui.colorscheme.GUIImageSet;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import cap.gui.colorscheme.UIImageSet;
 
 /**
  *
  * @author Wessel
  */
-class DarkModeImageSet implements GUIImageSet {
+class DarkModeImageSet implements UIImageSet {
     private final ControlImageSet playButton, 
                                  stopButton, 
                                  pauseButton, 

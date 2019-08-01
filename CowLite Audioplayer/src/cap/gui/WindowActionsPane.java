@@ -5,7 +5,6 @@
  */
 package cap.gui;
 
-import cap.gui.colorscheme.ColorScheme;
 import cap.gui.colorscheme.ControlImageSet;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import java.awt.Component;
@@ -20,6 +19,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.border.AbstractBorder;
+import cap.gui.colorscheme.UILayout;
 
 /**
  *
@@ -49,7 +49,7 @@ public class WindowActionsPane extends JPanel {
     
     // MARK: - Initialisers
     
-    public WindowActionsPane(ColorScheme colorScheme) {
+    public WindowActionsPane(UILayout colorScheme) {
         super();
         
         super.setBackground(colorScheme.frameColor());
@@ -86,7 +86,7 @@ public class WindowActionsPane extends JPanel {
         super.add(closeButton, c);
     }
     
-    private void makeButtons(ColorScheme colorScheme) {
+    private void makeButtons(UILayout colorScheme) {
         minimizeButton = makeButton(colorScheme.imageSet().minimizeScreenButton(), Layout.minimizeButtonSize);
         minimizeButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressMinimizeButton(this)));
         

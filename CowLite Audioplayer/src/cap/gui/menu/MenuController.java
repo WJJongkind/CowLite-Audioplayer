@@ -7,30 +7,40 @@ package cap.gui.menu;
 
 import cap.core.services.PlaylistService;
 import cap.gui.ViewController;
-import cap.gui.colorscheme.ColorScheme;
+import static cap.util.SugarySyntax.unwrappedPerform;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.lang.ref.WeakReference;
 import javax.swing.JFileChooser;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
+import cap.gui.colorscheme.UILayout;
 
 /**
  *
  * @author Wessel
  */
 public class MenuController implements ViewController, Menu.MenuDelegate {
+    
+    // MARK: - Associated types
+    
+    public interface MenuControllerDelegate {
+        public void didPressShowAbout(MenuController menuController);
+        public void didPressHotkeys(MenuController menuController);
+        public void didPressLayout(MenuController menuController);
+        public void didPressFeatures(MenuController menuController);
+    }
 
     // MARK: - Private properties
     
     private final Menu menu;
     private final MenuContextInterface menuContext;
     private final PlaylistService playlistService;
+    private WeakReference<MenuControllerDelegate> delegate;
     
     // MARK: - Initialisers
 
-    public MenuController(ColorScheme colorScheme, MenuContextInterface menuContext, PlaylistService playlistService) {
+    public MenuController(UILayout colorScheme, MenuContextInterface menuContext, PlaylistService playlistService) {
         this.playlistService = playlistService;
         this.menuContext = menuContext;
         menu = new Menu(colorScheme);
@@ -42,6 +52,12 @@ public class MenuController implements ViewController, Menu.MenuDelegate {
     @Override
     public Menu getView() {
         return menu;
+    }
+    
+    // MARK: - Public functions
+    
+    public void setDelegate(MenuControllerDelegate delegate) {
+        this.delegate = new WeakReference<>(delegate);
     }
 
     // MARK: - MenuDelegate
@@ -73,23 +89,28 @@ public class MenuController implements ViewController, Menu.MenuDelegate {
             menuContext.getPlaylistStore().removePlaylist(menuContext.getCurrentPlaylist());
         } catch (IOException ex) {
             // TODO show some usefull user feedback
+            ex.printStackTrace();
         }
     }
 
     @Override
     public void didPressLayout(Menu sender) {
+        unwrappedPerform(delegate, delegate -> delegate.didPressLayout(this));
     }
 
     @Override
     public void didPressHotkeys(Menu sender) {
+        unwrappedPerform(delegate, delegate -> delegate.didPressHotkeys(this));
     }
 
     @Override
     public void didPressAbout(Menu sender) {
+        unwrappedPerform(delegate, delegate -> delegate.didPressShowAbout(this));
     }
 
     @Override
     public void didPressFeatures(Menu sender) {
+        unwrappedPerform(delegate, delegate -> delegate.didPressFeatures(this));
     }
 
 }

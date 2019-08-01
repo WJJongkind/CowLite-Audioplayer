@@ -7,7 +7,6 @@ package cap.gui;
 
 import cap.core.services.PlaylistService;
 import cap.gui.WindowActionsPane.WindowActionsPaneDelegate;
-import cap.gui.colorscheme.ColorScheme;
 import cap.gui.menu.MenuController;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -18,6 +17,8 @@ import javax.swing.JPanel;
 import cap.gui.menu.MenuContextInterface;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import java.lang.ref.WeakReference;
+import cap.gui.colorscheme.UILayout;
+import javax.swing.JComponent;
 
 /**
  *
@@ -46,7 +47,7 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
     
     // MARK: - Initialisers
     
-    public DefaultWindow(ColorScheme colorScheme, MenuContextInterface menuContext) {
+    public DefaultWindow(UILayout colorScheme, MenuContextInterface menuContext) {
         super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         super.setSize(normalSize);
         super.setBackground(colorScheme.frameColor());
@@ -56,7 +57,7 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
         super.addMouseMotionListener(windowManager);
         super.setMinimumSize(minimumSize);
         
-        menuController = new MenuController(colorScheme, menuContext, new PlaylistService(menuContext.getPlaylistStore()));
+        menuController = new MenuController(colorScheme, menuContext, new PlaylistService(menuContext.getPlaylistStore())); // TODO make a setMenu option... Perhaps change the entire way menus are handled.
         windowActionsPane = new WindowActionsPane(colorScheme);
         windowActionsPane.setDelegate(this);
         
@@ -102,11 +103,18 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
         
         contentPane.add(viewController.getView(), c);
         this.presentedViewController = viewController;
+        
+        super.revalidate();
+        super.repaint();
     }
 
     @Override
     public void setDelegate(WindowDelegate delegate) {
         this.delegate = new WeakReference<>(delegate);
+    }
+    
+    public void setMenuDelegate(MenuController.MenuControllerDelegate delegate) { // TODO replace me with setMenu. This stinks.
+        menuController.setDelegate(delegate);
     }
     
     // MARK: - WindowActionsPaneDelegate

@@ -9,7 +9,7 @@ package cap.gui.colorscheme;
  *
  * @author Wessel
  */
-public interface GUIImageSet {
+public interface UIImageSet {
     public ControlImageSet playButton();
     public ControlImageSet stopButton();
     public ControlImageSet pauseButton();

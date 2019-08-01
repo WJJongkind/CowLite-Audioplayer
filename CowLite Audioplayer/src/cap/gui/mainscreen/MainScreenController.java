@@ -16,7 +16,6 @@ import cap.core.audio.youtube.YouTubeService;
 import cap.core.audio.youtube.YouTubeSong;
 import cap.core.services.PlaylistStoreInterface;
 import cap.gui.ViewController;
-import cap.gui.colorscheme.ColorScheme;
 import static cap.util.SugarySyntax.nilCoalesce;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -38,6 +37,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
+import cap.gui.colorscheme.UILayout;
 
 /**
  *
@@ -68,7 +68,7 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
     
     // MARK: - Initialisers
     
-    public MainScreenController(ColorScheme colorScheme, PlaylistPlayer playlistPlayer, YouTubeService youTubeService, PlaylistStoreInterface playlistStore) {
+    public MainScreenController(UILayout colorScheme, PlaylistPlayer playlistPlayer, YouTubeService youTubeService, PlaylistStoreInterface playlistStore) {
         // YT Service
         this.youTubeService = youTubeService;
         

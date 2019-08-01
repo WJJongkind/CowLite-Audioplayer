@@ -1,4 +1,4 @@
-package cap.gui.mainscreen;
+package cap.gui.shared;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -16,7 +16,7 @@ public class Slider extends JComponent implements MouseMotionListener, MouseList
     
     // MARK: - Associated types & constants
     
-    enum Orientation {
+    public enum Orientation {
         horizontal,
         vertical
     }

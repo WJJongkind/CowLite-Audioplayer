@@ -5,13 +5,13 @@
  */
 package cap.gui.mainscreen;
 
-import cap.gui.colorscheme.ColorScheme;
 import java.awt.Component;
 import java.awt.Graphics;
 import javax.swing.JSplitPane;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
+import cap.gui.colorscheme.UILayout;
 
 /**
  *
@@ -19,7 +19,7 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
  */
 public class PlaylistsSplitPane extends JSplitPane {
     
-    public PlaylistsSplitPane(ColorScheme colorScheme, int orientation, Component first, Component second) {
+    public PlaylistsSplitPane(UILayout colorScheme, int orientation, Component first, Component second) {
         super(orientation, first, second);
         
         super.setUI(new BasicSplitPaneUI() {

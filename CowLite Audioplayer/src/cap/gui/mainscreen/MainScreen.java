@@ -1,6 +1,6 @@
 package cap.gui.mainscreen;
 
-import cap.gui.colorscheme.ColorScheme;
+import cap.gui.shared.Slider;
 import cap.gui.mainscreen.MusicControlPane.MusicControlPaneDelegate;
 import cap.gui.mainscreen.PlaylistPane.SongSelectionDelegate;
 import cap.gui.mainscreen.SavedPlaylistsPane.PlayListSelectionDelegate;
@@ -9,6 +9,7 @@ import cap.gui.mainscreen.VolumeSlider.VolumeSliderDelegate;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
+import cap.gui.colorscheme.UILayout;
 
 /**
  * (c) Copyright
@@ -56,7 +57,7 @@ public class MainScreen extends JPanel {
     private final VolumeSlider volumeSlider;
     private final TimeSlider timeSlider;
     
-    public MainScreen(ColorScheme colorScheme) {
+    public MainScreen(UILayout colorScheme) {
         controlPane = new MusicControlPane(colorScheme);
         playlistPane = new PlaylistPane<>(colorScheme);
         savedPlaylistsPane = new SavedPlaylistsPane(colorScheme);
