@@ -6,8 +6,8 @@
 package cap.core.services;
 
 import cap.core.audio.Playlist;
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
 /**
@@ -25,7 +25,7 @@ public interface PlaylistStoreInterface {
     
     // MARK: - Interface
     
-    public void addPlaylist(Playlist playlist, URL url) throws IOException;
+    public void addPlaylist(Playlist playlist, File file) throws IOException;
     public void removePlaylist(Playlist playlist) throws IOException;
     public List<Playlist> getPlaylists();
     public void addObserver(PlaylistStoreObserver observer);

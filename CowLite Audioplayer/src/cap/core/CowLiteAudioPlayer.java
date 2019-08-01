@@ -4,6 +4,7 @@ import cap.control.HotkeyListener;
 import cap.control.HotkeyListener.Control;
 import cap.core.audio.DynamicSongPlayer;
 import cap.core.audio.PlaylistPlayer;
+import cap.core.services.PlaylistService;
 import cap.core.services.PlaylistStore;
 import cap.gui.DefaultWindow;
 import cap.gui.Window;
@@ -59,11 +60,11 @@ public class CowLiteAudioPlayer {
         PlaylistPlayer playlistPlayer = new PlaylistPlayer(new DynamicSongPlayer());
         
         // Storing playlists
-        PlaylistStore playlistStore = new PlaylistStore(new File("resources" + File.separatorChar + "infofiles" + File.separatorChar + "playlisstore"));
+        PlaylistStore playlistStore = new PlaylistStore(new File("resources" + File.separatorChar + "infofiles" + File.separatorChar + "playlisstore"), new PlaylistService());
         
         // Initiate UI
-        mainWindow = new DefaultWindow(colorScheme, new MenuContext(playlistPlayer, playlistStore));
-        applicationCoordinator = new ApplicationCoordinator(colorScheme, result.hotkeyListener, playlistPlayer, playlistStore);
+        mainWindow = new DefaultWindow(colorScheme);
+        applicationCoordinator = new ApplicationCoordinator(colorScheme, result.hotkeyListener, playlistPlayer, playlistStore, new DefaultMenuContext(playlistPlayer, playlistStore));
         applicationCoordinator.start(mainWindow);
         
         mainWindow.setVisible(true);

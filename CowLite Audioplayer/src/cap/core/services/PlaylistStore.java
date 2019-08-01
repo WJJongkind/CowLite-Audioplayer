@@ -30,29 +30,31 @@ public class PlaylistStore implements PlaylistStoreInterface {
     private final List<PlaylistReference> playlists = new ArrayList<>();
     private final List<WeakReference<PlaylistStoreObserver>> observers = new ArrayList<>();
     private final File storeFile;
+    private final PlaylistServiceInterface playlistService;
     
     // MARK: - Initialisers
     
-    public PlaylistStore(File file) throws IOException, URISyntaxException {
+    public PlaylistStore(File file, PlaylistServiceInterface playlistService) throws IOException, URISyntaxException {
         this.storeFile = file;
+        this.playlistService = playlistService;
         
         FileDataReader reader = new FileDataReader();
         reader.setPath(file);
         
-        PlaylistService playlistService = new PlaylistService(this);
-        for(String entry : reader.getDataStringLines()) {
-            URL url = new URL(entry);
-            Playlist playlist = playlistService.loadPlayList(new File(url.toURI()));
-            playlists.add(new PlaylistReference(playlist, url));
+        for(String playlistFilePath : reader.getDataStringLines()) {
+            File playlistFile = new File(playlistFilePath);
+            Playlist playlist = playlistService.loadPlayList(playlistFile);
+            playlists.add(new PlaylistReference(playlist, playlistFile));
         }
     }
     
     // MARK: - PlaylistStoreInterface
 
     @Override
-    public void addPlaylist(Playlist playlist, URL url) throws IOException {
+    public void addPlaylist(Playlist playlist, File file) throws IOException {
         removePlaylistReference(playlist);
-        playlists.add(new PlaylistReference(playlist, url));
+        playlistService.savePlayList(playlist, file);
+        playlists.add(new PlaylistReference(playlist, file));
         updateSaveFile();
         unwrappedPerform(observers, observer -> observer.didAddPlaylist(this, playlist));
     }
@@ -100,7 +102,7 @@ public class PlaylistStore implements PlaylistStoreInterface {
             storeFile.createNewFile();
             out = new PrintWriter(storeFile);
             for(PlaylistReference reference: playlists) {
-                out.println(reference.url);
+                out.println(reference.file);
             }
             out.flush();
         } catch (FileNotFoundException ex) {
@@ -115,11 +117,11 @@ public class PlaylistStore implements PlaylistStoreInterface {
     
     private class PlaylistReference {
         Playlist playlist;
-        URL url;
+        File file;
         
-        public PlaylistReference(Playlist playlist, URL url) {
+        public PlaylistReference(Playlist playlist, File file) {
             this.playlist = playlist;
-            this.url = url;
+            this.file = file;
         }
     }
     

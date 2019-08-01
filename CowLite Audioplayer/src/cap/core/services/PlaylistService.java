@@ -57,16 +57,6 @@ public class PlaylistService implements PlaylistServiceInterface {
     private static final Pattern songEntryRegex = Pattern.compile("([a-z][a-z])-(.+)");
     private static final JFileChooser fileChooser = new  JFileChooser();
     
-    // MARK: - Private properties
-    
-    private final PlaylistStoreInterface playlistStore;
-    
-    // MARK: - Initialisers
-    
-    public PlaylistService(PlaylistStoreInterface playlistStore) {
-        this.playlistStore = playlistStore;
-    }
-    
     // MARK: - Service methods
     
     @Override
@@ -123,14 +113,8 @@ public class PlaylistService implements PlaylistServiceInterface {
                 }
             }
             out.flush();
-            playlistStore.addPlaylist(playList, target.toURI().toURL());
         } catch (FileNotFoundException ex) {
             throw ex;
-        } catch (MalformedURLException ex) {
-            // Should in theory never happen, as FileNotFoundException would've been thrown already.
-        } catch (IOException ex) {
-            // TODO show some usefull user feedback? For now StackTrace
-            ex.printStackTrace();
         } finally {
             out.close();
         }

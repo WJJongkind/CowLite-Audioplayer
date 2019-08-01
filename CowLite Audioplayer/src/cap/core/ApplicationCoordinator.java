@@ -10,11 +10,9 @@ import cap.core.audio.PlaylistPlayer;
 import cap.core.audio.SongPlayer;
 import cap.core.audio.youtube.YouTubeService;
 import cap.core.services.PlaylistStoreInterface;
-import cap.gui.DefaultWindow;
+import cap.core.DefaultMenuCoordinator.DefaultMenuContextInterface;
 import cap.gui.Window;
-import cap.gui.about.AboutViewController;
 import cap.gui.mainscreen.MainScreenController;
-import cap.gui.menu.MenuController;
 import java.io.IOException;
 import cap.gui.colorscheme.ColorScheme;
 
@@ -22,7 +20,7 @@ import cap.gui.colorscheme.ColorScheme;
  *
  * @author Wessel
  */
-public class ApplicationCoordinator implements Coordinator, HotkeyListener.HotkeyListenerDelegate, Window.WindowDelegate, MenuController.MenuControllerDelegate {
+public class ApplicationCoordinator implements Coordinator, HotkeyListener.HotkeyListenerDelegate, Window.WindowDelegate {
     
     // MARK: - Constants
     
@@ -31,16 +29,16 @@ public class ApplicationCoordinator implements Coordinator, HotkeyListener.Hotke
     // MARK: - Private properties
     
     private final MainScreenController mainScreenController;
-    private final AboutViewController aboutViewController;
     private final PlaylistPlayer playlistPlayer;
+    private final Coordinator defaultMenuCoordinator;
     private Window window;
     
     // MARK: - Initialisers
     
-    public ApplicationCoordinator(ColorScheme colorScheme, HotkeyListener hotkeyListener, PlaylistPlayer playlistPlayer, PlaylistStoreInterface playlistStore) throws IOException {
+    public ApplicationCoordinator(ColorScheme colorScheme, HotkeyListener hotkeyListener, PlaylistPlayer playlistPlayer, PlaylistStoreInterface playlistStore, DefaultMenuContextInterface menuContext) throws IOException {
         this.playlistPlayer = playlistPlayer;
-        mainScreenController = new MainScreenController(colorScheme, playlistPlayer, new YouTubeService(), playlistStore);
-        aboutViewController = new AboutViewController(colorScheme);
+        this.mainScreenController = new MainScreenController(colorScheme, playlistPlayer, new YouTubeService(), playlistStore);
+        this.defaultMenuCoordinator = new DefaultMenuCoordinator(colorScheme, menuContext);
         
         // Catch global hotkey events
         hotkeyListener.setDelegate(this);
@@ -51,9 +49,10 @@ public class ApplicationCoordinator implements Coordinator, HotkeyListener.Hotke
     @Override
     public void start(Window window) {
         this.window = window;
-        ((DefaultWindow) window).setMenuDelegate(this); // TODO remove me
         window.presentViewController(mainScreenController);
         window.setDelegate(this);
+        
+        defaultMenuCoordinator.start(window);
     }
     
     // MARK: - HotkeyListenerDelegate
@@ -126,29 +125,5 @@ public class ApplicationCoordinator implements Coordinator, HotkeyListener.Hotke
             System.exit(0);
         }
     }
-    
-    // MARK: - MenuControllerDelegate
-
-    @Override
-    public void didPressShowAbout(MenuController menuController) {
-        window.presentViewController(aboutViewController);
-    }
-
-    @Override
-    public void didPressHotkeys(MenuController menuController) {
-        
-    }
-
-    @Override
-    public void didPressLayout(MenuController menuController) {
-        
-    }
-
-    @Override
-    public void didPressFeatures(MenuController menuController) {
-        
-    }
-    
-    
     
 }

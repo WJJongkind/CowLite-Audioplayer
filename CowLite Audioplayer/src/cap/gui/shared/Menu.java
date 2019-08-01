@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cap.gui.menu;
+package cap.gui.shared;
 
 import java.awt.Component;
 import java.awt.Graphics;
@@ -17,9 +17,9 @@ import cap.gui.colorscheme.ColorScheme;
  *
  * @author Wessel
  */
-public class NewMenu extends JMenuBar {
+public class Menu extends JMenuBar {
     
-    public NewMenu(ColorScheme colorScheme) {
+    public Menu(ColorScheme colorScheme) {
         super.setBackground(colorScheme.frameColor());
         super.setBorder(new AbstractBorder() {
             @Override
@@ -28,19 +28,6 @@ public class NewMenu extends JMenuBar {
                 g.drawLine(x, y + height - 1, x + width, y + height - 1);
             }
         });
-    }
-    
-    public class SubMenu extends JMenu {
-        
-        public SubMenu(String title, ColorScheme colorScheme) {
-            super(title);
-            
-            super.setBorderPainted(false);
-            super.getPopupMenu().setBorder(BorderFactory.createLineBorder(colorScheme.frameColor()));
-            super.setForeground(colorScheme.defaultContentColor());
-            super.setBackground(colorScheme.frameColor());
-        }
-        
     }
     
 }

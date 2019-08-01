@@ -5,20 +5,18 @@
  */
 package cap.gui;
 
-import cap.core.services.PlaylistService;
 import cap.gui.WindowActionsPane.WindowActionsPaneDelegate;
-import cap.gui.menu.MenuController;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import cap.gui.menu.MenuContextInterface;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import java.lang.ref.WeakReference;
-import javax.swing.JComponent;
 import cap.gui.colorscheme.ColorScheme;
+import cap.gui.shared.Menu;
+import cap.gui.shared.SubMenu;
 
 /**
  *
@@ -33,7 +31,6 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
     
     // MARK: - Private properties
     
-    private final MenuController menuController; // TODO inject me
     private boolean maximizedState = false; // TODO inject & store me
     private Dimension normalSize = new Dimension(1280, 720); // TODO inject & store me
     private Point normalLocation = new Point(200, 200);
@@ -41,13 +38,14 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
     
     // MARK: - UI elements
     
+    private final Menu menu;
     private JPanel contentPane;
     private WindowActionsPane windowActionsPane;
     private ViewController presentedViewController;
     
     // MARK: - Initialisers
     
-    public DefaultWindow(ColorScheme colorScheme, MenuContextInterface menuContext) {
+    public DefaultWindow(ColorScheme colorScheme) {
         super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         super.setSize(normalSize);
         super.setBackground(colorScheme.frameColor());
@@ -57,13 +55,14 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
         super.addMouseMotionListener(windowManager);
         super.setMinimumSize(minimumSize);
         
-        menuController = new MenuController(colorScheme, menuContext, new PlaylistService(menuContext.getPlaylistStore())); // TODO make a setMenu option... Perhaps change the entire way menus are handled.
         windowActionsPane = new WindowActionsPane(colorScheme);
         windowActionsPane.setDelegate(this);
         
         contentPane = new JPanel();
         contentPane.setLayout(new GridBagLayout());
         contentPane.setBackground(colorScheme.frameColor());
+        
+        menu = new Menu(colorScheme);
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 1;
@@ -74,7 +73,7 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
         c.weighty = 0;
         c.fill = c.BOTH;
 
-        contentPane.add(menuController.getView(), c);
+        contentPane.add(menu, c);
         
         c.gridx = 2;
         c.weightx = 0;
@@ -114,8 +113,10 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
     }
 
     @Override
-    public void setMenu(JComponent menu) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setSubMenus(SubMenu... subMenus) {
+        for(SubMenu subMenu : subMenus) {
+            menu.add(subMenu);
+        }
     }
     
     // MARK: - WindowActionsPaneDelegate

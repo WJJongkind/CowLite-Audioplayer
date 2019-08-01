@@ -7,19 +7,18 @@ package cap.core;
 
 import cap.core.audio.Playlist;
 import cap.core.audio.PlaylistPlayer;
-import cap.gui.menu.MenuContextInterface;
 import cap.core.services.PlaylistStoreInterface;
 
 /**
  *
  * @author Wessel
  */
-class MenuContext implements MenuContextInterface {
+class DefaultMenuContext implements DefaultMenuCoordinator.DefaultMenuContextInterface {
         
         private final PlaylistPlayer playlistPlayer;
         private final PlaylistStoreInterface playlistStore;
 
-        public MenuContext(PlaylistPlayer playlistPlayer, PlaylistStoreInterface playlistStore) {
+        public DefaultMenuContext(PlaylistPlayer playlistPlayer, PlaylistStoreInterface playlistStore) {
             this.playlistPlayer = playlistPlayer;
             this.playlistStore = playlistStore;
         }
