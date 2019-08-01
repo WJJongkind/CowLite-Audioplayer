@@ -20,7 +20,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import cap.gui.colorscheme.UILayout;
+import cap.gui.colorscheme.ColorScheme;
 
 /**
  *
@@ -47,7 +47,7 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane {
     
     // MARK: - Initialisers
     
-    public PlaylistPane(UILayout colorScheme) {
+    public PlaylistPane(ColorScheme colorScheme) {
         super(colorScheme.frameColor());
         songTable = new JTable();
         songTableModel = new DefaultTableModel() {

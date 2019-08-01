@@ -19,7 +19,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.border.AbstractBorder;
-import cap.gui.colorscheme.UILayout;
+import cap.gui.colorscheme.ColorScheme;
 
 /**
  *
@@ -49,7 +49,7 @@ public class WindowActionsPane extends JPanel {
     
     // MARK: - Initialisers
     
-    public WindowActionsPane(UILayout colorScheme) {
+    public WindowActionsPane(ColorScheme colorScheme) {
         super();
         
         super.setBackground(colorScheme.frameColor());
@@ -86,7 +86,7 @@ public class WindowActionsPane extends JPanel {
         super.add(closeButton, c);
     }
     
-    private void makeButtons(UILayout colorScheme) {
+    private void makeButtons(ColorScheme colorScheme) {
         minimizeButton = makeButton(colorScheme.imageSet().minimizeScreenButton(), Layout.minimizeButtonSize);
         minimizeButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressMinimizeButton(this)));
         

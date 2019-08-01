@@ -17,7 +17,7 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import cap.gui.colorscheme.UILayout;
+import cap.gui.colorscheme.ColorScheme;
 
 /**
  *
@@ -44,7 +44,7 @@ public class SavedPlaylistsPane extends JScrollPane {
     
     // MARK: - Initialiser
     
-    public SavedPlaylistsPane(UILayout colorScheme) {
+    public SavedPlaylistsPane(ColorScheme colorScheme) {
         playlistPane = new JList();
         playlistListModel = new DefaultListModel<>();
         

@@ -17,8 +17,8 @@ import javax.swing.JPanel;
 import cap.gui.menu.MenuContextInterface;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import java.lang.ref.WeakReference;
-import cap.gui.colorscheme.UILayout;
 import javax.swing.JComponent;
+import cap.gui.colorscheme.ColorScheme;
 
 /**
  *
@@ -47,7 +47,7 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
     
     // MARK: - Initialisers
     
-    public DefaultWindow(UILayout colorScheme, MenuContextInterface menuContext) {
+    public DefaultWindow(ColorScheme colorScheme, MenuContextInterface menuContext) {
         super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         super.setSize(normalSize);
         super.setBackground(colorScheme.frameColor());
@@ -112,9 +112,10 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
     public void setDelegate(WindowDelegate delegate) {
         this.delegate = new WeakReference<>(delegate);
     }
-    
-    public void setMenuDelegate(MenuController.MenuControllerDelegate delegate) { // TODO replace me with setMenu. This stinks.
-        menuController.setDelegate(delegate);
+
+    @Override
+    public void setMenu(JComponent menu) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     // MARK: - WindowActionsPaneDelegate

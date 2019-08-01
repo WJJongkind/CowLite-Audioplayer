@@ -16,8 +16,8 @@ import javax.swing.JToggleButton;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
-import cap.gui.colorscheme.UILayout;
 import cap.gui.colorscheme.UIImageSet;
+import cap.gui.colorscheme.ColorScheme;
 
 /**
  *
@@ -66,7 +66,7 @@ public class MusicControlPane extends JPanel {
                           shuffleButton, 
                           alphabeticButton;
     
-    public MusicControlPane(UILayout colorScheme) {
+    public MusicControlPane(ColorScheme colorScheme) {
         imageSet = colorScheme.imageSet();
         makeButtons(colorScheme);
         
@@ -92,7 +92,7 @@ public class MusicControlPane extends JPanel {
     
     // MARK: - Private methods
     
-    private void makeButtons(UILayout colorScheme) {
+    private void makeButtons(ColorScheme colorScheme) {
         playButton = makeButton(colorScheme.imageSet().playButton(), Layout.playButtonSize);
         playButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> didPressPlay(delegate)));
         

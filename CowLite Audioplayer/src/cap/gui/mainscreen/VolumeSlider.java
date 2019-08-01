@@ -7,7 +7,7 @@ package cap.gui.mainscreen;
 
 import cap.gui.shared.Slider;
 import java.lang.ref.WeakReference;
-import cap.gui.colorscheme.UILayout;
+import cap.gui.colorscheme.ColorScheme;
 
 /**
  *
@@ -27,7 +27,7 @@ public class VolumeSlider extends Slider {
     
     // MARK: - Initialisers
     
-    public VolumeSlider(UILayout colorScheme) {
+    public VolumeSlider(ColorScheme colorScheme) {
         super(Orientation.vertical);
         super.setBackground(colorScheme.volumeColor().backgroundColor());
         super.setForeground(colorScheme.volumeColor().fillColor());

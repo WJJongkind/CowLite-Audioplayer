@@ -10,9 +10,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import cap.gui.colorscheme.UILayout;
 import cap.gui.shared.Button;
 import java.awt.Insets;
+import cap.gui.colorscheme.ColorScheme;
 
 /**
  *
@@ -20,7 +20,7 @@ import java.awt.Insets;
  */
 public class AboutScreen extends JPanel {
     
-    public AboutScreen(UILayout layout) {
+    public AboutScreen(ColorScheme layout) {
         super.setBorder(new EmptyBorder(8, 8, 16, 8));
         super.setBackground(new Color(0, 0, 0, 0));
         

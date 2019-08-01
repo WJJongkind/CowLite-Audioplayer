@@ -14,7 +14,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.border.AbstractBorder;
-import cap.gui.colorscheme.UILayout;
+import cap.gui.colorscheme.ColorScheme;
 
 /**
  *
@@ -40,7 +40,7 @@ public class Menu extends JMenuBar {
     
     // MARK: - Initialisers
     
-    public Menu(UILayout colorScheme) {
+    public Menu(ColorScheme colorScheme) {
         super.setBackground(colorScheme.frameColor());
         super.setBorder(new AbstractBorder() {
             @Override
@@ -67,7 +67,7 @@ public class Menu extends JMenuBar {
     
     // MARK: - Private functions - Menu initialisation
     
-    private JMenu makeFileMenu(UILayout colorScheme) {
+    private JMenu makeFileMenu(ColorScheme colorScheme) {
         JMenu menu = makeMenu("File", colorScheme);
         
         JMenuItem savePlaylist = makeMenuItem("Save playlist", colorScheme);
@@ -82,7 +82,7 @@ public class Menu extends JMenuBar {
         return menu;
     }
     
-    private JMenu makeSettingsMenu(UILayout colorScheme) {
+    private JMenu makeSettingsMenu(ColorScheme colorScheme) {
         JMenu menu = makeMenu("Settings", colorScheme);
         
         JMenuItem savePlaylist = makeMenuItem("Layout", colorScheme);
@@ -97,7 +97,7 @@ public class Menu extends JMenuBar {
         return menu;
     }
     
-    private JMenu makeHelpMenu(UILayout colorScheme) {
+    private JMenu makeHelpMenu(ColorScheme colorScheme) {
         JMenu menu = makeMenu("Help", colorScheme);
         
         JMenuItem savePlaylist = makeMenuItem("About", colorScheme);
@@ -112,7 +112,7 @@ public class Menu extends JMenuBar {
         return menu;
     }
     
-    private JMenu makeMenu(String title, UILayout colorScheme) {
+    private JMenu makeMenu(String title, ColorScheme colorScheme) {
         JMenu menu = new JMenu(title);
         menu.setBorderPainted(false);
         menu.getPopupMenu().setBorder(BorderFactory.createLineBorder(colorScheme.frameColor()));
@@ -122,7 +122,7 @@ public class Menu extends JMenuBar {
         return menu;
     }
     
-    private JMenuItem makeMenuItem(String title, UILayout colorScheme) {
+    private JMenuItem makeMenuItem(String title, ColorScheme colorScheme) {
         JMenuItem menuItem = new JMenuItem(title);
         menuItem.setBackground(colorScheme.menu().menuBackgroundColor());
         menuItem.setForeground(colorScheme.menu().menuTextColor());

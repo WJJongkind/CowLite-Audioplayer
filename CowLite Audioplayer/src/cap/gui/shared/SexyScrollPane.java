@@ -5,7 +5,7 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
-import cap.gui.colorscheme.UILayout;
+import cap.gui.colorscheme.ColorScheme;
 
 /**
 * This is an implementation of a JScrollPane with a modern UI

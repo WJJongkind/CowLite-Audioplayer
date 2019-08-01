@@ -14,7 +14,7 @@ import java.lang.ref.WeakReference;
 import javax.swing.JFileChooser;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
-import cap.gui.colorscheme.UILayout;
+import cap.gui.colorscheme.ColorScheme;
 
 /**
  *
@@ -40,7 +40,7 @@ public class MenuController implements ViewController, Menu.MenuDelegate {
     
     // MARK: - Initialisers
 
-    public MenuController(UILayout colorScheme, MenuContextInterface menuContext, PlaylistService playlistService) {
+    public MenuController(ColorScheme colorScheme, MenuContextInterface menuContext, PlaylistService playlistService) {
         this.playlistService = playlistService;
         this.menuContext = menuContext;
         menu = new Menu(colorScheme);

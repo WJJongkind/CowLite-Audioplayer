@@ -37,7 +37,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
-import cap.gui.colorscheme.UILayout;
+import cap.gui.colorscheme.ColorScheme;
 
 /**
  *
@@ -68,7 +68,7 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
     
     // MARK: - Initialisers
     
-    public MainScreenController(UILayout colorScheme, PlaylistPlayer playlistPlayer, YouTubeService youTubeService, PlaylistStoreInterface playlistStore) {
+    public MainScreenController(ColorScheme colorScheme, PlaylistPlayer playlistPlayer, YouTubeService youTubeService, PlaylistStoreInterface playlistStore) {
         // YT Service
         this.youTubeService = youTubeService;
         

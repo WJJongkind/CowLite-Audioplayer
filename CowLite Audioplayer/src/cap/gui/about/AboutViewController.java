@@ -7,7 +7,7 @@ package cap.gui.about;
 
 import cap.gui.ViewController;
 import javax.swing.JComponent;
-import cap.gui.colorscheme.UILayout;
+import cap.gui.colorscheme.ColorScheme;
 
 /**
  *
@@ -21,7 +21,7 @@ public class AboutViewController implements ViewController {
     
     // MARK: - Initialisers
     
-    public AboutViewController(UILayout colorScheme) {
+    public AboutViewController(ColorScheme colorScheme) {
         aboutPanel = new AboutScreen(colorScheme);
     }
 

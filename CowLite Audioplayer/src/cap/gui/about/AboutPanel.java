@@ -10,7 +10,7 @@ import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import cap.gui.colorscheme.UILayout;
+import cap.gui.colorscheme.ColorScheme;
 
 /**
  *
@@ -18,7 +18,7 @@ import cap.gui.colorscheme.UILayout;
  */
 public class AboutPanel extends SexyScrollPane {
     
-    public AboutPanel(UILayout layout) {
+    public AboutPanel(ColorScheme layout) {
         super(layout.defaultContentColor());
         
         JTextArea textArea = new JTextArea();

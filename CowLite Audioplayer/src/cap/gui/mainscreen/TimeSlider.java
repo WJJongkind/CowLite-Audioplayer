@@ -7,7 +7,7 @@ package cap.gui.mainscreen;
 
 import cap.gui.shared.Slider;
 import java.lang.ref.WeakReference;
-import cap.gui.colorscheme.UILayout;
+import cap.gui.colorscheme.ColorScheme;
 
 /**
  *
@@ -25,7 +25,7 @@ public class TimeSlider extends Slider {
     
     private WeakReference<TrackPositionDelegate> delegate = new WeakReference<>(null);
     
-    public TimeSlider(UILayout colorScheme) {
+    public TimeSlider(ColorScheme colorScheme) {
         super(Orientation.horizontal);
         super.setBackground(colorScheme.timeSliderColor().backgroundColor());
         super.setForeground(colorScheme.timeSliderColor().fillColor());

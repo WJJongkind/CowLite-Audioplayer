@@ -11,7 +11,7 @@ import java.awt.Color;
  *
  * @author Wessel
  */
-public interface UILayout {
+public interface ColorScheme {
     public Color frameColor();
     public Color defaultContentColor();
     public ButtonColorScheme defaultButtonColorScheme();

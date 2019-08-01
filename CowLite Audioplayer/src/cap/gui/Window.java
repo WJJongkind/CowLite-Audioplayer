@@ -7,6 +7,7 @@ package cap.gui;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import javax.swing.JComponent;
 
 /**
  *
@@ -23,6 +24,7 @@ public interface Window {
     // MARK: - Interface
     
     public void presentViewController(ViewController viewController);
+    public void setMenu(JComponent menu);
     public void setDelegate(WindowDelegate delegate);
     public void setVisible(boolean visible);
     public void setSize(Dimension size);

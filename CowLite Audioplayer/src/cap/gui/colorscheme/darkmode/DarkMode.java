@@ -12,14 +12,14 @@ import cap.gui.colorscheme.SavedListsPaneColorScheme;
 import cap.gui.colorscheme.SliderColorScheme;
 import java.awt.Color;
 import java.io.IOException;
-import cap.gui.colorscheme.UILayout;
 import cap.gui.colorscheme.UIImageSet;
+import cap.gui.colorscheme.ColorScheme;
 
 /**
  *
  * @author Wessel
  */
-public class DarkMode implements UILayout {
+public class DarkMode implements ColorScheme {
     
     private static DarkModeImageSet imageSet;
     

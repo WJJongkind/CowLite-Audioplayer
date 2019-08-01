@@ -16,7 +16,7 @@ import cap.gui.about.AboutViewController;
 import cap.gui.mainscreen.MainScreenController;
 import cap.gui.menu.MenuController;
 import java.io.IOException;
-import cap.gui.colorscheme.UILayout;
+import cap.gui.colorscheme.ColorScheme;
 
 /**
  *
@@ -37,7 +37,7 @@ public class ApplicationCoordinator implements Coordinator, HotkeyListener.Hotke
     
     // MARK: - Initialisers
     
-    public ApplicationCoordinator(UILayout colorScheme, HotkeyListener hotkeyListener, PlaylistPlayer playlistPlayer, PlaylistStoreInterface playlistStore) throws IOException {
+    public ApplicationCoordinator(ColorScheme colorScheme, HotkeyListener hotkeyListener, PlaylistPlayer playlistPlayer, PlaylistStoreInterface playlistStore) throws IOException {
         this.playlistPlayer = playlistPlayer;
         mainScreenController = new MainScreenController(colorScheme, playlistPlayer, new YouTubeService(), playlistStore);
         aboutViewController = new AboutViewController(colorScheme);
