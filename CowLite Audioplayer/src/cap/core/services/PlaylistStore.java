@@ -5,7 +5,7 @@
  */
 package cap.core.services;
 
-import cap.core.audio.Playlist;
+import cap.audio.Playlist;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import filedatareader.FileDataReader;
 import java.io.File;

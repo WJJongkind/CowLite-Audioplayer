@@ -66,6 +66,8 @@ public class MusicControlPane extends JPanel {
                           shuffleButton, 
                           alphabeticButton;
     
+    // MARK: - Initialisers
+    
     public MusicControlPane(ColorScheme colorScheme) {
         imageSet = colorScheme.imageSet();
         makeButtons(colorScheme);
@@ -154,6 +156,24 @@ public class MusicControlPane extends JPanel {
         repaint();
     }
     
+    public void setShuffleEnabled(boolean enabled) {
+        if(enabled) {
+            setButtonImage(shuffleButton, imageSet.shuffleButton(), true);
+            setButtonImage(alphabeticButton, imageSet.alphabeticSortButton(), false);
+        } else {
+            setButtonImage(shuffleButton, imageSet.shuffleButton(), false);
+        }
+    }
+    
+    public void setAlphabeticSortEnabled(boolean enabled) {
+        if(enabled) {
+            setButtonImage(alphabeticButton, imageSet.alphabeticSortButton(),true);
+            setButtonImage(shuffleButton, imageSet.shuffleButton(), false);
+        } else {
+            setButtonImage(alphabeticButton, imageSet.alphabeticSortButton(), false);
+        }
+    }
+    
     // MARK: - Private functions
     
     private void didPressPlay(MusicControlPaneDelegate delegate) {
@@ -165,21 +185,11 @@ public class MusicControlPane extends JPanel {
     }
     
     private void didPressShuffle(MusicControlPaneDelegate delegate) {
-        if(delegate.didPressShuffleButton(this)) {
-            setButtonImage(shuffleButton, imageSet.shuffleButton(), true);
-            setButtonImage(alphabeticButton, imageSet.alphabeticSortButton(), false);
-        } else {
-            setButtonImage(shuffleButton, imageSet.shuffleButton(), false);
-        }
+        setShuffleEnabled(delegate.didPressShuffleButton(this));
     }
     
     private void didPressAlphabeticSort(MusicControlPaneDelegate delegate) {
-        if(delegate.didPressAlphabeticSortButton(this)) {
-            setButtonImage(alphabeticButton, imageSet.alphabeticSortButton(),true);
-            setButtonImage(shuffleButton, imageSet.shuffleButton(), false);
-        } else {
-            setButtonImage(alphabeticButton, imageSet.alphabeticSortButton(), false);
-        }
+        setAlphabeticSortEnabled(delegate.didPressAlphabeticSortButton(this));
     }
     
     private void setButtonImage(JToggleButton button, ControlImageSet imageSet, boolean isEnabled) {

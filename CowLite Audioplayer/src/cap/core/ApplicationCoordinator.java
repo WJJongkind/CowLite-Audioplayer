@@ -6,11 +6,12 @@
 package cap.core;
 
 import cap.control.HotkeyListener;
-import cap.core.audio.PlaylistPlayer;
-import cap.core.audio.SongPlayer;
-import cap.core.audio.youtube.YouTubeService;
+import cap.audio.PlaylistPlayer;
+import cap.audio.SongPlayer;
+import cap.audio.youtube.YouTubeService;
 import cap.core.services.PlaylistStoreInterface;
 import cap.core.DefaultMenuCoordinator.DefaultMenuContextInterface;
+import cap.core.services.AppStateService;
 import cap.gui.Window;
 import cap.gui.mainscreen.MainScreenController;
 import java.io.IOException;
@@ -31,16 +32,21 @@ public class ApplicationCoordinator implements Coordinator, HotkeyListener.Hotke
     private final MainScreenController mainScreenController;
     private final PlaylistPlayer playlistPlayer;
     private final Coordinator defaultMenuCoordinator;
+    private final AppStateService appStateService;
+    private final HotkeyListener hotkeyListener;
+    
     private Window window;
     
     // MARK: - Initialisers
     
-    public ApplicationCoordinator(ColorScheme colorScheme, HotkeyListener hotkeyListener, PlaylistPlayer playlistPlayer, PlaylistStoreInterface playlistStore, DefaultMenuContextInterface menuContext) throws IOException {
+    public ApplicationCoordinator(ColorScheme colorScheme, HotkeyListener hotkeyListener, PlaylistPlayer playlistPlayer, PlaylistStoreInterface playlistStore, DefaultMenuContextInterface menuContext, AppStateService appStateService) throws IOException {
         this.playlistPlayer = playlistPlayer;
         this.mainScreenController = new MainScreenController(colorScheme, playlistPlayer, new YouTubeService(), playlistStore);
         this.defaultMenuCoordinator = new DefaultMenuCoordinator(colorScheme, menuContext);
+        this.appStateService = appStateService;
         
         // Catch global hotkey events
+        this.hotkeyListener = hotkeyListener;
         hotkeyListener.setDelegate(this);
     }
     
@@ -122,6 +128,10 @@ public class ApplicationCoordinator implements Coordinator, HotkeyListener.Hotke
     @Override
     public void didPressCloseWindow(Window window) {
         if(window == this.window) {
+            appStateService.saveWindowSettings(window.getLocation(), window.getSize(), window.isFullScreen());
+            appStateService.saveVolume(playlistPlayer.getPlayer().getVolume());
+            appStateService.savePlaylistMode(playlistPlayer.getPlaylist().getMode());
+            appStateService.saveControls(hotkeyListener.getControls());
             System.exit(0);
         }
     }

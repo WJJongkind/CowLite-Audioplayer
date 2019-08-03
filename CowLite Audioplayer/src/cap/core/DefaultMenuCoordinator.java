@@ -5,7 +5,7 @@
  */
 package cap.core;
 
-import cap.core.audio.Playlist;
+import cap.audio.Playlist;
 import cap.core.services.PlaylistStoreInterface;
 import cap.gui.Window;
 import cap.gui.about.AboutViewController;

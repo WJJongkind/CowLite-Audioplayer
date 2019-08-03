@@ -5,10 +5,10 @@
  */
 package cap.core.services;
 
-import cap.core.audio.Playlist;
-import cap.core.audio.Song;
-import cap.core.audio.files.FileSong;
-import cap.core.audio.youtube.YouTubeSong;
+import cap.audio.Playlist;
+import cap.audio.Song;
+import cap.audio.files.FileSong;
+import cap.audio.youtube.YouTubeSong;
 import filedatareader.FileDataReader;
 import java.io.File;
 import java.io.FileNotFoundException;

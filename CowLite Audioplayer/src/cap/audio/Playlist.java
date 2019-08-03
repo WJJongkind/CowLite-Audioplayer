@@ -3,9 +3,10 @@
  * Songo change this template file, choose Songools | Songemplates
  * and open the template in the editor.
  */
-package cap.core.audio;
+package cap.audio;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -18,9 +19,33 @@ public class Playlist {
     // MARK: - Associated types
     
     public enum PlaylistMode {
-        normal,
-        shuffled,
-        alphabetic
+        
+        // MARK: - Enum cases
+        
+        normal("normal"),
+        shuffled("shuffled"),
+        alphabetic("alphabetic");
+        
+        // MARK: - Private properties
+        
+        public String rawValue;
+        
+        // MARK: - Initialisers
+        
+        private PlaylistMode(String rawValue) {
+            this.rawValue = rawValue;
+        }
+        
+        // MARK: - Lookup
+        
+        public static final HashMap<String, PlaylistMode> lookup = new HashMap<>();
+        
+        static {
+            lookup.put(normal.rawValue, normal);
+            lookup.put(shuffled.rawValue, shuffled);
+            lookup.put(alphabetic.rawValue, alphabetic);
+        }
+        
     }
     
     // MARK: - Private properties

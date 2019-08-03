@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cap.core.audio.files;
+package cap.audio.files;
 
-import cap.core.audio.SongPlayer;
+import cap.audio.SongPlayer;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

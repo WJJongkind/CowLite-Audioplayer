@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cap.core.audio.files;
+package cap.audio.files;
 
-import cap.core.audio.files.FileSongMetaDataReader.MetaData;
-import cap.core.audio.Song;
+import cap.audio.files.FileSongMetaDataReader.MetaData;
+import cap.audio.Song;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;

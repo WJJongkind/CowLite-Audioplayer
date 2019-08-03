@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cap.core.audio;
+package cap.audio;
 
-import cap.core.audio.files.FileSongPlayer;
-import cap.core.audio.youtube.YTSongPlayer;
-import cap.core.audio.files.FileSong;
-import cap.core.audio.youtube.YouTubeSong;
+import cap.audio.files.FileSongPlayer;
+import cap.audio.youtube.YTSongPlayer;
+import cap.audio.files.FileSong;
+import cap.audio.youtube.YouTubeSong;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -78,9 +78,8 @@ public class DynamicSongPlayer implements SongPlayer<Song> {
     public void setVolume(double volume) {
         this.volume = volume;
         
-        if(activePlayer != null) {
-            activePlayer.setVolume(volume);
-        }
+        fileSongPlayer.setVolume(volume);
+        ytSongPlayer.setVolume(volume);
         
         unwrappedPerform(observers, observer -> observer.volumeChanged(this, volume));
     }

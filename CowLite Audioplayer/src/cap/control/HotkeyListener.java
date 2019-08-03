@@ -14,13 +14,34 @@ public class HotkeyListener implements NativeKeyListener {
     // MARK: - Associated types & constants
     
     public enum Control {
-        play,
-        pause,
-        stop,
-        previousSong,
-        nextSong,
-        volumeUp,
-        volumeDown
+        play("play"),
+        pause("pause"),
+        stop("stop"),
+        previousSong("previous"),
+        nextSong("next"),
+        volumeUp("volumeUp"),
+        volumeDown("volumeDown");
+        
+        public String rawValue;
+        
+        private Control(String rawValue) {
+            this.rawValue = rawValue;
+        }
+    
+        // MARK: - Lookup
+    
+        public static final HashMap<String, Control> lookup = new HashMap<>();
+        
+        static {
+            lookup.put(play.rawValue, play);
+            lookup.put(pause.rawValue, pause);
+            lookup.put(stop.rawValue, stop);
+            lookup.put(previousSong.rawValue, previousSong);
+            lookup.put(nextSong.rawValue, nextSong);
+            lookup.put(volumeUp.rawValue, volumeUp);
+            lookup.put(volumeDown.rawValue, volumeDown);
+        }
+        
     }
     
     public interface HotkeyListenerDelegate {
@@ -35,8 +56,6 @@ public class HotkeyListener implements NativeKeyListener {
         public void allowOverlayRepositioning();
         public void toggleOverlay();
     }
-
-  //  private final int TRESHOLD = 30, TRESHOLD2 = 60; TODO place these in a different class
     
     // MARK: - Private final properties
     
@@ -60,12 +79,12 @@ public class HotkeyListener implements NativeKeyListener {
         this.delegate = new WeakReference<>(delegate);
     }
     
-    public void setControls(Map<Control, String> controls) {
-        this.controls = controls;
+    public Map<Control, String> getControls() {
+        return controls;
     }
     
-    public Map<Control, String> getControls() {
-        return new HashMap<>(controls);
+    public void setControls(Map<Control, String> controls) {
+        this.controls = controls;
     }
     
     // MARK: - NativeKeyListener

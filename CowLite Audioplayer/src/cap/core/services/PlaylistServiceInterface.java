@@ -5,7 +5,7 @@
  */
 package cap.core.services;
 
-import cap.core.audio.Playlist;
+import cap.audio.Playlist;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;

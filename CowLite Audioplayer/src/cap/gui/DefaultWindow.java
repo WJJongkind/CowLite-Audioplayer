@@ -31,9 +31,9 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
     
     // MARK: - Private properties
     
-    private boolean maximizedState = false; // TODO inject & store me
-    private Dimension normalSize = new Dimension(1280, 720); // TODO inject & store me
-    private Point normalLocation = new Point(200, 200);
+    private boolean isFullScreen = false;
+    private Dimension normalSize = new Dimension(0, 0);
+    private Point normalLocation = new Point(0, 0);
     private WeakReference<WindowDelegate> delegate;
     
     // MARK: - UI elements
@@ -47,7 +47,6 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
     
     public DefaultWindow(ColorScheme colorScheme) {
         super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        super.setSize(normalSize);
         super.setBackground(colorScheme.frameColor());
         super.getContentPane().setBackground(colorScheme.frameColor());
         super.setUndecorated(true);
@@ -119,6 +118,58 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
         }
     }
     
+    @Override
+    public void setFullScreen(boolean isFullScreen) {
+        if(isFullScreen) {
+            normalSize = getSize();
+            normalLocation = getLocation();
+            this.isFullScreen = true;
+            super.setSize(getToolkit().getScreenSize());
+            super.setLocation(0, 0);
+            super.removeMouseListener(windowManager);
+            super.removeMouseMotionListener(windowManager);
+        } else {
+            this.isFullScreen = false;
+            super.setSize(normalSize);
+            super.setLocation(normalLocation);
+            super.removeMouseListener(windowManager); // Ensures that the listener isnt added twice
+            super.removeMouseMotionListener(windowManager); // Ensures that the listener isnt added twice
+            super.addMouseListener(windowManager);
+            super.addMouseMotionListener(windowManager);
+        }
+    }
+    
+    @Override
+    public boolean isFullScreen() {
+        return isFullScreen;
+    }
+    
+    @Override
+    public Point getLocation() {
+        return isFullScreen ? normalLocation : super.getLocation();
+    }
+    
+    @Override
+    public void setLocation(Point location) {
+        normalLocation = location;
+        if(!isFullScreen) {
+            super.setLocation(location);
+        }
+    }
+    
+    @Override
+    public Dimension getSize() {
+        return isFullScreen ? normalSize : super.getSize();
+    }
+    
+    @Override
+    public void setSize(Dimension size) {
+        normalSize = size;
+        if(!isFullScreen) {
+            super.setSize(size);
+        }
+    }
+    
     // MARK: - WindowActionsPaneDelegate
 
     @Override
@@ -133,21 +184,7 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
 
     @Override
     public void didPressStretchButton(WindowActionsPane sender) {
-        if(maximizedState) {
-            maximizedState = false;
-            super.setSize(normalSize);
-            super.setLocation(normalLocation);
-            super.addMouseListener(windowManager); // TODO disable if is fullscreen
-            super.addMouseMotionListener(windowManager);
-        } else {
-            normalSize = getSize();
-            normalLocation = getLocation();
-            maximizedState = true;
-            super.setSize(getToolkit().getScreenSize());
-            super.setLocation(0, 0);
-            super.removeMouseListener(windowManager);
-            super.removeMouseMotionListener(windowManager);
-        }
+        setFullScreen(!isFullScreen);
     }
     
 }

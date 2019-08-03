@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cap.core.audio;
+package cap.audio;
 
-import cap.core.audio.Playlist.PlaylistMode;
+import cap.audio.Playlist.PlaylistMode;
 import javax.swing.Timer;
 
 /**

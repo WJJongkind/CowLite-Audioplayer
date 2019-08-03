@@ -5,7 +5,7 @@
  */
 package cap.gui.mainscreen;
 
-import cap.core.audio.Playlist;
+import cap.audio.Playlist;
 import cap.gui.colorscheme.SavedListsPaneColorScheme;
 import java.awt.Component;
 import java.lang.ref.WeakReference;

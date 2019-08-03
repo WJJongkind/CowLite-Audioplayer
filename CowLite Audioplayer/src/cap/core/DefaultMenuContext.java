@@ -5,8 +5,8 @@
  */
 package cap.core;
 
-import cap.core.audio.Playlist;
-import cap.core.audio.PlaylistPlayer;
+import cap.audio.Playlist;
+import cap.audio.PlaylistPlayer;
 import cap.core.services.PlaylistStoreInterface;
 
 /**

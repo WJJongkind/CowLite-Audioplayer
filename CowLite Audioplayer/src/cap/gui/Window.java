@@ -30,6 +30,8 @@ public interface Window {
     public void setVisible(boolean visible);
     public void setSize(Dimension size);
     public Dimension getSize();
+    public void setFullScreen(boolean isFullScreen);
+    public boolean isFullScreen();
     public void setLocation(Point location);
     public Point getLocation();
     

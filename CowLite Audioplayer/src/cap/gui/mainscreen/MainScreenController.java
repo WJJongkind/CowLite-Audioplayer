@@ -5,15 +5,15 @@
  */
 package cap.gui.mainscreen;
 
-import cap.core.audio.PlaylistPlayer;
-import cap.core.audio.Playlist;
-import cap.core.audio.Playlist.PlaylistMode;
-import cap.core.audio.Song;
-import cap.core.audio.SongPlayer;
-import cap.core.audio.SongPlayer.SongPlayerObserver;
-import cap.core.audio.files.FileSong;
-import cap.core.audio.youtube.YouTubeService;
-import cap.core.audio.youtube.YouTubeSong;
+import cap.audio.PlaylistPlayer;
+import cap.audio.Playlist;
+import cap.audio.Playlist.PlaylistMode;
+import cap.audio.Song;
+import cap.audio.SongPlayer;
+import cap.audio.SongPlayer.SongPlayerObserver;
+import cap.audio.files.FileSong;
+import cap.audio.youtube.YouTubeService;
+import cap.audio.youtube.YouTubeSong;
 import cap.core.services.PlaylistStoreInterface;
 import cap.gui.ViewController;
 import static cap.util.SugarySyntax.nilCoalesce;
@@ -79,6 +79,8 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
         // Setting up the main screen
         this.mainScreen = new MainScreen(colorScheme);
         this.mainScreen.getVolumeSlider().setValue(playlistPlayer.getPlayer().getVolume());
+        this.mainScreen.getControlPane().setShuffleEnabled(playlistPlayer.getPlaylist().getMode() == PlaylistMode.shuffled);
+        this.mainScreen.getControlPane().setAlphabeticSortEnabled(playlistPlayer.getPlaylist().getMode() == PlaylistMode.alphabetic);
         this.mainScreen.getSavedPlaylistsPane().setPlayLists(playlistStore.getPlaylists());
         this.mainScreen.setDelegate(this);
         
@@ -170,7 +172,11 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
         PlaylistMode currentMode = playlistPlayer.getPlaylist().getMode();
         playlistPlayer.getPlaylist().setMode(currentMode == PlaylistMode.shuffled ? PlaylistMode.normal : PlaylistMode.shuffled);
         mainScreen.getPlaylistPane().setSongs(playlistPlayer.getPlaylist().getSongs());
-        playlistPlayer.getPlayer().setSong(playlistPlayer.getPlaylist().getSong(0));
+        
+        if(playlistPlayer.getPlaylist().getSongs().size() > 0) {
+            playlistPlayer.getPlayer().setSong(playlistPlayer.getPlaylist().getSong(0));
+        }
+        
         return playlistPlayer.getPlaylist().getMode() == PlaylistMode.shuffled;
     }
 
@@ -179,7 +185,11 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
         PlaylistMode currentMode = playlistPlayer.getPlaylist().getMode();
         playlistPlayer.getPlaylist().setMode(currentMode == PlaylistMode.alphabetic ? PlaylistMode.normal : PlaylistMode.alphabetic);
         mainScreen.getPlaylistPane().setSongs(playlistPlayer.getPlaylist().getSongs());
-        playlistPlayer.getPlayer().setSong(playlistPlayer.getPlaylist().getSong(0));
+        
+        if(playlistPlayer.getPlaylist().getSongs().size() > 0) {
+            playlistPlayer.getPlayer().setSong(playlistPlayer.getPlaylist().getSong(0));
+        }
+        
         return playlistPlayer.getPlaylist().getMode() == PlaylistMode.alphabetic;
     }
 
@@ -193,6 +203,7 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
     @Override
     public void didSelectPlayList(Playlist playlist) {
         Playlist newPlaylist = nilCoalesce(playlist, new Playlist());
+        newPlaylist.setMode(playlistPlayer.getPlaylist().getMode());
         playlistPlayer.setPlaylist(newPlaylist);
         mainScreen.getPlaylistPane().setSongs(newPlaylist.getSongs());
     }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cap.core.audio.files;
+package cap.audio.files;
 
 import cap.util.ResultCarryingCountdownLatch;
 import uk.co.caprica.vlcj.media.Media;

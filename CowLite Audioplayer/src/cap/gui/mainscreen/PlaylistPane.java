@@ -6,7 +6,7 @@
 package cap.gui.mainscreen;
 
 import cap.gui.shared.SexyScrollPane;
-import cap.core.audio.Song;
+import cap.audio.Song;
 import cap.gui.colorscheme.PlaylistPaneColorScheme;
 import java.awt.Component;
 import java.awt.Font;
