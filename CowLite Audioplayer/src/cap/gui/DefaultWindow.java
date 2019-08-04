@@ -17,6 +17,8 @@ import java.lang.ref.WeakReference;
 import cap.gui.colorscheme.ColorScheme;
 import cap.gui.shared.Menu;
 import cap.gui.shared.SubMenu;
+import java.util.ArrayList;
+import java.util.Stack;
 
 /**
  *
@@ -42,6 +44,8 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
     private JPanel contentPane;
     private WindowActionsPane windowActionsPane;
     private ViewController presentedViewController;
+    private ViewController visibleViewController;
+    private Stack<ViewController> pusheddViewControllers;
     
     // MARK: - Initialisers
     
@@ -62,6 +66,8 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
         contentPane.setBackground(colorScheme.frameColor());
         
         menu = new Menu(colorScheme);
+        
+        pusheddViewControllers = new Stack<>();
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 1;
@@ -86,9 +92,33 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
 
     @Override
     public void presentViewController(ViewController viewController) {
-        if(presentedViewController != null) {
-            contentPane.remove(presentedViewController.getView());
+        pusheddViewControllers.clear();
+        this.presentedViewController = viewController;
+        setVisibleViewController(viewController);
+    }
+    
+    @Override
+    public void pushViewController(ViewController viewController) {
+        pusheddViewControllers.push(viewController);
+        setVisibleViewController(viewController);
+    }
+    
+    @Override
+    public void popViewController() {
+        if(pusheddViewControllers.size() <= 0) {
+            return;
         }
+        
+        pusheddViewControllers.pop();
+        setVisibleViewController(pusheddViewControllers.size() > 0 ? pusheddViewControllers.peek() : presentedViewController);
+    }
+    
+    private void setVisibleViewController(ViewController viewController) {
+        if(visibleViewController != null) {
+            contentPane.remove(visibleViewController.getView());
+        }
+        
+        this.visibleViewController = viewController;
         
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 1;
@@ -100,7 +130,6 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
         c.fill = c.BOTH;
         
         contentPane.add(viewController.getView(), c);
-        this.presentedViewController = viewController;
         
         super.revalidate();
         super.repaint();

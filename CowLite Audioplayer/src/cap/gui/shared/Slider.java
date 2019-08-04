@@ -37,6 +37,7 @@ public class Slider extends JComponent implements MouseMotionListener, MouseList
         addMouseListener(this);
     }
 
+    long timeFromPrevious = 0;
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -45,7 +46,7 @@ public class Slider extends JComponent implements MouseMotionListener, MouseList
         g2.setColor(getBackground());
         g2.fillRect(0, 0, getWidth(), getHeight());
         
-        double percentage = value / ((double) (maximumValue - minimumValue));
+        double percentage = value / (maximumValue - minimumValue);
         g2.setColor(getForeground());
         switch(orientation) {
             case horizontal:

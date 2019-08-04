@@ -16,7 +16,7 @@ import cap.gui.colorscheme.ColorScheme;
  *
  * @author Wessel
  */
-public class AboutPanel extends SexyScrollPane {
+class AboutPanel extends SexyScrollPane {
     
     public AboutPanel(ColorScheme layout) {
         super(layout.defaultContentColor());

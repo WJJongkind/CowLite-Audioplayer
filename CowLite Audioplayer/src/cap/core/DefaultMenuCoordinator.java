@@ -12,11 +12,7 @@ import cap.gui.about.AboutViewController;
 import cap.gui.colorscheme.ColorScheme;
 import cap.gui.shared.SubMenu;
 import cap.gui.shared.SubMenuItem;
-import static java.awt.SystemColor.menu;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
@@ -25,7 +21,7 @@ import javax.swing.UIManager;
  *
  * @author Wessel
  */
-public class DefaultMenuCoordinator implements Coordinator {
+public class DefaultMenuCoordinator implements Coordinator, AboutViewController.AboutViewControllerDelegate {
     
     // MARK: - Associated types
     
@@ -54,6 +50,8 @@ public class DefaultMenuCoordinator implements Coordinator {
         menus[0] = makeFileMenu(colorScheme);
         menus[1] = makeSettingsMenu(colorScheme);
         menus[2] = makeHelpMenu(colorScheme);
+        
+        aboutViewController.setDelegate(this);
     }
     
     private SubMenu makeFileMenu(ColorScheme colorScheme) {
@@ -141,11 +139,18 @@ public class DefaultMenuCoordinator implements Coordinator {
     }
     
     private void didPressAbout() {
-        window.presentViewController(aboutViewController);
+        window.pushViewController(aboutViewController);
     }
     
     private void didPressFeatures() {
         
+    }
+    
+    // MARK: - AboutScreenDelegate
+    
+    @Override
+    public void didPressClose(AboutViewController sender) {
+        window.popViewController();
     }
     
 }

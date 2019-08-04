@@ -32,7 +32,7 @@ public class TimeSlider extends Slider {
         super.setMinimumValue(0);
         super.setMaximumValue(1);
         super.setValue(0);
-        super.addChangeListener(e -> didChangeVolume());
+        super.addChangeListener(e -> didChangePosition());
     }
     
     // MARK: - Getters & Setters
@@ -43,7 +43,7 @@ public class TimeSlider extends Slider {
     
     // MARK: - ChangeListener
     
-    private void didChangeVolume() {
+    private void didChangePosition() {
         TrackPositionDelegate strongDelegate = delegate.get();
         if(strongDelegate != null) {
             strongDelegate.didChangeTrackPosition(getValue());

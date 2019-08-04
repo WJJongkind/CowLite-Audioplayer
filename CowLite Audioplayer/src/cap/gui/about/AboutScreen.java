@@ -13,12 +13,29 @@ import javax.swing.border.EmptyBorder;
 import cap.gui.shared.Button;
 import java.awt.Insets;
 import cap.gui.colorscheme.ColorScheme;
+import static cap.util.SugarySyntax.unwrappedPerform;
+import java.lang.ref.WeakReference;
 
 /**
  *
  * @author Wessel
  */
-public class AboutScreen extends JPanel {
+class AboutScreen extends JPanel {
+    
+    // MARK: - Associated types
+    
+    interface AboutScreenDelegate {
+        
+        void didPressClose(AboutScreen sender);
+        
+    }
+    
+    // MARK: - Private properties
+    
+    private WeakReference<AboutScreenDelegate> delegate;
+    private Button button;
+    
+    // MARK: - Initialisers
     
     public AboutScreen(ColorScheme layout) {
         super.setBorder(new EmptyBorder(8, 8, 16, 8));
@@ -44,7 +61,16 @@ public class AboutScreen extends JPanel {
         c.fill = c.NONE;
         c.insets = new Insets(8, 0, 0, 0);
         
-        super.add(new Button("Close", layout.defaultButtonColorScheme()), c);
+        button = new Button("Close", layout.defaultButtonColorScheme());
+        button.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressClose(this)));
+        
+        super.add(button, c);
+    }
+    
+    // MARK: - Public functions
+    
+    public void setDelegate(AboutScreenDelegate delegate) {
+        this.delegate = new WeakReference<>(delegate);
     }
     
 }

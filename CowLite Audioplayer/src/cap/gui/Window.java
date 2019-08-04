@@ -25,6 +25,8 @@ public interface Window {
     // MARK: - Interface
     
     public void presentViewController(ViewController viewController);
+    public void pushViewController(ViewController viewController);
+    public void popViewController();
     public void setSubMenus(SubMenu... subMenus);
     public void setDelegate(WindowDelegate delegate);
     public void setVisible(boolean visible);
