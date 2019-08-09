@@ -10,6 +10,10 @@ import cap.audio.SongPlayer;
 import cap.gui.colorscheme.ColorScheme;
 import cap.gui.colorscheme.darkmode.DarkMode;
 import java.awt.Color;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 import java.net.URL;
 import javax.swing.JFrame;
@@ -18,7 +22,7 @@ import javax.swing.JFrame;
  *
  * @author Wessel
  */
-public class SongInfoOverlay extends JFrame {
+public class SongInfoOverlay extends JFrame implements MouseMotionListener, MouseListener {
     
     // MARK: - Constants
     
@@ -29,6 +33,8 @@ public class SongInfoOverlay extends JFrame {
     // MARK: - Private properties
     
     private final SongInfoPanel infoPanel;
+    private boolean isMovable = false;
+    private Point previousMousePoint = null;
     
     // MARK: - Initialisers
     
@@ -42,102 +48,57 @@ public class SongInfoOverlay extends JFrame {
         super.setSize(Layout.maximumWidth, infoPanel.getPreferredSize().height);
         super.setAlwaysOnTop(true);
         super.setFocusable(false);
+        super.addMouseMotionListener(this);
+        super.addMouseListener(this);
     }
+    
+    // MARK: - Public methods
     
     public void updateForPlayer(SongPlayer player) {
         infoPanel.updateForPlayer(player);
     }
     
-    public static void main(String[] args) throws IOException {
-        SongInfoOverlay overlay = new SongInfoOverlay(new DarkMode());
-        overlay.setLocation(1090, 0);
-        overlay.updateForPlayer(new SongPlayer() {
-            @Override
-            public boolean play() {
-                return true;
-            }
-
-            @Override
-            public void pause() {
-            }
-
-            @Override
-            public void stop() {
-            }
-
-            @Override
-            public SongPlayer.PlayerState getPlayerState() {
-                return PlayerState.playing;
-            }
-
-            @Override
-            public void setVolume(double volume) {
-            }
-
-            @Override
-            public double getVolume() {
-                return 0.75;
-            }
-
-            @Override
-            public void setSong(Song song) {
-            }
-
-            @Override
-            public Song getSong() {
-                return new Song() {
-                    @Override
-                    public String getSongName() {
-                        return "Frog";
-                    }
-
-                    @Override
-                    public String getAlbumName() {
-                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                    }
-
-                    @Override
-                    public String getArtistName() {
-                        return "Epica";
-                    }
-
-                    @Override
-                    public URL getUrl() {
-                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                    }
-
-                    @Override
-                    public long getDuration() {
-                        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                    }
-                };
-            }
-
-            @Override
-            public void seek(long toPosition) {
-            }
-
-            @Override
-            public long getPosition() {
-                return 1000;
-            }
-
-            @Override
-            public long getDuration() {
-                return 300000;
-            }
-
-            @Override
-            public void addObserver(SongPlayer.SongPlayerObserver observer) {
-            }
-
-            @Override
-            public void removeObserver(SongPlayer.SongPlayerObserver observer) {
-            }
-        });
-        
-        
-        overlay.setVisible(true);
+    public void setIsMovable(boolean isMovable) {
+        this.isMovable = isMovable;
     }
+    
+    // MARK: - MouseMotionListener
+    
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        if(previousMousePoint != null && isMovable) {
+            int dx = e.getLocationOnScreen().x - previousMousePoint.x;
+            int dy = e.getLocationOnScreen().y - previousMousePoint.y;
+            int newX = getLocation().x + dx;
+            int newY = getLocation().y + dy;
+            super.setLocation(newX, newY);
+        }
+        
+        previousMousePoint = e.getLocationOnScreen();
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {}
+    
+    // MARK: - MouseListener
+    
+    @Override
+    public void mouseClicked(MouseEvent e) {}
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        previousMousePoint = e.getLocationOnScreen();
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        previousMousePoint = null;
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+
+    @Override
+    public void mouseExited(MouseEvent e) {}
     
 }

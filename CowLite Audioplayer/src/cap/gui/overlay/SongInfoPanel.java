@@ -70,7 +70,7 @@ class SongInfoPanel extends JComponent {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(0, songInfoFont.getSize() + playerInfoFont.getSize() + Layout.marginBetweenLines);
+        return new Dimension(0, getYOffsetForFirstLine(songInfoFont, artistSongText) + playerInfoFont.getSize() + Layout.marginBetweenLines + getFontDescent(playerInfoFont, playerStateText));
     }
 
     // MARK: - Public methods
@@ -103,9 +103,13 @@ class SongInfoPanel extends JComponent {
     }
     
     private int getYOffsetForFirstLine(Font font, String text) {
+        return font.getSize() - getFontDescent(font, text);
+    }
+    
+    private int getFontDescent(Font font, String text) {
         AffineTransform affineTransform = new AffineTransform();
         FontRenderContext renderContext = new FontRenderContext(affineTransform, true, true);
-        return font.getSize() - ((int) Math.round(font.getStringBounds(text, renderContext).getHeight()) - font.getSize());
+        return (int) Math.round(font.getStringBounds(text, renderContext).getHeight()) - font.getSize();
     }
 
 }
