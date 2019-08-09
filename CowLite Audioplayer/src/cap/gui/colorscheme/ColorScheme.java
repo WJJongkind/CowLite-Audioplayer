@@ -12,6 +12,7 @@ import java.awt.Color;
  * @author Wessel
  */
 public interface ColorScheme {
+    public DynamicFont font();
     public Color frameColor();
     public Color defaultContentColor();
     public ButtonColorScheme defaultButtonColorScheme();
@@ -20,5 +21,6 @@ public interface ColorScheme {
     public SavedListsPaneColorScheme savedLists();
     public SliderColorScheme timeSliderColor();
     public SliderColorScheme volumeColor();
+    public OverlayColorScheme overlay();
     public UIImageSet imageSet();
 }

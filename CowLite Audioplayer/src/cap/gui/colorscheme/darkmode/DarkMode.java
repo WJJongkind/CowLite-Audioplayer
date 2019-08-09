@@ -14,6 +14,9 @@ import java.awt.Color;
 import java.io.IOException;
 import cap.gui.colorscheme.UIImageSet;
 import cap.gui.colorscheme.ColorScheme;
+import cap.gui.colorscheme.DynamicFont;
+import cap.gui.colorscheme.OverlayColorScheme;
+import java.awt.Font;
 
 /**
  *
@@ -22,11 +25,13 @@ import cap.gui.colorscheme.ColorScheme;
 public class DarkMode implements ColorScheme {
     
     private static DarkModeImageSet imageSet;
+    private static DynamicFont font;
     
     public DarkMode() throws IOException {
         if(imageSet == null) {
             imageSet =  new DarkModeImageSet();
         }
+        font = new DynamicFont(new Font("Tahoma", Font.PLAIN, 11));
     }
 
     @Override
@@ -167,6 +172,26 @@ public class DarkMode implements ColorScheme {
                 return new Color(0x333333);
             }
         };
+    }
+    
+    @Override
+    public OverlayColorScheme overlay() {
+        return new OverlayColorScheme() {
+            @Override
+            public Color backgroundColor() {
+                return new Color(0, 0, 0, 0.3f);
+            }
+
+            @Override
+            public Color foregroundColor() {
+                return Color.white;
+            }
+        };
+    }
+
+    @Override
+    public DynamicFont font() {
+        return font;
     }
     
 }
