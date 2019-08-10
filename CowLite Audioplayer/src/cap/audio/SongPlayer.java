@@ -23,7 +23,7 @@ public interface SongPlayer<T extends Song> {
         public void stateChanged(SongPlayer<T> player, PlayerState state);
         public void volumeChanged(SongPlayer<T> player, double volume);
         public void songChanged(SongPlayer<T> player, T song);
-        public void didSeek(SongPlayer<T> player, long position);
+        public void positionChanged(SongPlayer<T> player, long position);
     }
     
     // MARK: - Interface, audio controls

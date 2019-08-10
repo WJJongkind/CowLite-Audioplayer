@@ -8,21 +8,18 @@ package cap.gui.overlay;
 import cap.audio.Song;
 import cap.audio.SongPlayer;
 import cap.gui.colorscheme.ColorScheme;
-import cap.gui.colorscheme.darkmode.DarkMode;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.io.IOException;
-import java.net.URL;
 import javax.swing.JFrame;
 
 /**
  *
  * @author Wessel
  */
-public class SongInfoOverlay extends JFrame implements MouseMotionListener, MouseListener {
+public class SongInfoOverlay extends JFrame implements MouseMotionListener, MouseListener, SongPlayer.SongPlayerObserver<Song> {
     
     // MARK: - Constants
     
@@ -40,6 +37,7 @@ public class SongInfoOverlay extends JFrame implements MouseMotionListener, Mous
     
     public SongInfoOverlay(ColorScheme colorScheme) {
         this.infoPanel = new SongInfoPanel(colorScheme);
+        infoPanel.setShouldDrawInfo(false);
         
         super.add(infoPanel);
         super.setUndecorated(true);
@@ -53,10 +51,6 @@ public class SongInfoOverlay extends JFrame implements MouseMotionListener, Mous
     }
     
     // MARK: - Public methods
-    
-    public void updateForPlayer(SongPlayer player) {
-        infoPanel.updateForPlayer(player);
-    }
     
     public void setIsMovable(boolean isMovable) {
         this.isMovable = isMovable;
@@ -100,5 +94,34 @@ public class SongInfoOverlay extends JFrame implements MouseMotionListener, Mous
 
     @Override
     public void mouseExited(MouseEvent e) {}
+    
+    // MARK: - SongPlayerObserver
+    
+    @Override
+    public void stateChanged(SongPlayer<Song> player, SongPlayer.PlayerState state) {}
+
+    @Override
+    public void volumeChanged(SongPlayer<Song> player, double volume) {
+        infoPanel.setVolume(volume);
+        infoPanel.repaint();
+    }
+
+    @Override
+    public void songChanged(SongPlayer<Song> player, Song song) {
+        if(song == null) {
+            infoPanel.setShouldDrawInfo(false);
+        } else {
+            infoPanel.setShouldDrawInfo(true);
+            infoPanel.setSong(song);
+            infoPanel.setTimes(song.getDuration(), 0);
+        }
+        infoPanel.repaint();
+    }
+
+    @Override
+    public void positionChanged(SongPlayer<Song> player, long position) {
+        infoPanel.setTimes(player.getDuration(), player.getPosition()); // TODO improve me
+        infoPanel.repaint();
+    }
     
 }

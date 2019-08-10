@@ -16,8 +16,8 @@ import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import cap.gui.colorscheme.ColorScheme;
+import javax.swing.event.ListSelectionListener;
 
 /**
  *
@@ -38,6 +38,8 @@ public class SavedPlaylistsPane extends JScrollPane {
     
     // MARK: - Private properties
     
+    private final ListSelectionListener selectionListener = e -> didSelectPlaylist(e.getFirstIndex());
+    
     private WeakReference<PlayListSelectionDelegate> delegate;
     private List<Playlist> playlists;
     
@@ -50,7 +52,7 @@ public class SavedPlaylistsPane extends JScrollPane {
         
         playlistPane.setBackground(colorScheme.savedLists().backgroundColor());
         playlistPane.setForeground(colorScheme.savedLists().textColor());
-        playlistPane.addListSelectionListener(e -> didSelectPlaylist(e.getFirstIndex()));
+        playlistPane.addListSelectionListener(selectionListener);
         playlistPane.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
         playlistPane.setModel(playlistListModel);
         playlistPane.setCellRenderer(new ListCellRenderer(colorScheme.savedLists()));
@@ -76,6 +78,14 @@ public class SavedPlaylistsPane extends JScrollPane {
         for(Playlist playlist: playlists) {
             playlistListModel.addElement(playlist.getName());
         }
+    }
+    
+    public void clearSelection() {
+        // Removing and re-adding selection listener is required because otherwise the delegate
+        // will be notified that index 0 has been selected,which is bad as that is not the case.
+        playlistPane.removeListSelectionListener(selectionListener);
+        playlistPane.clearSelection();
+        playlistPane.addListSelectionListener(selectionListener);
     }
     
     // MARK: - ListSelectionListener

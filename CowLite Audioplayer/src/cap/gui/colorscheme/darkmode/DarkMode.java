@@ -31,7 +31,7 @@ public class DarkMode implements ColorScheme {
         if(imageSet == null) {
             imageSet =  new DarkModeImageSet();
         }
-        font = new DynamicFont(new Font("Tahoma", Font.PLAIN, 11));
+        font = new DynamicFont(new Font("Dialog", Font.PLAIN, 11));
     }
 
     @Override

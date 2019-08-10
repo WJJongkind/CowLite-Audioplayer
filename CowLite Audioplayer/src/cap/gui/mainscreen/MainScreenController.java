@@ -52,6 +52,7 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
         public static final Set<String> supportedFileTypes = new HashSet<>();
         
         static {
+            // TODO probably should inject these...? Or make them a property on the relevant player?
             String[] supportedExtensions = {"3pg", "aac", "act", "aiff", "flac", "gsm", "m4a", "m4p", "mp3", "ogg", "oga", "mogg", "opus", "vox", "webm", "wma", "mp4", "avi", "wmv", "wav", "flv", "mov"};
             supportedFileTypes.addAll(Arrays.asList(supportedExtensions));
         }
@@ -121,7 +122,7 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
     }
 
     @Override
-    public void didSeek(SongPlayer<Song> player, long position) {
+    public void positionChanged(SongPlayer<Song> player, long position) {
         double percentageDone = position / ((double) player.getDuration());
         mainScreen.getTrackPositionSlider().setValue(percentageDone);
     }
@@ -198,6 +199,7 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
         playlistPlayer.getPlayer().stop();
         playlistPlayer.setPlaylist(new Playlist());
         mainScreen.getPlaylistPane().setSongs(playlistPlayer.getPlaylist().getSongs());
+        mainScreen.getSavedPlaylistsPane().clearSelection();
     }
 
     @Override

@@ -21,9 +21,10 @@ import uk.co.caprica.vlcj.binding.RuntimeUtil;
 import java.io.File;
 import java.net.URISyntaxException;
 import cap.gui.colorscheme.ColorScheme;
-import static cap.util.SugarySyntax.nilCoalesce;
+import cap.gui.overlay.SongInfoOverlay;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.util.HashMap;
 
 /**
@@ -61,8 +62,12 @@ public class CowLiteAudioPlayer {
         // UI layout
         ColorScheme colorScheme = new DarkMode();
         
+        // Overlay. We alreayd need this because the overlay has an inherent preferred size which we will give as input to the appstate service as a default value.
+        SongInfoOverlay overlay = new SongInfoOverlay(colorScheme);
+        
         // App state that persists through sessions
-        AppStateService appStateService = new AppStateService(controls, 0.5, Playlist.PlaylistMode.normal, new Dimension(1280,720), new Point(200, 200), false);
+        int centerX = (int) Math.round(Toolkit.getDefaultToolkit().getScreenSize().width / 2.0 - overlay.getWidth() / 2.0);
+        AppStateService appStateService = new AppStateService(controls, 0.5, Playlist.PlaylistMode.normal, new Dimension(1280,720), new Point(200, 200), overlay.getSize(), new Point(centerX, 0), false);
         
         // Music playback
         PlaylistPlayer playlistPlayer = new PlaylistPlayer(new DynamicSongPlayer());
@@ -77,7 +82,13 @@ public class CowLiteAudioPlayer {
         GlobalScreen.addNativeKeyListener(hotkeyListener);
         
         // Main coordinator
-        applicationCoordinator = new ApplicationCoordinator(colorScheme, hotkeyListener, playlistPlayer, playlistStore, new DefaultMenuContext(playlistPlayer, playlistStore), appStateService);
+        applicationCoordinator = new ApplicationCoordinator(colorScheme, hotkeyListener, playlistPlayer, playlistStore, new DefaultMenuContext(playlistPlayer, playlistStore), appStateService, overlay);
+        
+        // Update overlay with stored settings
+        overlay.setSize(appStateService.getOverlaySize());
+        overlay.setLocation(appStateService.getOverlayLocation());
+        overlay.volumeChanged(playlistPlayer.getPlayer(), playlistPlayer.getPlayer().getVolume());
+        playlistPlayer.getPlayer().addObserver(overlay);
         
         // Initiate UI
         mainWindow = new DefaultWindow(colorScheme);

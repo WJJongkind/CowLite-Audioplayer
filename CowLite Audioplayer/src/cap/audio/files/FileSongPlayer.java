@@ -109,7 +109,7 @@ public class FileSongPlayer implements SongPlayer<FileSong> {
     public void seek(long toPosition) {
         if(state == PlayerState.playing || state == PlayerState.paused) {
             mediaPlayer.controls().setTime(toPosition);
-            unwrappedPerform(observers, observer -> observer.didSeek(this, toPosition));
+            unwrappedPerform(observers, observer -> observer.positionChanged(this, toPosition));
         }
     }
 
@@ -131,6 +131,12 @@ public class FileSongPlayer implements SongPlayer<FileSong> {
     @Override
     public void removeObserver(SongPlayerObserver<FileSong> observer) {
         observers.remove(new WeakReference<>(observer));
+    }
+    
+    // MARK: - ActionListener for timer
+    
+    private void notifyPositionChanged() {
+        unwrappedPerform(observers, observer -> observer.positionChanged(this, getPosition()));
     }
     
 }

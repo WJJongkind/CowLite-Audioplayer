@@ -53,7 +53,7 @@ public class HotkeyListener implements NativeKeyListener {
         public void didPressVolumeUp();
         public void didPressVolumeDown();
         public void repositionOverlay(int dx, int dy);
-        public void allowOverlayRepositioning();
+        public void shouldAllowOverlayRepositioning(boolean shouldAllowOverlayRepositioning);
         public void toggleOverlay();
     }
     
@@ -112,8 +112,10 @@ public class HotkeyListener implements NativeKeyListener {
         
         HotkeyListenerDelegate delegate = this.delegate.get();
         if (alt) {
-            delegate.allowOverlayRepositioning();
+            delegate.shouldAllowOverlayRepositioning(true);
             repositionIfNeeded();
+        } else {
+            delegate.shouldAllowOverlayRepositioning(false);
         }
         
         if(alt && show) {

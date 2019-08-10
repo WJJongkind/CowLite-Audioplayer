@@ -13,6 +13,7 @@ import static cap.util.SugarySyntax.unwrappedPerform;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import javax.swing.Timer;
 
 /**
  *
@@ -20,24 +21,38 @@ import java.util.ArrayList;
  */
 public class DynamicSongPlayer implements SongPlayer<Song> {
     
+    // MARK: - Constants
+    
+    private static final class Constants {
+        public static final int positionChangedTimerInterval = 30;
+    }
+    
+    // MARK: - Private properties
+    
+    private final ArrayList<WeakReference<SongPlayerObserver<Song>>> observers = new ArrayList<>();
     private final FileSongPlayer fileSongPlayer;
     private final YTSongPlayer ytSongPlayer;
+    private final Timer timer;
     
-    private ArrayList<WeakReference<SongPlayerObserver<Song>>> observers = new ArrayList<>();
     private SongPlayer<?> activePlayer;
     private double volume = 0.5;
+    
+    // MARK: - Initialisers
     
     public DynamicSongPlayer() throws IOException {
         fileSongPlayer = new FileSongPlayer();
         ytSongPlayer = new YTSongPlayer();
+        timer = new Timer(Constants.positionChangedTimerInterval, e -> notifyPositionChanged());
     }
+    
+    // MARK: - SongPlayer
 
     @Override
     public boolean play() {
         PlayerState oldState = getPlayerState();
         boolean result = activePlayer == null ? false : activePlayer.play();
-        System.out.println(getPlayerState() + "   " + oldState);
         if(getPlayerState() != oldState) {
+            timer.start();
             unwrappedPerform(observers, observer -> observer.stateChanged(this, getPlayerState()));
         }
         return result;
@@ -49,6 +64,7 @@ public class DynamicSongPlayer implements SongPlayer<Song> {
             PlayerState oldState = getPlayerState();
             activePlayer.pause();
             if(getPlayerState() != oldState) {
+                timer.stop();
                 unwrappedPerform(observers, observer -> observer.stateChanged(this, getPlayerState()));
             }
         }
@@ -60,6 +76,7 @@ public class DynamicSongPlayer implements SongPlayer<Song> {
             PlayerState oldState = getPlayerState();
             activePlayer.stop();
             if(getPlayerState() != oldState) {
+                timer.stop();
                 unwrappedPerform(observers, observer -> observer.stateChanged(this, getPlayerState()));
             }
         }
@@ -115,7 +132,7 @@ public class DynamicSongPlayer implements SongPlayer<Song> {
     public void seek(long toPosition) {
         if(activePlayer != null && activePlayer.getSong() != null) {
             activePlayer.seek(toPosition);
-            unwrappedPerform(observers, observer -> observer.didSeek(this, toPosition));
+            unwrappedPerform(observers, observer -> observer.positionChanged(this, toPosition));
         }
     }
 
@@ -137,6 +154,12 @@ public class DynamicSongPlayer implements SongPlayer<Song> {
     @Override
     public void removeObserver(SongPlayerObserver<Song> observer) {
         observers.remove(new WeakReference<>(observer));
+    }
+    
+    // MARK: - ActionListener for timer
+    
+    private void notifyPositionChanged() {
+        unwrappedPerform(observers, observer -> observer.positionChanged(this, getPosition()));
     }
     
 }

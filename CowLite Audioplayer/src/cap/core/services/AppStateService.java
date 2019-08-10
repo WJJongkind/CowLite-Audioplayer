@@ -45,6 +45,8 @@ public class AppStateService implements AppStateServiceInterface {
         private static final String windowLocationKey = "window location";
         private static final String windowSizeKey = "window size";
         private static final String windowFullscreenKey = "window fullscreen";
+        private static final String overlayLocationKey = "overlay location";
+        private static final String overlaySizeKey = "overlay size";
         
         // MARK: - Config files
         
@@ -61,11 +63,20 @@ public class AppStateService implements AppStateServiceInterface {
     private PlaylistMode playlistMode;
     private Point windowLocation;
     private Dimension windowSize;
+    private Point overlayLocation;
+    private Dimension overlaySize;
     private boolean isWindowFullscreen;
     
     // MARK: - Initialisers
     
-    public AppStateService(HashMap<HotkeyListener.Control, String> defaultControls, double defaultVolume, PlaylistMode defaultPlaylistMode, Dimension defaultWindowSize, Point defaultWindowLocation, boolean isWindowDefaultFullscreen) {
+    public AppStateService(HashMap<HotkeyListener.Control, String> defaultControls, 
+                           double defaultVolume, 
+                           PlaylistMode defaultPlaylistMode, 
+                           Dimension defaultWindowSize, 
+                           Point defaultWindowLocation, 
+                           Dimension defaultOverlaySize, 
+                           Point defaultOverlayLocation, 
+                           boolean isWindowDefaultFullscreen) {
         // Set defaults, which may be overridden by stored settings
         controls = defaultControls;
         volume = defaultVolume;
@@ -73,6 +84,8 @@ public class AppStateService implements AppStateServiceInterface {
         windowSize = defaultWindowSize;
         windowLocation = defaultWindowLocation;
         isWindowFullscreen = isWindowDefaultFullscreen;
+        overlayLocation = defaultOverlayLocation;
+        overlaySize = defaultOverlaySize;
         
         // Load stored settings
         loadControls();
@@ -128,6 +141,12 @@ public class AppStateService implements AppStateServiceInterface {
                         break;
                     case Constants.windowFullscreenKey:
                         isWindowFullscreen = Boolean.parseBoolean(splitValue[0]);
+                        break;
+                    case Constants.overlayLocationKey:
+                        overlayLocation = new Point(Integer.parseInt(splitValue[0]), Integer.parseInt(splitValue[1]));
+                        break;
+                    case Constants.overlaySizeKey:
+                        overlaySize = new Dimension(Integer.parseInt(splitValue[0]), Integer.parseInt(splitValue[1]));
                         break;
                 }
             }
@@ -195,10 +214,24 @@ public class AppStateService implements AppStateServiceInterface {
         this.windowLocation = location;
         this.windowSize = size;
         
+        saveGraphicsSettings(location, size, isFullScreen, overlayLocation, overlaySize);
+    }
+
+    @Override
+    public void saveOverlaySettings(Point location, Dimension size) {
+        this.overlayLocation = location;
+        this.overlaySize = size;
+        
+        saveGraphicsSettings(windowLocation, windowSize, isWindowFullscreen, location, size);
+    }
+    
+    private void saveGraphicsSettings(Point windowLocation, Dimension windowSize, boolean isWindowFullScreen, Point overlayLocation, Dimension overlaySize) {
         SaveJob printJob = out -> {
-            out.println(Constants.windowLocationKey + Constants.cfgDelimiter + location.x + Constants.valueDelimiter + location.y);
-            out.println(Constants.windowSizeKey + Constants.cfgDelimiter + size.width + Constants.valueDelimiter + size.height);
-            out.println(Constants.windowFullscreenKey + Constants.cfgDelimiter + isFullScreen);
+            out.println(Constants.windowLocationKey + Constants.cfgDelimiter + windowLocation.x + Constants.valueDelimiter + windowLocation.y);
+            out.println(Constants.windowSizeKey + Constants.cfgDelimiter + windowSize.width + Constants.valueDelimiter + windowSize.height);
+            out.println(Constants.windowFullscreenKey + Constants.cfgDelimiter + isWindowFullScreen);
+            out.println(Constants.overlayLocationKey + Constants.cfgDelimiter + overlayLocation.x + Constants.valueDelimiter + overlayLocation.y);
+            out.println(Constants.overlaySizeKey + Constants.cfgDelimiter + overlaySize.width + Constants.valueDelimiter + overlaySize.height);
         };
         
         try {
@@ -233,6 +266,16 @@ public class AppStateService implements AppStateServiceInterface {
     @Override
     public Dimension getWindowSize() {
         return windowSize;
+    }
+
+    @Override
+    public Point getOverlayLocation() {
+        return overlayLocation;
+    }
+
+    @Override
+    public Dimension getOverlaySize() {
+        return overlaySize;
     }
     
     @Override

@@ -5,6 +5,7 @@
  */
 package cap.gui.overlay;
 
+import cap.audio.Song;
 import cap.audio.SongPlayer;
 import cap.gui.colorscheme.ColorScheme;
 import cap.gui.colorscheme.OverlayColorScheme;
@@ -29,15 +30,22 @@ class SongInfoPanel extends JComponent {
     
     private static final class Layout {
         public static final int marginBetweenLines = 4;
+        public static final int paddingTop = 4;
+        public static final int paddingBottom = 4;
+        public static final int paddingLeft = 4;
+        public static final int paddingRight = 4;
     }
     
     // MARK: - Private properties
 
     private String artistSongText = "";
     private String playerStateText = "";
+    private String playerPositionText = "";
+    private String volumeText = "";
     private Font songInfoFont;
     private Font playerInfoFont;
     private OverlayColorScheme colorScheme;
+    private boolean shouldDrawInfo = true;
 
     // MARK: - Initialisers
 
@@ -57,30 +65,42 @@ class SongInfoPanel extends JComponent {
         g2.setColor(colorScheme.backgroundColor());
         g2.fillRect(0, 0, getWidth(), getHeight());
 
+        if(!shouldDrawInfo) {
+            return;
+        }
+        
         g2.setColor(colorScheme.foregroundColor());
         
         g2.setFont(songInfoFont);
         String trimmedArtistSongText = trimString(g2, artistSongText);
-        g2.drawString(trimmedArtistSongText, getStringX(trimmedArtistSongText, g2), getYOffsetForFirstLine(songInfoFont, artistSongText));
+        g2.drawString(trimmedArtistSongText, getStringX(trimmedArtistSongText, g2), getYOffsetForFirstLine(songInfoFont, artistSongText) + Layout.paddingTop);
 
         g2.setFont(playerInfoFont);
-        String trimmedPlayerState = trimString(g2, playerStateText);
-        g2.drawString(trimmedPlayerState, getStringX(trimmedPlayerState, g2), getYOffsetForFirstLine(songInfoFont, artistSongText) + playerInfoFont.getSize() + Layout.marginBetweenLines);
+        String trimmedPlayerState = trimString(g2, playerPositionText + "      " + volumeText);
+        g2.drawString(trimmedPlayerState, getStringX(trimmedPlayerState, g2), getYOffsetForFirstLine(songInfoFont, artistSongText) + playerInfoFont.getSize() + Layout.marginBetweenLines + Layout.paddingTop);
     }
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(0, getYOffsetForFirstLine(songInfoFont, artistSongText) + playerInfoFont.getSize() + Layout.marginBetweenLines + getFontDescent(playerInfoFont, playerStateText));
+        return new Dimension(0, getYOffsetForFirstLine(songInfoFont, artistSongText) + playerInfoFont.getSize() + Layout.marginBetweenLines + getFontDescent(playerInfoFont, playerStateText) + Layout.paddingTop + Layout.paddingBottom);
     }
 
     // MARK: - Public methods
-
-    public void updateForPlayer(SongPlayer player) {
-        artistSongText = player.getSong().getArtistName() + " - " + player.getSong().getSongName();
-
-        String positionInfo =  MillisecondsToTimestampConverter.convert(player.getPosition()) + "|" + MillisecondsToTimestampConverter.convert(player.getDuration());
-        String volumeInfo = "Volume: " + (int)(100 * player.getVolume());
-        playerStateText = positionInfo + "      " + volumeInfo + "%";
+    
+    public void setVolume(double volume) {
+        volumeText = "Volume: " + (int)(100 * volume) + "%";
+    }
+    
+    public void setTimes(long songDuration, long position) {
+        playerPositionText = MillisecondsToTimestampConverter.convert(position) + " | " + MillisecondsToTimestampConverter.convert(songDuration);
+    }
+    
+    public void setSong(Song song) {
+        artistSongText = song.getArtistName() + " - " + song.getSongName();
+    }
+    
+    public void setShouldDrawInfo(boolean shouldDrawInfo) {
+        this.shouldDrawInfo = shouldDrawInfo;
     }
 
     // MARK: - Private methods
@@ -95,8 +115,8 @@ class SongInfoPanel extends JComponent {
     private String trimString(Graphics g, String s) {
         String result = s;
 
-        while(getWidth() < g.getFontMetrics().getStringBounds(result, g).getWidth()) {
-            result = result.substring(0, result.length() - 4);
+        while(getWidth() - Layout.paddingLeft - Layout.paddingRight < g.getFontMetrics().getStringBounds(result, g).getWidth()) {
+            result = result.substring(0, result.length() - 4) + "...";
         }
 
         return result;

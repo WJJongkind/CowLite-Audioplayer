@@ -117,7 +117,7 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
         if(currentSong != null) {
             double position = toPosition / 1000.0;
             browser.executeJavaScript("player.seekTo(" + position + ", true)");
-            unwrappedPerform(observers, observer -> observer.didSeek(this, toPosition));
+            unwrappedPerform(observers, observer -> observer.positionChanged(this, toPosition));
         }
     }
 
