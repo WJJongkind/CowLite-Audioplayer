@@ -11,7 +11,6 @@ import cap.audio.SongPlayer;
 import cap.audio.youtube.YouTubeService;
 import cap.core.services.PlaylistStoreInterface;
 import cap.core.DefaultMenuCoordinator.DefaultMenuContextInterface;
-import cap.core.services.AppStateService;
 import cap.core.services.AppStateServiceInterface;
 import cap.gui.Window;
 import cap.gui.mainscreen.MainScreenController;
@@ -45,7 +44,7 @@ public class ApplicationCoordinator implements Coordinator, HotkeyListener.Hotke
     public ApplicationCoordinator(ColorScheme colorScheme, HotkeyListener hotkeyListener, PlaylistPlayer playlistPlayer, PlaylistStoreInterface playlistStore, DefaultMenuContextInterface menuContext, AppStateServiceInterface appStateService, SongInfoOverlay overlay) throws IOException {
         this.playlistPlayer = playlistPlayer;
         this.mainScreenController = new MainScreenController(colorScheme, playlistPlayer, new YouTubeService(), playlistStore);
-        this.defaultMenuCoordinator = new DefaultMenuCoordinator(colorScheme, menuContext);
+        this.defaultMenuCoordinator = new DefaultMenuCoordinator(colorScheme, menuContext, overlay);
         this.appStateService = appStateService;
         this.overlay = overlay;
         

@@ -10,8 +10,10 @@ import cap.core.services.PlaylistStoreInterface;
 import cap.gui.Window;
 import cap.gui.about.AboutViewController;
 import cap.gui.colorscheme.ColorScheme;
+import cap.gui.overlay.SongInfoOverlay;
 import cap.gui.shared.SubMenu;
 import cap.gui.shared.SubMenuItem;
+import java.awt.Toolkit;
 import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.LookAndFeel;
@@ -37,19 +39,22 @@ public class DefaultMenuCoordinator implements Coordinator, AboutViewController.
     private final AboutViewController aboutViewController;
     private final DefaultMenuContextInterface menuContext;
     private final SubMenu[] menus;
+    private final SongInfoOverlay overlay;
     
     private Window window;
     
     // MARK: - Initialisers
     
-    public DefaultMenuCoordinator(ColorScheme colorScheme, DefaultMenuContextInterface menuContext) {
+    public DefaultMenuCoordinator(ColorScheme colorScheme, DefaultMenuContextInterface menuContext, SongInfoOverlay overlay) {
         this.menuContext = menuContext;
         this.aboutViewController = new AboutViewController(colorScheme);
+        this.overlay = overlay;
         
-        menus = new SubMenu[3];
+        menus = new SubMenu[4];
         menus[0] = makeFileMenu(colorScheme);
         menus[1] = makeSettingsMenu(colorScheme);
-        menus[2] = makeHelpMenu(colorScheme);
+        menus[2] = makeWindowMenu(colorScheme);
+        menus[3] = makeHelpMenu(colorScheme);
         
         aboutViewController.setDelegate(this);
     }
@@ -78,6 +83,18 @@ public class DefaultMenuCoordinator implements Coordinator, AboutViewController.
         return subMenu;
     }
     
+    private SubMenu makeWindowMenu(ColorScheme colorScheme) {
+        SubMenu subMenu = new SubMenu("Window", colorScheme);
+        
+        SubMenuItem layout = new SubMenuItem("Toggle overlay", colorScheme, e -> didPressToggleOverlay());
+        SubMenuItem hotkeys = new SubMenuItem("Reset overlay location", colorScheme, e -> didPressResetOverlayLocation());
+        
+        subMenu.add(layout);
+        subMenu.add(hotkeys);
+        
+        return subMenu;
+    }
+    
     private SubMenu makeHelpMenu(ColorScheme colorScheme) {
         SubMenu subMenu = new SubMenu("Help", colorScheme);
         
@@ -98,7 +115,7 @@ public class DefaultMenuCoordinator implements Coordinator, AboutViewController.
         this.window = window;
     }
     
-    // MARK: - Private methods
+    // MARK: - Private methods, File submenu
     
     private void didPressSavePlaylist() {
         JFileChooser chooser = null;
@@ -130,6 +147,8 @@ public class DefaultMenuCoordinator implements Coordinator, AboutViewController.
         }
     }
     
+    // MARK: - Private methods, Settings submenu
+    
     private void didPressLayout() {
         
     }
@@ -138,12 +157,28 @@ public class DefaultMenuCoordinator implements Coordinator, AboutViewController.
         
     }
     
+    // MARK: - Private methods, Help submenu
+    
     private void didPressAbout() {
         window.pushViewController(aboutViewController);
     }
     
     private void didPressFeatures() {
         
+    }
+    
+    // MARK: - Private methods, Window submenu
+    
+    private void didPressToggleOverlay() {
+        overlay.setVisible(!overlay.isVisible());
+    }
+    
+    private void didPressResetOverlayLocation() {
+        int centerX = Toolkit.getDefaultToolkit().getScreenSize().width / 2 - overlay.getWidth() / 2;
+        overlay.setLocation(centerX, 0);
+        
+        // Ensures that overlay becomes visible, assuming that that's what the user wants when he presses the reset button.
+        overlay.setVisible(true);
     }
     
     // MARK: - AboutScreenDelegate
