@@ -47,6 +47,7 @@ public class AppStateService implements AppStateServiceInterface {
         private static final String windowFullscreenKey = "window fullscreen";
         private static final String overlayLocationKey = "overlay location";
         private static final String overlaySizeKey = "overlay size";
+        private static final String overlayEnabledKey = "overlay enabled";
         
         // MARK: - Config files
         
@@ -66,6 +67,7 @@ public class AppStateService implements AppStateServiceInterface {
     private Point overlayLocation;
     private Dimension overlaySize;
     private boolean isWindowFullscreen;
+    private boolean isOverlayEnabled;
     
     // MARK: - Initialisers
     
@@ -76,7 +78,8 @@ public class AppStateService implements AppStateServiceInterface {
                            Point defaultWindowLocation, 
                            Dimension defaultOverlaySize, 
                            Point defaultOverlayLocation, 
-                           boolean isWindowDefaultFullscreen) {
+                           boolean isWindowDefaultFullscreen,
+                           boolean defaultIsOverlayEnabled) {
         // Set defaults, which may be overridden by stored settings
         controls = defaultControls;
         volume = defaultVolume;
@@ -86,6 +89,7 @@ public class AppStateService implements AppStateServiceInterface {
         isWindowFullscreen = isWindowDefaultFullscreen;
         overlayLocation = defaultOverlayLocation;
         overlaySize = defaultOverlaySize;
+        isOverlayEnabled = defaultIsOverlayEnabled;
         
         // Load stored settings
         loadControls();
@@ -147,6 +151,9 @@ public class AppStateService implements AppStateServiceInterface {
                         break;
                     case Constants.overlaySizeKey:
                         overlaySize = new Dimension(Integer.parseInt(splitValue[0]), Integer.parseInt(splitValue[1]));
+                        break;
+                    case Constants.overlayEnabledKey:
+                        isOverlayEnabled = Boolean.parseBoolean(splitValue[0]);
                         break;
                 }
             }
@@ -214,24 +221,25 @@ public class AppStateService implements AppStateServiceInterface {
         this.windowLocation = location;
         this.windowSize = size;
         
-        saveGraphicsSettings(location, size, isFullScreen, overlayLocation, overlaySize);
+        saveGraphicsSettings(location, size, isFullScreen, overlayLocation, overlaySize, isOverlayEnabled);
     }
 
     @Override
-    public void saveOverlaySettings(Point location, Dimension size) {
+    public void saveOverlaySettings(Point location, Dimension size, boolean isEnabled) {
         this.overlayLocation = location;
         this.overlaySize = size;
         
-        saveGraphicsSettings(windowLocation, windowSize, isWindowFullscreen, location, size);
+        saveGraphicsSettings(windowLocation, windowSize, isWindowFullscreen, location, size, isEnabled);
     }
     
-    private void saveGraphicsSettings(Point windowLocation, Dimension windowSize, boolean isWindowFullScreen, Point overlayLocation, Dimension overlaySize) {
+    private void saveGraphicsSettings(Point windowLocation, Dimension windowSize, boolean isWindowFullScreen, Point overlayLocation, Dimension overlaySize, boolean isOverlayEnabled) {
         SaveJob printJob = out -> {
             out.println(Constants.windowLocationKey + Constants.cfgDelimiter + windowLocation.x + Constants.valueDelimiter + windowLocation.y);
             out.println(Constants.windowSizeKey + Constants.cfgDelimiter + windowSize.width + Constants.valueDelimiter + windowSize.height);
             out.println(Constants.windowFullscreenKey + Constants.cfgDelimiter + isWindowFullScreen);
             out.println(Constants.overlayLocationKey + Constants.cfgDelimiter + overlayLocation.x + Constants.valueDelimiter + overlayLocation.y);
             out.println(Constants.overlaySizeKey + Constants.cfgDelimiter + overlaySize.width + Constants.valueDelimiter + overlaySize.height);
+            out.println(Constants.overlayEnabledKey + Constants.cfgDelimiter + isOverlayEnabled);
         };
         
         try {
@@ -276,6 +284,11 @@ public class AppStateService implements AppStateServiceInterface {
     @Override
     public Dimension getOverlaySize() {
         return overlaySize;
+    }
+    
+    @Override
+    public boolean isOverlayEnabled() {
+        return isOverlayEnabled;
     }
     
     @Override
@@ -329,7 +342,7 @@ public class AppStateService implements AppStateServiceInterface {
         
     }
     
-    private class KeyValuePair {
+    private class KeyValuePair { // TODO get rid of this, should be using a hashmap
         
         public String key;
         public String value;

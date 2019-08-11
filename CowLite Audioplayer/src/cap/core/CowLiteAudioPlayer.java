@@ -67,7 +67,7 @@ public class CowLiteAudioPlayer {
         
         // App state that persists through sessions
         int centerX = (int) Math.round(Toolkit.getDefaultToolkit().getScreenSize().width / 2.0 - overlay.getWidth() / 2.0);
-        AppStateService appStateService = new AppStateService(controls, 0.5, Playlist.PlaylistMode.normal, new Dimension(1280,720), new Point(200, 200), overlay.getSize(), new Point(centerX, 0), false);
+        AppStateService appStateService = new AppStateService(controls, 0.5, Playlist.PlaylistMode.normal, new Dimension(1280,720), new Point(200, 200), overlay.getSize(), new Point(centerX, 0), false, false);
         
         // Music playback
         PlaylistPlayer playlistPlayer = new PlaylistPlayer(new DynamicSongPlayer());
@@ -97,6 +97,7 @@ public class CowLiteAudioPlayer {
         mainWindow.setFullScreen(appStateService.isWindowFullScreen());
         applicationCoordinator.start(mainWindow);
         mainWindow.setVisible(true);
+        overlay.setVisible(appStateService.isOverlayEnabled());
     }
     
     private static void configureGlobalEnvironment() {

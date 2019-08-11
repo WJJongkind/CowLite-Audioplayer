@@ -21,7 +21,7 @@ public interface AppStateServiceInterface {
     public void saveVolume(double volume);
     public void savePlaylistMode(PlaylistMode mode);
     public void saveWindowSettings(Point location, Dimension size, boolean isFullScreen);
-    public void saveOverlaySettings(Point location, Dimension size);
+    public void saveOverlaySettings(Point location, Dimension size, boolean isEnabled);
     public Map<HotkeyListener.Control, String> getControls();
     public double getVolume();
     public PlaylistMode getPlaylistMode();
@@ -30,4 +30,5 @@ public interface AppStateServiceInterface {
     public Point getOverlayLocation();
     public Dimension getOverlaySize();
     public boolean isWindowFullScreen();
+    public boolean isOverlayEnabled();
 }

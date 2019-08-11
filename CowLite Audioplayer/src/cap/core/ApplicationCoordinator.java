@@ -136,7 +136,7 @@ public class ApplicationCoordinator implements Coordinator, HotkeyListener.Hotke
     public void didPressCloseWindow(Window window) {
         if(window == this.window) {
             appStateService.saveWindowSettings(window.getLocation(), window.getSize(), window.isFullScreen());
-            appStateService.saveOverlaySettings(overlay.getLocation(), overlay.getSize());
+            appStateService.saveOverlaySettings(overlay.getLocation(), overlay.getSize(), overlay.isVisible());
             appStateService.saveVolume(playlistPlayer.getPlayer().getVolume());
             appStateService.savePlaylistMode(playlistPlayer.getPlaylist().getMode());
             appStateService.saveControls(hotkeyListener.getControls());
