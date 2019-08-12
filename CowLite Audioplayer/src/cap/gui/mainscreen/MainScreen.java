@@ -36,6 +36,7 @@ public class MainScreen extends JPanel {
         public static final int timeSliderMarginBottom = 8;
         public static final int timeSliderMarginRight = 8;
         public static final int volumeSliderMarginBottom = 8;
+        public static final int controlPaneMarginLeft = 3;
         
         // MARK: - Sliders
         
@@ -138,7 +139,7 @@ public class MainScreen extends JPanel {
         c.gridwidth = 2;
         c.gridheight = 1;
         c.fill = c.HORIZONTAL;
-        c.insets = new Insets(0, 0, Layout.marginBottom, 0);
+        c.insets = new Insets(0, Layout.controlPaneMarginLeft, Layout.marginBottom, 0);
         
         add(controlPane, c);
     }

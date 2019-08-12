@@ -48,6 +48,7 @@ public class SongInfoOverlay extends JFrame implements MouseMotionListener, Mous
         super.setFocusable(false);
         super.addMouseMotionListener(this);
         super.addMouseListener(this);
+        super.setType(JFrame.Type.UTILITY);
     }
     
     // MARK: - Public methods

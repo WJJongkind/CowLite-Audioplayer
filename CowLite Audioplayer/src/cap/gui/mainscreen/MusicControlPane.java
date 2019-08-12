@@ -41,14 +41,14 @@ public class MusicControlPane extends JPanel {
     // MARK: - Layout properties
     
     private static final class Layout {
-        static final Dimension playButtonSize = new Dimension(15, 15);
-        static final Dimension pauseButtonSize = new Dimension(15, 15);
-        static final Dimension stopButtonSize = new Dimension(15, 15);
-        static final Dimension nextButtonSize = new Dimension(15, 15);
-        static final Dimension previousButtonSize = new Dimension(15, 15);
-        static final Dimension shuffleButtonSize = new Dimension(19, 15);
-        static final Dimension clearButtonSize = new Dimension(30, 15);
-        static final Dimension alphabeticButtonSize = new Dimension(29, 15);
+        static final Dimension playButtonSize = new Dimension(14, 14);
+        static final Dimension pauseButtonSize = new Dimension(14, 14);
+        static final Dimension stopButtonSize = new Dimension(14, 14);
+        static final Dimension nextButtonSize = new Dimension(10, 10);
+        static final Dimension previousButtonSize = new Dimension(10, 10);
+        static final Dimension shuffleButtonSize = new Dimension(16, 12);
+        static final Dimension clearButtonSize = new Dimension(34, 10);
+        static final Dimension alphabeticButtonSize = new Dimension(22, 10);
         static final int spacingBetweenButtons = 5;
     }
     
