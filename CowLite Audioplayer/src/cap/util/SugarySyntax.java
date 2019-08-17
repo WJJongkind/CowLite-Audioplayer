@@ -35,6 +35,36 @@ public class SugarySyntax {
         }
     }
     
+    public static <T extends Comparable> T clamp(T value, T lowerBound, T upperBound) {
+        if(value.compareTo(lowerBound) < 0) {
+            return lowerBound;
+        } else if(value.compareTo(upperBound) > 0) {
+            return upperBound;
+        } else {
+            return value;
+        }
+    }
+    
+    public static int clamp(int value, int lowerBound, int upperBound) {
+        if(value < lowerBound) {
+            return lowerBound;
+        } else if(value > upperBound) {
+            return upperBound;
+        } else {
+            return value;
+        }
+    }
+    
+    public static double clamp(double value, double lowerBound, double upperBound) {
+        if(value < lowerBound) {
+            return lowerBound;
+        } else if(value > upperBound) {
+            return upperBound;
+        } else {
+            return value;
+        }
+    }
+    
     public interface TargetedAction<T> {
         public void perform(T delegate);
     }

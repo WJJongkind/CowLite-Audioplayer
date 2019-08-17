@@ -3,16 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cap.gui.colorscheme;
+package cap.gui.settings.layout;
 
-import java.awt.Color;
+import javax.swing.JPanel;
 
 /**
  *
  * @author Wessel
  */
-public interface ButtonColorScheme {
-    public Color pressedBackgroundColor();
-    public Color backgroundColor();
-    public Color textColor();
+public class SexyColorPicker extends JPanel {
+    
 }

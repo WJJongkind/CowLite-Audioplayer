@@ -3,16 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cap.gui.colorscheme;
-
-import java.awt.Color;
+package cap.gui.settings.layout;
 
 /**
  *
  * @author Wessel
  */
-public interface ButtonColorScheme {
-    public Color pressedBackgroundColor();
-    public Color backgroundColor();
-    public Color textColor();
+public class VolumeSliderLayoutSettingsPane {
+    
 }
