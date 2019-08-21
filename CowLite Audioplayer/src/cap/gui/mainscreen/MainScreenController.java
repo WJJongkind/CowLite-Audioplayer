@@ -38,6 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 import cap.gui.colorscheme.ColorScheme;
+import javax.swing.JComponent;
 
 /**
  *
@@ -336,7 +337,7 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
     // MARK: - Keybindings for pasting YouTube videos
     
     private void mapKeystrokes() {
-        mainScreen.getInputMap().put(KeyStroke.getKeyStroke("ctrl V"), "tryPasteUrl");
+        mainScreen.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl V"), "tryPasteUrl");
         mainScreen.getActionMap().put("tryPasteUrl", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -356,6 +357,7 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
                         mainScreen.getPlaylistPane().repaint();
                     }
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                     // TODO show some user feedback?
                 }
             }

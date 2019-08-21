@@ -15,6 +15,7 @@ import java.io.IOException;
 import cap.gui.colorscheme.UIImageSet;
 import cap.gui.colorscheme.ColorScheme;
 import cap.gui.colorscheme.DynamicFont;
+import cap.gui.colorscheme.InputFieldColorScheme;
 import cap.gui.colorscheme.OverlayColorScheme;
 import java.awt.Font;
 
@@ -192,6 +193,26 @@ public class DarkMode implements ColorScheme {
     @Override
     public DynamicFont font() {
         return font;
+    }
+
+    @Override
+    public InputFieldColorScheme defaultInputFieldColorScheme() {
+        return new InputFieldColorScheme() {
+            @Override
+            public Color backgroundColor() {
+                return new Color(0x333333);
+            }
+
+            @Override
+            public Color textColor() {
+                return new Color(0x909090);
+            }
+
+            @Override
+            public Color borderColor() {
+                return new Color(0x909090);
+            }
+        };
     }
     
 }

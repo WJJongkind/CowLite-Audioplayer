@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cap.gui.settings.layout;
+package cap.gui.shared;
 
 import static cap.util.SugarySyntax.clamp;
 import static cap.util.SugarySyntax.unwrappedPerform;
@@ -73,6 +73,20 @@ public class SexyColorPickerStave extends JComponent implements MouseListener, M
         repaint();
     }
     
+    public Color getColor() {
+        int size = orientation == Orientation.horizontal ? getWidth() : getHeight();
+        int absolutePosition = clamp((int) Math.round(position * size), 0, colors.size());
+        
+        // If absolutePosition is not an index of colors, it most likely means that paintComponent has never occured.
+        // In that case return red, as that's the default starting color. This seems kinda sketchy so may
+        // revisit this at some point in the future.
+        return absolutePosition < colors.size() ? colors.get(absolutePosition) : Color.red;
+    }
+    
+    public void setColor(Color color) {
+        // TODO to be implemented
+    }
+    
     // MARK: - JComponent
     
     @Override
@@ -140,18 +154,20 @@ public class SexyColorPickerStave extends JComponent implements MouseListener, M
     // MARK: - Private methods
     
     private void handleMouseEvent(Point mouseLocation) {
+        int coordinate = clamp(orientation == Orientation.horizontal ? mouseLocation.x : mouseLocation.y, 0, getLength() - 1);
+        
         switch(orientation) {
             case horizontal:
-                this.position = clamp(mouseLocation.x / ((double) getWidth()), 0, 1);
+                this.position = clamp(coordinate / ((double) getWidth()), 0, 1);
                 break;
             case vertical:
-                this.position = clamp(mouseLocation.y / ((double) getHeight()), 0, 1);
+                this.position = clamp(coordinate / ((double) getHeight()), 0, 1);
                 break;
         }
         
         repaint();
         
-        unwrappedPerform(delegate, delegate -> delegate.didSelectColor(this, orientation == Orientation.horizontal ? colors.get(mouseLocation.x) : colors.get(mouseLocation.y)));
+        unwrappedPerform(delegate, delegate -> delegate.didSelectColor(this, colors.get(coordinate)));
     }
     
     private void calculateColorsIfNeeded() {
@@ -159,12 +175,15 @@ public class SexyColorPickerStave extends JComponent implements MouseListener, M
             colors.clear();
             previousSize = getSize();
             
-            int size = orientation == Orientation.horizontal ? getWidth() : getHeight();
-            
-            for(int i = 0; i < size; i++) {
-                colors.add(getColorForRelativePosition(i / ((double) size)));
+            int length = getLength();
+            for(int i = 0; i < length; i++) {
+                colors.add(getColorForRelativePosition(i / ((double) length)));
             }
         }
+    }
+    
+    private int getLength() {
+        return orientation == Orientation.horizontal ? getWidth() : getHeight();
     }
     
     private Color getColorForRelativePosition(double position) {

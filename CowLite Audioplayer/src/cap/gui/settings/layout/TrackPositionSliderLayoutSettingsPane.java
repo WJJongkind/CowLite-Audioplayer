@@ -5,12 +5,10 @@
  */
 package cap.gui.settings.layout;
 
-import javax.swing.JPanel;
-
 /**
  *
  * @author Wessel
  */
-public class SexyColorPicker extends JPanel {
+public class TrackPositionSliderLayoutSettingsPane {
     
 }

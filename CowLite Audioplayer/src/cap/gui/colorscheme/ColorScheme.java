@@ -16,6 +16,7 @@ public interface ColorScheme {
     public Color frameColor();
     public Color defaultContentColor();
     public ButtonColorScheme defaultButtonColorScheme();
+    public InputFieldColorScheme defaultInputFieldColorScheme();
     public MenuColorScheme menu();
     public PlaylistPaneColorScheme playlist();
     public SavedListsPaneColorScheme savedLists();

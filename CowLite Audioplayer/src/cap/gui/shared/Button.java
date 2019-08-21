@@ -6,11 +6,10 @@
 package cap.gui.shared;
 
 import cap.gui.colorscheme.ButtonColorScheme;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Insets;
-import javax.swing.BorderFactory;
+import java.awt.event.ActionListener;
 import javax.swing.JButton;
 
 /**
@@ -19,7 +18,11 @@ import javax.swing.JButton;
  */
 public class Button extends JButton {
     
+    // MARK: - Private properties
+    
     private ButtonColorScheme colorScheme;
+    
+    // MARK: - Initialisers
     
     public Button(String title, ButtonColorScheme buttonColorScheme) {
         super(title);
@@ -35,6 +38,8 @@ public class Button extends JButton {
         super.setFont(super.getFont().deriveFont(Font.BOLD, 18));
     }
     
+    // MARK: - JComponent
+    
     @Override
     public void paintComponent(Graphics g) {
         // Draw the background
@@ -43,6 +48,14 @@ public class Button extends JButton {
         
         // Draw remainder of button.
         super.paintComponent(g);
+    }
+    
+    // MARK: - Public methods
+    
+    public void removeActionListeners() {
+        for(ActionListener listener : super.getActionListeners()) {
+            super.removeActionListener(listener);
+        }
     }
     
 }

@@ -3,18 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cap.gui.settings.layout;
+package cap.gui.shared;
 
 import static cap.util.SugarySyntax.clamp;
 import static cap.util.SugarySyntax.unwrappedPerform;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
@@ -23,7 +20,6 @@ import java.awt.event.MouseMotionListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 
 /**
  *
@@ -100,7 +96,7 @@ public class SexyColorPickerPanel extends JComponent implements MouseListener, M
         graphics2D.fillOval(whiteBorderX, whiteBorderY, whiteBorderSize, whiteBorderSize);
         
         // Dot
-        graphics2D.setColor(calculateColorForCurrentPosition());
+        graphics2D.setColor(getSelectedColor());
         graphics2D.fillOval(knobStartX, knobStartY, Layout.knobColorDiameter, Layout.knobColorDiameter);
     }
     
@@ -112,6 +108,20 @@ public class SexyColorPickerPanel extends JComponent implements MouseListener, M
     
     public void setBaseColor(Color color) throws IllegalArgumentException {
         this.baseColor = color;
+        repaint();
+        unwrappedPerform(delegate, delegate -> delegate.didSelectColor(this, getSelectedColor()));
+    }
+    
+    public Color getSelectedColor() {
+        int r = calculateColorComponentForCurrentPosition(baseColor.getRed());
+        int g = calculateColorComponentForCurrentPosition(baseColor.getGreen());
+        int b = calculateColorComponentForCurrentPosition(baseColor.getBlue());
+        
+        return new Color(r, g, b);
+    }
+    
+    public void setSelectedColor(Color color) {
+        // TODO to be implemented...
     }
     
     // MARK: - MouseMotionListener
@@ -151,15 +161,7 @@ public class SexyColorPickerPanel extends JComponent implements MouseListener, M
         
         repaint();
         
-        unwrappedPerform(delegate, delegate -> delegate.didSelectColor(this, calculateColorForCurrentPosition()));
-    }
-    
-    private Color calculateColorForCurrentPosition() {
-        int r = calculateColorComponentForCurrentPosition(baseColor.getRed());
-        int g = calculateColorComponentForCurrentPosition(baseColor.getGreen());
-        int b = calculateColorComponentForCurrentPosition(baseColor.getBlue());
-        
-        return new Color(r, g, b);
+        unwrappedPerform(delegate, delegate -> delegate.didSelectColor(this, getSelectedColor()));
     }
     
     private int calculateColorComponentForCurrentPosition(int baseValue) {
@@ -195,7 +197,6 @@ public class SexyColorPickerPanel extends JComponent implements MouseListener, M
             this.startColor = startColor;
             this.endColor = endColor;
         }
-        
     }
     
 }

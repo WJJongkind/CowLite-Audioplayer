@@ -3,12 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cap.gui.settings.layout;
+package cap.gui.colorscheme;
+
+import java.awt.Color;
 
 /**
  *
  * @author Wessel
  */
-public class TrackPositoinSliderLayoutSettingsPane {
-    
+public interface InputFieldColorScheme {
+    public Color backgroundColor();
+    public Color textColor();
+    public Color borderColor();
 }

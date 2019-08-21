@@ -65,6 +65,68 @@ public class SugarySyntax {
         }
     }
     
+    public static int maxInt(int... values) {
+        int max = Integer.MIN_VALUE;
+        for(int value : values) {
+            max = Math.max(max, value);
+        }
+        return max;
+    }
+    
+    public static double maxDouble(double... values) {
+        double max = Integer.MIN_VALUE;
+        for(double value : values) {
+            max = Math.max(max, value);
+        }
+        return max;
+    }
+    
+    public static <T extends Comparable> T max(T... values) {
+        if(values.length == 0) {
+            return null;
+        }
+        
+        T max = values[0];
+        for(T value : values) {
+            if(value.compareTo(max) > 0) {
+                max = value;
+            }
+        }
+        
+        return max;
+    }
+    
+    public static int minInt(int... values) {
+        int min = Integer.MAX_VALUE;
+        for(int value : values) {
+            min = Math.min(min, value);
+        }
+        return min;
+    }
+    
+    public static double minDouble(double... values) {
+        double min = Double.MAX_VALUE;
+        for(double value : values) {
+            min = Math.max(min, value);
+        }
+        return min;
+    }
+    
+    public static <T extends Comparable> T min(T... values) {
+        if(values.length == 0) {
+            return null;
+        }
+        
+        T min = values[0];
+        for(T value : values) {
+            if(value.compareTo(min) < 0) {
+                min = value;
+            }
+        }
+        
+        return min;
+    }
+    
     public interface TargetedAction<T> {
         public void perform(T delegate);
     }
