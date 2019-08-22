@@ -84,7 +84,7 @@ public class SexyColorPickerStave extends JComponent implements MouseListener, M
         return absolutePosition < colors.size() ? colors.get(absolutePosition) : Color.red;
     }
     
-    public void setColor(Color color) {
+    public void setSelectedColor(Color color) {
         position = getRelativePositionForColor(color);
         repaint();
     }

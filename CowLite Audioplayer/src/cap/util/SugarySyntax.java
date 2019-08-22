@@ -127,6 +127,22 @@ public class SugarySyntax {
         return min;
     }
     
+    public static double sigma(double... values) {
+        double sum = 0;
+        for(double value : values) {
+            sum += value;
+        }
+        return sum;
+    }
+    
+    public static int sigma(int... values) {
+        int sum = 0;
+        for(int value : values) {
+            sum += value;
+        }
+        return sum;
+    }
+    
     public interface TargetedAction<T> {
         public void perform(T delegate);
     }

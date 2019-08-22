@@ -6,6 +6,9 @@
 package cap.gui.shared;
 
 import static cap.util.SugarySyntax.clamp;
+import static cap.util.SugarySyntax.maxDouble;
+import static cap.util.SugarySyntax.minInt;
+import static cap.util.SugarySyntax.sigma;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -106,6 +109,10 @@ public class SexyColorPickerPanel extends JComponent implements MouseListener, M
         this.delegate = new WeakReference<>(delegate);
     }
     
+    public Color getBaseColor() {
+        return baseColor;
+    }
+    
     public void setBaseColor(Color color) throws IllegalArgumentException {
         this.baseColor = color;
         repaint();
@@ -121,7 +128,9 @@ public class SexyColorPickerPanel extends JComponent implements MouseListener, M
     }
     
     public void setSelectedColor(Color color) {
-        // TODO to be implemented...
+        calculateBaseColorAndSetPosition(color);
+        repaint();
+        unwrappedPerform(delegate, delegate -> delegate.didSelectColor(this, getSelectedColor()));
     }
     
     // MARK: - MouseMotionListener
@@ -166,6 +175,47 @@ public class SexyColorPickerPanel extends JComponent implements MouseListener, M
     
     private int calculateColorComponentForCurrentPosition(int baseValue) {
         return (int) Math.round((baseValue + ((255 - baseValue) * (1 - position.x))) * (1 - position.y));
+    }
+    
+    private void calculateBaseColorAndSetPosition(Color color) {
+        int r = color.getRed();
+        int g = color.getGreen();
+        int b = color.getBlue();
+        
+        // TODO maybe move this to panel class and from there expose function getBaseColor?
+        double darkeningFactor = maxDouble(r / 255.0, g / 255.0, b / 255.0);
+        position.y = 1 - darkeningFactor;
+        
+        int brightR = (int) Math.round(r / darkeningFactor);
+        int brightG = (int) Math.round(g / darkeningFactor);
+        int brightB = (int) Math.round(b / darkeningFactor);
+        
+        int leastSignificantComponentValue = minInt(brightR, brightG, brightB);
+        
+        // This is the case when "white" is selected as a color.
+        if(sigma(brightR, brightG, brightB) / 3 == leastSignificantComponentValue) {
+            position.x = 0;
+            baseColor = Color.red;
+            return;
+        }
+        
+        double brighteningFactor = leastSignificantComponentValue / 255.0;
+        position.x = 1 - brighteningFactor;
+        
+        if(brighteningFactor == 0.0) {
+            baseColor = new Color(brightR, brightG, brightB);
+            return;
+        }
+        
+        int baseR = brightR == 255 ? 255 : (int) Math.round((brightR - brighteningFactor * 255) / (1 - brighteningFactor));
+        int baseG = brightG == 255 ? 255 : (int) Math.round((brightG - brighteningFactor * 255) / (1 - brighteningFactor));
+        int baseB = brightB == 255 ? 255 : (int) Math.round((brightB - brighteningFactor * 255) / (1 - brighteningFactor));
+        
+        baseR = clamp(baseR, 0, 255);
+        baseG = clamp(baseG, 0, 255);
+        baseB = clamp(baseB, 0, 255);
+        
+        baseColor = new Color(baseR, baseG, baseB);
     }
     
     private void calculateGradientsIfNeeded() {

@@ -43,6 +43,7 @@ public class InputField extends JTextField implements DocumentListener {
     
     private final ArrayList<ChangeListener> changeListeners = new ArrayList<>();
     private InputCondition inputCondition = null;
+    private boolean muted = false;
     
     // MARK: - Initialisers
     
@@ -84,28 +85,39 @@ public class InputField extends JTextField implements DocumentListener {
         return new RegexDocument();
     }
     
+    @Override
+    public void setText(String text) {
+        if(text != null && getText() != null && !text.equals(getText()) && !muted) {
+            super.setText(text);
+        }
+    }
+    
     // MARK: - DocumentListener
     
     @Override
     public void insertUpdate(DocumentEvent e) {
-        System.out.println("Changeupdate: " + getText());
-        System.out.println(changeListeners.size());
-        for(ChangeListener listener : changeListeners) {
-            listener.valueChanged(this, getText());
-        }
+        notifyChangeListeners();
     }
 
     @Override
     public void removeUpdate(DocumentEvent e) {
-        System.out.println("Changeupdate: " + getText());
-        System.out.println(changeListeners.size());
-        for(ChangeListener listener : changeListeners) {
-            listener.valueChanged(this, getText());
-        }
+        notifyChangeListeners();
     }
 
     @Override
     public void changedUpdate(DocumentEvent e) {
+    }
+    
+    // MARK: - Private methods
+    
+    private void notifyChangeListeners() {
+        // We mute the inputfield (i.e. "setText" won't have any effect) because observers may attempt to change the value
+        // of this inputfield while we are notfying them of a change. As this is not supported, we will ignore any calls to "setText".
+        muted = true;
+        for(ChangeListener listener : changeListeners) {
+            listener.valueChanged(this, getText());
+        }
+        muted = false;
     }
     
     // MARK: - Private associated types
@@ -116,7 +128,7 @@ public class InputField extends JTextField implements DocumentListener {
             if(newString == null) {
                 return;
             }
-            System.out.println(newString);
+            
             String combined = nilCoalesce(super.getText(0, super.getLength()), "") + newString;
             if(inputCondition == null || (offset >= 0 && inputCondition.conformsToCondition(combined))) {
                 super.insertString(offset, newString, attributes);

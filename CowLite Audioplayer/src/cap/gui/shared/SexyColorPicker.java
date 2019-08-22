@@ -54,7 +54,7 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
                 return false;
             }
         };
-        public static final InputCondition hexInputCondition = text -> { return text.matches("#?([a-fA-F0-9]{0,6})"); };
+        public static final InputCondition hexInputCondition = text -> { return text.matches("[a-fA-F0-9]{0,6}"); };
     }
     
     // MARK: - Private properties
@@ -120,6 +120,8 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
     
     @Override
     public void didSelectColor(SexyColorPickerPanel sender, Color color) {
+        setRGBInputFieldValuesForColor(color);
+        setHexInputFieldValueForColor(color);
         unwrappedPerform(delegate, delegate -> delegate.didSelectColor(this, color));
     }
     
@@ -132,61 +134,51 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         int parsedValue = Integer.parseInt(newValue);
         Color selectedColor = panel.getSelectedColor();
         
-        Color baseColor;
         Color newColor;
         if(inputField == redInputField) {
-            baseColor = calculateBaseColor(parsedValue, selectedColor.getGreen(), selectedColor.getBlue());// TODO maybe move this to panel class and from there expose function getBaseColor?
             newColor = new Color(parsedValue, selectedColor.getGreen(), selectedColor.getBlue());
         } else if(inputField == greenInputField) {
-            baseColor = calculateBaseColor(selectedColor.getRed(), parsedValue, selectedColor.getBlue());// TODO maybe move this to panel class and from there expose function getBaseColor?
             newColor = new Color(selectedColor.getRed(), parsedValue, selectedColor.getBlue());
         } else {
-            baseColor = calculateBaseColor(selectedColor.getRed(), selectedColor.getGreen(), parsedValue);// TODO maybe move this to panel class and from there expose function getBaseColor?
             newColor = new Color(selectedColor.getRed(), selectedColor.getGreen(), parsedValue);
         }
         
-        stave.setColor(baseColor);
-        panel.setBaseColor(baseColor);
+        setHexInputFieldValueForColor(newColor);
         panel.setSelectedColor(newColor);
+        stave.setSelectedColor(panel.getBaseColor());
     }
     
     private void hexInputFieldValueChanged(InputField inputField, String newValue) {
+        if(newValue.length() < 6) {
+            return;
+        }
         
+        int r = Integer.parseInt(newValue.substring(0, 2), 16);
+        int g = Integer.parseInt(newValue.substring(2, 4), 16);
+        int b = Integer.parseInt(newValue.substring(4, 6), 16);
+        
+        Color newColor = new Color(r, g, b);
+        
+        setRGBInputFieldValuesForColor(newColor);
+        panel.setSelectedColor(newColor);
+        stave.setSelectedColor(panel.getBaseColor());
+    }
+    
+    private void setRGBInputFieldValuesForColor(Color color) {
+        redInputField.setText(color.getRed() + "");
+        greenInputField.setText(color.getGreen() + "");
+        blueInputField.setText(color.getBlue() + "");
+    }
+    
+    private void setHexInputFieldValueForColor(Color color) {
+        String redString = String.format("%02X", color.getRed());
+        String greenString = String.format("%02X", color.getGreen());
+        String blueString = String.format("%02X", color.getBlue());
+        
+        hexInputField.setText(redString + greenString + blueString);
     }
     
     // MARK: - Private methods
-    
-    private Color calculateBaseColor(int r, int g, int b) {
-        // TODO maybe move this to panel class and from there expose function getBaseColor?
-        double darkeningFactor = maxDouble(r / 255.0, g / 255.0, b / 255.0);
-        
-        int brightR = (int) Math.round(r / darkeningFactor);
-        int brightG = (int) Math.round(g / darkeningFactor);
-        int brightB = (int) Math.round(b / darkeningFactor);
-        
-        int leastSignificantComponentValue = minInt(brightR, brightG, brightB);
-        
-        // This is the case when "white" is selected as a color.
-        if(leastSignificantComponentValue == 255) {
-            return Color.red;
-        }
-        
-        double brighteningFactor = leastSignificantComponentValue / 255.0;
-        
-        if(brighteningFactor == 0.0) {
-            return new Color(brightR, brightG, brightB);
-        }
-        
-        int baseR = brightR == 255 ? 255 : (int) Math.round((brightR - brighteningFactor * 255) / (1 - brighteningFactor));
-        int baseG = brightG == 255 ? 255 : (int) Math.round((brightG - brighteningFactor * 255) / (1 - brighteningFactor));
-        int baseB = brightB == 255 ? 255 : (int) Math.round((brightB - brighteningFactor * 255) / (1 - brighteningFactor));
-        
-        baseR = clamp(baseR, 0, 255);
-        baseG = clamp(baseG, 0, 255);
-        baseB = clamp(baseB, 0, 255);
-        
-        return new Color(baseR, baseG, baseB);
-    }
     
     private void layoutComponents(ColorScheme colorScheme) {
         super.setLayout(new GridBagLayout());
@@ -411,7 +403,6 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         
         SexyColorPicker scp = new SexyColorPicker(new DarkMode());
         panel.add(scp, c);
-        scp.setDelegate((sender, color) -> System.out.println(color));
         
         frame.setVisible(true);
     }
