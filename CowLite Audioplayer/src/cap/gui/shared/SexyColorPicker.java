@@ -135,13 +135,13 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         Color baseColor;
         Color newColor;
         if(inputField == redInputField) {
-            baseColor = calculateBaseColor(parsedValue, selectedColor.getGreen(), selectedColor.getBlue());
+            baseColor = calculateBaseColor(parsedValue, selectedColor.getGreen(), selectedColor.getBlue());// TODO maybe move this to panel class and from there expose function getBaseColor?
             newColor = new Color(parsedValue, selectedColor.getGreen(), selectedColor.getBlue());
         } else if(inputField == greenInputField) {
-            baseColor = calculateBaseColor(selectedColor.getRed(), parsedValue, selectedColor.getBlue());
+            baseColor = calculateBaseColor(selectedColor.getRed(), parsedValue, selectedColor.getBlue());// TODO maybe move this to panel class and from there expose function getBaseColor?
             newColor = new Color(selectedColor.getRed(), parsedValue, selectedColor.getBlue());
         } else {
-            baseColor = calculateBaseColor(selectedColor.getRed(), selectedColor.getGreen(), parsedValue);
+            baseColor = calculateBaseColor(selectedColor.getRed(), selectedColor.getGreen(), parsedValue);// TODO maybe move this to panel class and from there expose function getBaseColor?
             newColor = new Color(selectedColor.getRed(), selectedColor.getGreen(), parsedValue);
         }
         
@@ -157,6 +157,7 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
     // MARK: - Private methods
     
     private Color calculateBaseColor(int r, int g, int b) {
+        // TODO maybe move this to panel class and from there expose function getBaseColor?
         double darkeningFactor = maxDouble(r / 255.0, g / 255.0, b / 255.0);
         
         int brightR = (int) Math.round(r / darkeningFactor);

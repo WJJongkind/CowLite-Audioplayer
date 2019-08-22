@@ -17,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.lang.ref.WeakReference;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import javax.swing.JComponent;
 
@@ -84,7 +85,8 @@ public class SexyColorPickerStave extends JComponent implements MouseListener, M
     }
     
     public void setColor(Color color) {
-        // TODO to be implemented
+        position = getRelativePositionForColor(color);
+        repaint();
     }
     
     // MARK: - JComponent
@@ -218,6 +220,35 @@ public class SexyColorPickerStave extends JComponent implements MouseListener, M
         }
         
         return new Color(red, green, blue);
+    }
+    
+    private double getRelativePositionForColor(Color color) {
+        // Below are optimized algebraic expressions. They are effectively the inverse of the function getColorForRelativePosition.
+        if(color.getRed() == 255) {
+            if(color.getGreen() == 0 && color.getBlue() == 0) {
+                return 0; // first in segment 1 / last in segment 6
+            } else if(color.getGreen() > 0) {
+                return color.getGreen() / 1530.0; // segment 1
+            } else {
+                return color.getBlue() / -1530.0 + 1; // segment 6
+            }
+        } else if(color.getGreen() == 255) {
+            if(color.getRed() == 0 && color.getBlue() == 0) {
+                return 1 / 3.0; // Inbetween segment 2 and 3
+            } else if(color.getRed() > 0) {
+                return color.getRed() / -1530.0 + (1 / 3.0); // segment 2
+            } else {
+                return color.getBlue() / 1530.0 + (1 / 3.0); // segment 3
+            }
+        } else {
+            if(color.getGreen() == 0 && color.getRed() == 0) {
+                return 2 / 3.0;
+            } else if(color.getGreen() > 0) {
+                return color.getGreen() / -1530.0 + (2 / 3.0); // segment 4
+            } else {
+                return color.getRed() / 1530.0 + (2 / 3.0); // segment 5
+            }
+        }
     }
     
 }
