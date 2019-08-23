@@ -98,6 +98,7 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         
         layoutComponents(colorScheme);
         
+        super.setOpaque(false);
         super.setBackground(new Color(0, 0, 0, 0f));
         stave.setDelegate(this);
         panel.setDelegate(this);
@@ -165,9 +166,9 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
     }
     
     private void setRGBInputFieldValuesForColor(Color color) {
-        redInputField.setText(color.getRed() + "");
-        greenInputField.setText(color.getGreen() + "");
-        blueInputField.setText(color.getBlue() + "");
+        redInputField.setText(color.getRed() + "", false);
+        greenInputField.setText(color.getGreen() + "", false);
+        blueInputField.setText(color.getBlue() + "", false);
     }
     
     private void setHexInputFieldValueForColor(Color color) {
@@ -175,7 +176,7 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         String greenString = String.format("%02X", color.getGreen());
         String blueString = String.format("%02X", color.getBlue());
         
-        hexInputField.setText(redString + greenString + blueString);
+        hexInputField.setText(redString + greenString + blueString, false);
     }
     
     // MARK: - Private methods
@@ -382,13 +383,10 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         frame.setSize(1280, 720);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
-        
-        frame.setVisible(true);
-        
         JPanel panel = new JPanel();
+        panel.setBackground(new Color(0, 0, 0, 0));
         panel.setSize(1000, 1000);
         frame.getContentPane().add(panel);
-        panel.setBackground(Color.cyan);
         panel.setLayout(new GridBagLayout());
         
         GridBagConstraints c = new GridBagConstraints();
@@ -404,6 +402,8 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         SexyColorPicker scp = new SexyColorPicker(new DarkMode());
         panel.add(scp, c);
         
+        frame.setUndecorated(true);
+        frame.setBackground(new Color(0, 0, 0, 0));
         frame.setVisible(true);
     }
     

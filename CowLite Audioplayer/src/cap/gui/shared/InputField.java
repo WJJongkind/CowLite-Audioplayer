@@ -44,6 +44,7 @@ public class InputField extends JTextField implements DocumentListener {
     private final ArrayList<ChangeListener> changeListeners = new ArrayList<>();
     private InputCondition inputCondition = null;
     private boolean muted = false;
+    private boolean shouldNotifyChangeListeners = true;
     
     // MARK: - Initialisers
     
@@ -85,11 +86,18 @@ public class InputField extends JTextField implements DocumentListener {
         return new RegexDocument();
     }
     
+    public void setText(String text, boolean shouldNotifyListeners) {
+        if(text != null && getText() != null && !text.equals(getText()) && !muted) {
+            this.shouldNotifyChangeListeners = shouldNotifyListeners;
+            super.setText(text);
+            this.shouldNotifyChangeListeners = true;
+        }
+        
+    }
+    
     @Override
     public void setText(String text) {
-        if(text != null && getText() != null && !text.equals(getText()) && !muted) {
-            super.setText(text);
-        }
+        setText(text, true);
     }
     
     // MARK: - DocumentListener
@@ -111,6 +119,9 @@ public class InputField extends JTextField implements DocumentListener {
     // MARK: - Private methods
     
     private void notifyChangeListeners() {
+        if(!shouldNotifyChangeListeners) {
+            return;
+        }
         // We mute the inputfield (i.e. "setText" won't have any effect) because observers may attempt to change the value
         // of this inputfield while we are notfying them of a change. As this is not supported, we will ignore any calls to "setText".
         muted = true;
