@@ -73,7 +73,7 @@ public class WindowActionsPane extends JPanel {
         c.weightx = 1;
         c.weighty = 1;
         c.fill = c.BOTH;
-        c.insets = new Insets(0, 0, 0, Layout.spacing);
+        c.insets = new Insets(4, 0, 4, Layout.spacing);
         
         super.add(minimizeButton, c);
         

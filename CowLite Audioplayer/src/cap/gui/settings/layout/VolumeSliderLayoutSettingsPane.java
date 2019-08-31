@@ -5,10 +5,12 @@
  */
 package cap.gui.settings.layout;
 
+import javax.swing.JPanel;
+
 /**
  *
  * @author Wessel
  */
-public class VolumeSliderLayoutSettingsPane {
+public class VolumeSliderLayoutSettingsPane extends JPanel  {
     
 }

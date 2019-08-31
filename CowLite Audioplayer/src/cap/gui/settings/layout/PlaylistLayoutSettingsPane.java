@@ -5,10 +5,12 @@
  */
 package cap.gui.settings.layout;
 
+import javax.swing.JPanel;
+
 /**
  *
  * @author Wessel
  */
-public class PlaylistLayoutSettingsPane {
+public class PlaylistLayoutSettingsPane extends JPanel  {
     
 }

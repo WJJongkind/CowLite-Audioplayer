@@ -17,7 +17,7 @@ import java.lang.ref.WeakReference;
 import cap.gui.colorscheme.ColorScheme;
 import cap.gui.shared.Menu;
 import cap.gui.shared.SubMenu;
-import java.util.ArrayList;
+import java.awt.Insets;
 import java.util.Stack;
 
 /**
@@ -45,7 +45,7 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
     private WindowActionsPane windowActionsPane;
     private ViewController presentedViewController;
     private ViewController visibleViewController;
-    private Stack<ViewController> pusheddViewControllers;
+    private Stack<ViewController> pushedViewControllers;
     
     // MARK: - Initialisers
     
@@ -67,7 +67,7 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
         
         menu = new Menu(colorScheme);
         
-        pusheddViewControllers = new Stack<>();
+        pushedViewControllers = new Stack<>();
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 1;
@@ -92,25 +92,25 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
 
     @Override
     public void presentViewController(ViewController viewController) {
-        pusheddViewControllers.clear();
+        pushedViewControllers.clear();
         this.presentedViewController = viewController;
         setVisibleViewController(viewController);
     }
     
     @Override
     public void pushViewController(ViewController viewController) {
-        pusheddViewControllers.push(viewController);
+        pushedViewControllers.push(viewController);
         setVisibleViewController(viewController);
     }
     
     @Override
     public void popViewController() {
-        if(pusheddViewControllers.size() <= 0) {
+        if(pushedViewControllers.size() <= 0) {
             return;
         }
         
-        pusheddViewControllers.pop();
-        setVisibleViewController(pusheddViewControllers.size() > 0 ? pusheddViewControllers.peek() : presentedViewController);
+        pushedViewControllers.pop();
+        setVisibleViewController(pushedViewControllers.size() > 0 ? pushedViewControllers.peek() : presentedViewController);
     }
     
     private void setVisibleViewController(ViewController viewController) {

@@ -44,7 +44,7 @@ import javax.swing.JComponent;
  *
  * @author Wessel
  */
-public class MainScreenController implements SongPlayerObserver<Song>, MainScreen.MainScreenDelegate, ViewController, DropTargetListener, PlaylistStoreInterface.PlaylistStoreObserver {
+public class MainScreenViewController implements SongPlayerObserver<Song>, MainScreen.MainScreenDelegate, ViewController, DropTargetListener, PlaylistStoreInterface.PlaylistStoreObserver {
     
     // MARK: - Constants & associated types
     
@@ -70,7 +70,7 @@ public class MainScreenController implements SongPlayerObserver<Song>, MainScree
     
     // MARK: - Initialisers
     
-    public MainScreenController(ColorScheme colorScheme, PlaylistPlayer playlistPlayer, YouTubeService youTubeService, PlaylistStoreInterface playlistStore) {
+    public MainScreenViewController(ColorScheme colorScheme, PlaylistPlayer playlistPlayer, YouTubeService youTubeService, PlaylistStoreInterface playlistStore) {
         // YT Service
         this.youTubeService = youTubeService;
         

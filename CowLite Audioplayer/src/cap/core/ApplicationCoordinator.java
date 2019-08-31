@@ -13,7 +13,7 @@ import cap.core.services.PlaylistStoreInterface;
 import cap.core.DefaultMenuCoordinator.DefaultMenuContextInterface;
 import cap.core.services.AppStateServiceInterface;
 import cap.gui.Window;
-import cap.gui.mainscreen.MainScreenController;
+import cap.gui.mainscreen.MainScreenViewController;
 import java.io.IOException;
 import cap.gui.colorscheme.ColorScheme;
 import cap.gui.overlay.SongInfoOverlay;
@@ -30,7 +30,7 @@ public class ApplicationCoordinator implements Coordinator, HotkeyListener.Hotke
     
     // MARK: - Private properties
     
-    private final MainScreenController mainScreenController;
+    private final MainScreenViewController mainScreenController;
     private final PlaylistPlayer playlistPlayer;
     private final Coordinator defaultMenuCoordinator;
     private final AppStateServiceInterface appStateService;
@@ -43,7 +43,7 @@ public class ApplicationCoordinator implements Coordinator, HotkeyListener.Hotke
     
     public ApplicationCoordinator(ColorScheme colorScheme, HotkeyListener hotkeyListener, PlaylistPlayer playlistPlayer, PlaylistStoreInterface playlistStore, DefaultMenuContextInterface menuContext, AppStateServiceInterface appStateService, SongInfoOverlay overlay) throws IOException {
         this.playlistPlayer = playlistPlayer;
-        this.mainScreenController = new MainScreenController(colorScheme, playlistPlayer, new YouTubeService(), playlistStore);
+        this.mainScreenController = new MainScreenViewController(colorScheme, playlistPlayer, new YouTubeService(), playlistStore);
         this.defaultMenuCoordinator = new DefaultMenuCoordinator(colorScheme, menuContext, overlay);
         this.appStateService = appStateService;
         this.overlay = overlay;

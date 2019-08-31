@@ -5,44 +5,49 @@
  */
 package cap.gui.shared;
 
+import cap.gui.DefaultWindow;
+import cap.gui.ViewController;
+import cap.gui.Window;
 import cap.gui.colorscheme.ColorScheme;
 import cap.gui.colorscheme.darkmode.DarkMode;
 import cap.gui.shared.InputField.InputCondition;
-import static cap.util.SugarySyntax.clamp;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import static cap.util.SugarySyntax.maxDouble;
-import static cap.util.SugarySyntax.minInt;
 
 /**
  *
  * @author Wessel
  */
-public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Delegate, SexyColorPickerPanel.Delegate{
+public class SexyColorPickerViewController implements ViewController, SexyColorPickerStave.Delegate, SexyColorPickerPanel.Delegate {
 
     // MARK: - Associated types & constants
     
     public interface Delegate {
-        public void didSelectColor(SexyColorPicker colorPicker, Color color);
+        public void didSelectColor(SexyColorPickerViewController colorPicker, Color color);
+        public void didPressConfirm(SexyColorPickerViewController colorPicker, Color color);
+        public void didPressCancel(SexyColorPickerViewController colorPicker);
     }
     
     private static final class Layout {
+        public static final int contentMargin = 8;
         public static final int staveWidth = 10;
         public static final int staveMarginLeft = 8;
         public static final int rgbFieldWidth = 30;
         public static final int marginBetweenInputFieldsAndStave = 8;
         public static final int marginBetweenLabelAndInputField = 4;
         public static final int marginBetweenInputFields = 8;
-        public static final int marginBetweenRGBAndHex = 16;
+        public static final int marginBetweenRGBAndHex = 8;
     }
     
     private static final class Constants {
@@ -59,6 +64,7 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
     
     // MARK: - Private properties
     
+    private final JPanel view;
     private final SexyColorPickerStave stave;
     private final SexyColorPickerPanel panel;
     private final JLabel redInputFieldLabel;
@@ -69,37 +75,55 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
     private final InputField greenInputField;
     private final InputField blueInputField;
     private final InputField hexInputField;
+    private final Button confirmButton;
+    private final Button cancelButton;
     
     private WeakReference<Delegate> delegate;
     
     // MARK: - Initialisers
     
-    public SexyColorPicker(ColorScheme colorScheme) {
+    public SexyColorPickerViewController(ColorScheme colorScheme) {
         super();
+        
+        view = new JPanel();
         
         stave = new SexyColorPickerStave(SexyColorPickerStave.Orientation.vertical);
         panel = new SexyColorPickerPanel(stave.getColor());
+        
         redInputFieldLabel = new JLabel("R:");
-        greenInputFieldLabel = new JLabel("G:");
-        blueInputFieldLabel = new JLabel("B:");
-        hexInputFieldLabel = new JLabel("Hex color code:");
         redInputField = new InputField(colorScheme.defaultInputFieldColorScheme());
         redInputField.addChangeListener((sender, text) -> rgbInputFieldValueChanged(sender, text));
         redInputField.setInputCondition(Constants.rgbInputCondition);
+        
+        greenInputFieldLabel = new JLabel("G:");
         greenInputField = new InputField(colorScheme.defaultInputFieldColorScheme());
         greenInputField.addChangeListener((sender, text) -> rgbInputFieldValueChanged(sender, text));
         greenInputField.setInputCondition(Constants.rgbInputCondition);
+        
+        blueInputFieldLabel = new JLabel("B:");
         blueInputField = new InputField(colorScheme.defaultInputFieldColorScheme());
         blueInputField.addChangeListener((sender, text) -> rgbInputFieldValueChanged(sender, text));
         blueInputField.setInputCondition(Constants.rgbInputCondition);
+        
+        hexInputFieldLabel = new JLabel("Hex color code:");
         hexInputField = new InputField(colorScheme.defaultInputFieldColorScheme());
         hexInputField.addChangeListener((sender, text) -> hexInputFieldValueChanged(sender, text));
         hexInputField.setInputCondition(Constants.hexInputCondition);
         
+        confirmButton = new Button("Confirm", colorScheme.defaultButtonColorScheme(), colorScheme.font().m().bold());
+        confirmButton.addActionListener(e -> {
+            unwrappedPerform(delegate, delegate -> delegate.didPressConfirm(this, panel.getSelectedColor()));
+        });
+        
+        cancelButton = new Button("Cancel", colorScheme.defaultButtonColorScheme(), colorScheme.font().m().bold());
+        cancelButton.addActionListener(e -> {
+            unwrappedPerform(delegate, delegate -> delegate.didPressCancel(this));
+        });
+        
         layoutComponents(colorScheme);
         
-        super.setOpaque(false);
-        super.setBackground(new Color(0, 0, 0, 0f));
+        view.setOpaque(false);
+        view.setBackground(new Color(0, 0, 0, 0f));
         stave.setDelegate(this);
         panel.setDelegate(this);
     }
@@ -108,6 +132,13 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
     
     public void setDelegate(Delegate delegate) {
         this.delegate = new WeakReference<>(delegate);
+    }
+    
+    // MARK: - ViewController
+    
+    @Override
+    public JComponent getView() {
+        return view;
     }
 
     // MARK: - SexyColorPickerStaveDelegate
@@ -126,7 +157,7 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         unwrappedPerform(delegate, delegate -> delegate.didSelectColor(this, color));
     }
     
-    // MARK: - InputFieldChangeListener
+    // MARK: - Private methods, InputFieldChangeListeners
     
     private void rgbInputFieldValueChanged(InputField inputField, String newValue) {
         if(newValue.equals("")) { 
@@ -182,7 +213,7 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
     // MARK: - Private methods
     
     private void layoutComponents(ColorScheme colorScheme) {
-        super.setLayout(new GridBagLayout());
+        view.setLayout(new GridBagLayout());
         
         layoutPanel();
         layoutStave();
@@ -194,6 +225,7 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         layoutBlueInputField(colorScheme);
         layoutHexInputFieldLabel(colorScheme);
         layoutHexInputField(colorScheme);
+        layoutButtons(colorScheme);
     }
     
     private void layoutPanel() {
@@ -202,12 +234,13 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         c.gridx = 1;
         c.gridy = 1;
         c.gridwidth = 1;
-        c.gridheight = 3;
+        c.gridheight = 4;
         c.weightx = 1;
         c.weighty = 1;
         c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets(Layout.contentMargin, Layout.contentMargin, Layout.contentMargin, 0);
         
-        add(panel, c);
+        view.add(panel, c);
     }
     
     private void layoutStave() {
@@ -218,17 +251,17 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         c.gridx = 2;
         c.gridy = 1;
         c.gridwidth = 1;
-        c.gridheight = 3;
+        c.gridheight = 4;
         c.weightx = 0;
         c.weighty = 0;
         c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(0, Layout.staveMarginLeft, 0, 0);
+        c.insets = new Insets(Layout.contentMargin, Layout.staveMarginLeft, Layout.contentMargin, 0);
         
-        add(stave, c);
+        view.add(stave, c);
     }
     
     private void layoutRedInputFieldLabel(ColorScheme colorScheme) {
-        redInputFieldLabel.setFont(colorScheme.font().l().bold().get());
+        redInputFieldLabel.setFont(colorScheme.font().m().bold().get());
         redInputFieldLabel.setForeground(colorScheme.defaultContentColor());
         
         GridBagConstraints c = new GridBagConstraints();
@@ -241,14 +274,14 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         c.weighty = 0;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.NORTH;
-        c.insets = new Insets(0, Layout.marginBetweenInputFieldsAndStave, 0, 0);
+        c.insets = new Insets(Layout.contentMargin, Layout.marginBetweenInputFieldsAndStave, 0, 0);
         
-        add(redInputFieldLabel, c);
+        view.add(redInputFieldLabel, c);
     }
     
     private void layoutRedInputField(ColorScheme colorScheme) {
         redInputField.setPreferredWidth(50);
-        redInputField.setFont(colorScheme.font().bold().l().get());
+        redInputField.setFont(colorScheme.font().bold().m().get());
         
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 4;
@@ -259,13 +292,13 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         c.weighty = 0;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.NORTH;
-        c.insets = new Insets(0, Layout.marginBetweenLabelAndInputField, 0, 0);
+        c.insets = new Insets(Layout.contentMargin, Layout.marginBetweenLabelAndInputField, 0, 0);
         
-        add(redInputField, c);
+        view.add(redInputField, c);
     }
     
     private void layoutGreenInputFieldLabel(ColorScheme colorScheme) {
-        greenInputFieldLabel.setFont(colorScheme.font().bold().l().get());
+        greenInputFieldLabel.setFont(colorScheme.font().bold().m().get());
         greenInputFieldLabel.setForeground(colorScheme.defaultContentColor());
         
         GridBagConstraints c = new GridBagConstraints();
@@ -277,14 +310,14 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         c.weighty = 0;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.NORTH;
-        c.insets = new Insets(0, Layout.marginBetweenInputFields, 0, 0);
+        c.insets = new Insets(Layout.contentMargin, Layout.marginBetweenInputFields, 0, 0);
         
-        add(greenInputFieldLabel, c);
+        view.add(greenInputFieldLabel, c);
     }
     
     private void layoutGreenInputField(ColorScheme colorScheme) {
         greenInputField.setPreferredWidth(50);
-        greenInputField.setFont(colorScheme.font().bold().l().get());
+        greenInputField.setFont(colorScheme.font().bold().m().get());
         
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 6;
@@ -295,13 +328,13 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         c.weighty = 0;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.NORTH;
-        c.insets = new Insets(0, Layout.marginBetweenLabelAndInputField, 0, 0);
+        c.insets = new Insets(Layout.contentMargin, Layout.marginBetweenLabelAndInputField, 0, 0);
         
-        add(greenInputField, c);
+        view.add(greenInputField, c);
     }
     
     private void layoutBlueInputFieldLabel(ColorScheme colorScheme) {
-        blueInputFieldLabel.setFont(colorScheme.font().bold().l().get());
+        blueInputFieldLabel.setFont(colorScheme.font().bold().m().get());
         blueInputFieldLabel.setForeground(colorScheme.defaultContentColor());
         
         GridBagConstraints c = new GridBagConstraints();
@@ -313,14 +346,14 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         c.weighty = 0;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.NORTH;
-        c.insets = new Insets(0, Layout.marginBetweenInputFields, 0, 0);
+        c.insets = new Insets(Layout.contentMargin, Layout.marginBetweenInputFields, 0, 0);
         
-        add(blueInputFieldLabel, c);
+        view.add(blueInputFieldLabel, c);
     }
     
     private void layoutBlueInputField(ColorScheme colorScheme) {
         blueInputField.setPreferredWidth(50);
-        blueInputField.setFont(colorScheme.font().bold().l().get());
+        blueInputField.setFont(colorScheme.font().bold().m().get());
         
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 8;
@@ -331,13 +364,13 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         c.weighty = 0;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.NORTH;
-        c.insets = new Insets(0, Layout.marginBetweenLabelAndInputField, 0, 0);
+        c.insets = new Insets(Layout.contentMargin, Layout.marginBetweenLabelAndInputField, 0, Layout.contentMargin);
         
-        add(blueInputField, c);
+        view.add(blueInputField, c);
     }
     
     private void layoutHexInputFieldLabel(ColorScheme colorScheme) {
-        hexInputFieldLabel.setFont(colorScheme.font().bold().l().get());
+        hexInputFieldLabel.setFont(colorScheme.font().bold().m().get());
         hexInputFieldLabel.setForeground(colorScheme.defaultContentColor());
         
         GridBagConstraints c = new GridBagConstraints();
@@ -349,13 +382,13 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         c.weighty = 0;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.NORTHWEST;
-        c.insets = new Insets(Layout.marginBetweenRGBAndHex, Layout.marginBetweenInputFieldsAndStave, 0, 0);
+        c.insets = new Insets(Layout.marginBetweenRGBAndHex, Layout.marginBetweenInputFieldsAndStave, 0, Layout.contentMargin);
         
-        add(hexInputFieldLabel, c);
+        view.add(hexInputFieldLabel, c);
     }
     
     private void layoutHexInputField(ColorScheme colorScheme) {
-        hexInputField.setFont(colorScheme.font().bold().l().get());
+        hexInputField.setFont(colorScheme.font().bold().m().get());
         
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 3;
@@ -366,9 +399,31 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         c.weighty = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.NORTHWEST;
-        c.insets = new Insets(0, Layout.marginBetweenInputFieldsAndStave, 0, 0);
+        c.insets = new Insets(0, Layout.marginBetweenInputFieldsAndStave, 0, Layout.contentMargin);
         
-        add(hexInputField, c);
+        view.add(hexInputField, c);
+    }
+    
+    private void layoutButtons(ColorScheme colorScheme) {
+        JPanel container = new JPanel();
+        container.setBackground(new Color(0, 0, 0, 0));
+        container.setLayout(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        container.add(cancelButton);
+        container.add(confirmButton);
+        
+        
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 3;
+        c.gridy = 4;
+        c.gridwidth = 6;
+        c.gridheight = 1;
+        c.weightx = 0;
+        c.weighty = 0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.anchor = GridBagConstraints.CENTER;
+        c.insets = new Insets(0, 0, Layout.contentMargin, 0);
+       
+        view.add(container, c);
     }
     
     
@@ -399,12 +454,19 @@ public class SexyColorPicker extends JPanel implements SexyColorPickerStave.Dele
         c.weightx = 1;
         
         
-        SexyColorPicker scp = new SexyColorPicker(new DarkMode());
-        panel.add(scp, c);
+        SexyColorPickerViewController scp = new SexyColorPickerViewController(new DarkMode());
+        Window defaultWindow = new DefaultWindow(new DarkMode());
+        defaultWindow.presentViewController(scp);
         
-        frame.setUndecorated(true);
-        frame.setBackground(new Color(0, 0, 0, 0));
-        frame.setVisible(true);
+        defaultWindow.setSize(new Dimension(500, 250));
+        defaultWindow.setVisible(true);
+        
+        
+//        panel.add(scp.getView(), c);
+//        
+//        frame.setUndecorated(true);
+//        frame.setBackground(new Color(0, 0, 0, 0));
+//        frame.setVisible(true);
     }
     
     

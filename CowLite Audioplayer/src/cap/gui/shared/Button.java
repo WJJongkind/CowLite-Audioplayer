@@ -6,6 +6,7 @@
 package cap.gui.shared;
 
 import cap.gui.colorscheme.ButtonColorScheme;
+import cap.gui.colorscheme.DynamicFont;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Insets;
@@ -24,18 +25,19 @@ public class Button extends JButton {
     
     // MARK: - Initialisers
     
-    public Button(String title, ButtonColorScheme buttonColorScheme) {
+    public Button(String title, ButtonColorScheme buttonColorScheme, DynamicFont font) {
         super(title);
         
         this.colorScheme = buttonColorScheme;
         
-        super.setMargin(new Insets(0, 8, 0, 8));
+        int margin = (int) Math.round(font.get().getSize() / 5.0);
+        super.setMargin(new Insets(0, margin, 0, margin));
         super.setBackground(buttonColorScheme.backgroundColor());
         super.setForeground(buttonColorScheme.textColor());
         super.setFocusPainted(false);
         super.setBorderPainted(false);
         super.setContentAreaFilled(false);
-        super.setFont(super.getFont().deriveFont(Font.BOLD, 18));
+        super.setFont(font.get());
     }
     
     // MARK: - JComponent

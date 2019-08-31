@@ -5,10 +5,12 @@
  */
 package cap.gui.settings.layout;
 
+import javax.swing.JPanel;
+
 /**
  *
  * @author Wessel
  */
-public class GeneralLayoutSettingsPane {
+public class GeneralLayoutSettingsPane extends JPanel {
     // Include buttons here as well
 }
