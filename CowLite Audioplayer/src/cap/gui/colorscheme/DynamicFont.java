@@ -54,8 +54,12 @@ public final class DynamicFont {
     // MARK: - Public methods
     
     public Font get() {
-        float fontSize = (float) (font.getSize() + scale * Constants.scaleFactor * font.getSize());
+        float fontSize = (float) getSize();
         return font.deriveFont(fontSize);
+    }
+    
+    public int getSize() {
+        return (int) Math.round(font.getSize() + scale * Constants.scaleFactor * font.getSize());
     }
     
     public DynamicFont plain() {

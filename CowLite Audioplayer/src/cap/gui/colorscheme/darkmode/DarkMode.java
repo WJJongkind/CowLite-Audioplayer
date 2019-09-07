@@ -5,6 +5,7 @@
  */
 package cap.gui.colorscheme.darkmode;
 
+import cap.gui.colorscheme.BasicColorScheme;
 import cap.gui.colorscheme.ButtonColorScheme;
 import cap.gui.colorscheme.MenuColorScheme;
 import cap.gui.colorscheme.PlaylistPaneColorScheme;
@@ -23,16 +24,15 @@ import java.awt.Font;
  *
  * @author Wessel
  */
-public class DarkMode implements ColorScheme {
-    
-    private static DarkModeImageSet imageSet;
-    private static DynamicFont font;
+public class DarkMode extends BasicColorScheme {
     
     public DarkMode() throws IOException {
         if(imageSet == null) {
             imageSet =  new DarkModeImageSet();
         }
         font = new DynamicFont(new Font("Dialog", Font.PLAIN, 11));
+        
+        
     }
 
     @Override

@@ -41,11 +41,12 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
     // MARK: - UI elements
     
     private final Menu menu;
-    private JPanel contentPane;
-    private WindowActionsPane windowActionsPane;
+    private final JPanel contentPane;
+    private final WindowActionsPane windowActionsPane;
+    private final Stack<ViewController> pushedViewControllers;
+    
     private ViewController presentedViewController;
     private ViewController visibleViewController;
-    private Stack<ViewController> pushedViewControllers;
     
     // MARK: - Initialisers
     
@@ -86,6 +87,13 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
         contentPane.add(windowActionsPane, c);
 
         super.add(contentPane);
+    }
+    
+    // MARK: - JFrame
+    
+    @Override
+    public JPanel getContentPane() {
+        return contentPane;
     }
     
     // MARK: - Window

@@ -5,6 +5,8 @@
  */
 package cap.gui.settings.layout;
 
+import cap.gui.DefaultWindow;
+import cap.gui.colorscheme.ColorScheme;
 import javax.swing.JPanel;
 
 /**
@@ -12,5 +14,29 @@ import javax.swing.JPanel;
  * @author Wessel
  */
 public class GeneralLayoutSettingsPane extends JPanel {
-    // Include buttons here as well
+    
+    // MARK: - Associated types & constants
+    
+    public interface Delegate {
+        
+    }
+    
+    // MARK: - Private properties
+
+    private final UICustomizationComponent contentComponent;
+    private final UICustomizationComponent frameComponent;
+    private final DefaultWindow previewWindow;
+    // private final SomeTextAdjustmentComponent textAdjustment;
+    
+    // MARK: - Initialisers
+    
+    public GeneralLayoutSettingsPane(ColorScheme colorScheme) {
+        contentComponent = new UICustomizationComponent(colorScheme, "Primary content / text color: ", colorScheme.defaultContentColor());
+        frameComponent = new UICustomizationComponent(colorScheme, "Window background color: ", colorScheme.frameColor());
+        previewWindow = new DefaultWindow(colorScheme);
+        
+        super.setBackground(colorScheme.frameColor());
+    }
+    
+    
 }
