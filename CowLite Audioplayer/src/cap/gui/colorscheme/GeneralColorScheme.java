@@ -39,4 +39,10 @@ public class GeneralColorScheme extends ColorSchemeItem<GeneralColorScheme> {
         notifyObservers();
     }
     
+    // MARK: - Protected methods 
+    
+    protected GeneralColorScheme copy() {
+        return new GeneralColorScheme(frameColor, contentColor);
+    }
+    
 }

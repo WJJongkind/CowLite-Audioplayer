@@ -50,6 +50,10 @@ public class ButtonColorScheme extends ColorSchemeItem<ButtonColorScheme> {
         notifyObservers();
     }
     
+    // MARK: - Protected methods
     
+    protected ButtonColorScheme copy() {
+        return new ButtonColorScheme(pressedBackgroundColor, backgroundColor, textColor);
+    }
     
 }

@@ -29,11 +29,14 @@ public class LayoutScreen extends JTabbedPane {
     private final VolumeSliderLayoutSettingsPane volumePane;
     private final MenuLayoutSettingsPane menuPane;
     private final OverlayLayoutSettingsPane overlayPane; 
+    private final ColorScheme previewColorScheme;
     
     // MARK: - Initialisers
     
     public LayoutScreen(ColorScheme colorScheme) {
-        generalPane = new GeneralLayoutSettingsPane(colorScheme);
+        previewColorScheme = colorScheme.copy();
+        
+        generalPane = new GeneralLayoutSettingsPane(colorScheme, previewColorScheme);
         playlistPane = new PlaylistLayoutSettingsPane();
         trackPositionPane = new TrackPositionSliderLayoutSettingsPane();
         volumePane = new VolumeSliderLayoutSettingsPane();

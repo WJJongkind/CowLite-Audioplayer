@@ -101,4 +101,12 @@ public final class DynamicFont {
         this.scale = scale;
     }
     
+    // MARK: - Protected methods
+    
+    protected DynamicFont copy() {
+        DynamicFont font = new DynamicFont(this.font);
+        font.scale = scale;
+        return font;
+    }
+    
 }

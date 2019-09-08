@@ -26,7 +26,7 @@ public class UICustomizationComponent extends JPanel {
     // MARK: - Associated types & constants
     
     public interface Delegate {
-        public void didPressSelectColorButton();
+        public void didPressSelectColorButton(UICustomizationComponent component);
     }
     
     private static final class Layout {
@@ -51,7 +51,7 @@ public class UICustomizationComponent extends JPanel {
         button.setPreferredSize(new Dimension(colorScheme.font().m().getSize(), colorScheme.font().m().getSize()));
         button.setBackground(initialColor);
         button.setBorder(BorderFactory.createLineBorder(colorScheme.general().getContentColor(), Layout.buttonBorderWidth));
-        button.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressSelectColorButton()));
+        button.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressSelectColorButton(this)));
         
         super.setBackground(new Color(0, 0, 0, 0));
         

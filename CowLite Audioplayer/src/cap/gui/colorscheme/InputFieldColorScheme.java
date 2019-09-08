@@ -51,4 +51,10 @@ public class InputFieldColorScheme extends ColorSchemeItem<InputFieldColorScheme
         notifyObservers();
     }
     
+    // MARK: - Proteced methods
+    
+    protected InputFieldColorScheme copy() {
+        return new InputFieldColorScheme(backgroundColor, textColor, borderColor);
+    }
+    
 }

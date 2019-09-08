@@ -24,5 +24,6 @@ public interface ColorScheme {
     public SliderColorScheme volumeSlider();
     public OverlayColorScheme overlay();
     public UIImageSet imageSet();
+    public ColorScheme copy();
     
 }

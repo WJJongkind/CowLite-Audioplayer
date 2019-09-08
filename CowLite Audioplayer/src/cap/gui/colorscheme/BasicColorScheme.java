@@ -5,8 +5,6 @@
  */
 package cap.gui.colorscheme;
 
-import java.awt.Color;
-
 /**
  *
  * @author Wessel
@@ -104,6 +102,23 @@ public class BasicColorScheme implements ColorScheme {
     @Override
     public UIImageSet imageSet() {
         return imageSet;
+    }
+
+    @Override
+    public ColorScheme copy() {
+        return new BasicColorScheme(
+                font.copy(),
+                generalColorScheme.copy(),
+                defaultButtonColorScheme.copy(),
+                defaultInputFieldColorScheme.copy(),
+                menuColorScheme.copy(),
+                playlistPaneColorScheme.copy(),
+                savedListsPaneColorScheme.copy(),
+                timeSliderColorScheme.copy(),
+                volumeSliderColorScheme.copy(),
+                overlayColorScheme.copy(),
+                imageSet.copy()
+        );
     }
     
 }

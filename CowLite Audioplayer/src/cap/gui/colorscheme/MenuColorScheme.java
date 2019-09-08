@@ -50,4 +50,10 @@ public class MenuColorScheme extends ColorSchemeItem<MenuColorScheme> {
         notifyObservers();
     }
     
+    // MARK: - Protected methods
+    
+    protected MenuColorScheme copy() {
+        return new MenuColorScheme(borderColor, textColor, backgroundColor);
+    }
+    
 }

@@ -38,5 +38,10 @@ public class SliderColorScheme extends ColorSchemeItem<SliderColorScheme> {
         this.fillColor = fillColor;
         notifyObservers();
     }
+
+    @Override
+    protected SliderColorScheme copy() {
+        return new SliderColorScheme(backgroundColor, fillColor);
+    }
     
 }

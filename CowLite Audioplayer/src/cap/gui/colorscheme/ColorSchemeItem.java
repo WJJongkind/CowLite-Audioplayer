@@ -38,4 +38,6 @@ public abstract class ColorSchemeItem<T extends ColorSchemeItem> {
         unwrappedPerform(observers, observer -> observer.colorSchemeChanged((T) this));
     }
     
+    protected abstract T copy();
+    
 }

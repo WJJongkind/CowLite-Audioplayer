@@ -72,5 +72,10 @@ public class PlaylistPaneColorScheme extends ColorSchemeItem<PlaylistPaneColorSc
         notifyObservers();
     }
     
+    // MARK: - Protected methods
+    
+    protected PlaylistPaneColorScheme copy() {
+        return new PlaylistPaneColorScheme(firstBackgroundColor, secondBackgroundColor, textColor, highlightBackgroundColor, highlightTextColor);
+    }
     
 }

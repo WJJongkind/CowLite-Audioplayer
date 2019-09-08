@@ -39,4 +39,10 @@ public class OverlayColorScheme extends ColorSchemeItem<OverlayColorScheme> {
         notifyObservers();
     }
     
+    // MARK: - Protected methods
+    
+    protected OverlayColorScheme copy() {
+        return new OverlayColorScheme(backgroundColor, foregroundColor);
+    }
+    
 }

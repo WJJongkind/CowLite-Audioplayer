@@ -60,5 +60,10 @@ public class SavedListsPaneColorScheme extends ColorSchemeItem<SavedListsPaneCol
         this.highlightTextColor = highlightTextColor;
         notifyObservers();
     }
+
+    @Override
+    protected SavedListsPaneColorScheme copy() {
+        return new SavedListsPaneColorScheme(backgroundColor, textColor, highlightBackgroundColor, highlightTextColor);
+    }
     
 }

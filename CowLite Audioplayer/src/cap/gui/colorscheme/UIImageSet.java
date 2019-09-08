@@ -9,7 +9,7 @@ package cap.gui.colorscheme;
  *
  * @author Wessel
  */
-public class UIImageSet {
+public class UIImageSet extends ColorSchemeItem<UIImageSet> {
     
     private ControlImageSet playButtomImageSet;
     private ControlImageSet stopButtonImageSet;
@@ -135,6 +135,23 @@ public class UIImageSet {
 
     public void setCloseScreenButtonImageSet(ControlImageSet closeScreenButtonImageSet) {
         this.closeScreenButtonImageSet = closeScreenButtonImageSet;
+    }
+
+    @Override
+    protected UIImageSet copy() {
+        return new UIImageSet(
+                playButtomImageSet, 
+                stopButtonImageSet, 
+                pauseButtonImageSet, 
+                shuffleButtonImageSet, 
+                alphabeticSortButtonImageSet, 
+                clearButtonImageSet, 
+                nextButtonImageSet, 
+                previousButtonImageSet, 
+                minimizeScreenButtonImageSet, 
+                stretchScreenButtonImageSet, 
+                closeScreenButtonImageSet
+        );
     }
     
 }
