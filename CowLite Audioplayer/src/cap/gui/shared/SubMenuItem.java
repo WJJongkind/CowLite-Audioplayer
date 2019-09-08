@@ -28,8 +28,8 @@ public class SubMenuItem extends JMenuItem {
     public SubMenuItem(String title, ColorScheme colorScheme, SubMenuAction action) {
         super(title);
         
-        super.setBackground(colorScheme.menu().menuBackgroundColor());
-        super.setForeground(colorScheme.menu().menuTextColor());
+        super.setBackground(colorScheme.menu().getBackgroundColor());
+        super.setForeground(colorScheme.menu().getTextColor());
         super.setBorder(BorderFactory.createEmptyBorder());
         super.addActionListener(e -> action.didSelectSubMenuItem(this));
     }

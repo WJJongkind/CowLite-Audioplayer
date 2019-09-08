@@ -49,9 +49,9 @@ public class InputField extends JTextField implements DocumentListener {
     // MARK: - Initialisers
     
     public InputField(InputFieldColorScheme inputFieldColorScheme) {
-        super.setBackground(inputFieldColorScheme.backgroundColor());
-        super.setForeground(inputFieldColorScheme.textColor());
-        super.setBorder(BorderFactory.createLineBorder(inputFieldColorScheme.borderColor(), Layout.borderThickness));
+        super.setBackground(inputFieldColorScheme.getBackgroundColor());
+        super.setForeground(inputFieldColorScheme.getTextColor());
+        super.setBorder(BorderFactory.createLineBorder(inputFieldColorScheme.getBorderColor(), Layout.borderThickness));
         super.getDocument().addDocumentListener(this);
     }
     

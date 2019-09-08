@@ -13,22 +13,46 @@ import java.awt.Color;
  */
 public class BasicColorScheme implements ColorScheme {
     
-    // TODO this smells... Maybe do go for the "Notify of transition to color scheme" method... Because this stinks.
-    
-    public DynamicFont font;
-    public Color frameColor;
-    public Color contentColor;
-    public ButtonColorScheme defaultButtonColorScheme;
-    public InputFieldColorScheme defaultInputFieldColorScheme;
-    public MenuColorScheme menuColorScheme;
-    public PlaylistPaneColorScheme playlistPaneColorScheme;
-    public SavedListsPaneColorScheme savedListsPaneColorScheme;
-    public SliderColorScheme timeSliderColorScheme;
-    public SliderColorScheme volumeSliderColorScheme;
-    public OverlayColorScheme overlayColorScheme;
-    public UIImageSet imageSet;
-    
-    // TODO make initialiser with all properties as nonnullables
+    private DynamicFont font;
+    private Color frameColor;
+    private Color contentColor;
+    private ButtonColorScheme defaultButtonColorScheme;
+    private InputFieldColorScheme defaultInputFieldColorScheme;
+    private MenuColorScheme menuColorScheme;
+    private PlaylistPaneColorScheme playlistPaneColorScheme;
+    private SavedListsPaneColorScheme savedListsPaneColorScheme;
+    private SliderColorScheme timeSliderColorScheme;
+    private SliderColorScheme volumeSliderColorScheme;
+    private OverlayColorScheme overlayColorScheme;
+    private UIImageSet imageSet;
+
+    public BasicColorScheme(
+            DynamicFont font, 
+            Color frameColor, 
+            Color contentColor, 
+            ButtonColorScheme defaultButtonColorScheme, 
+            InputFieldColorScheme defaultInputFieldColorScheme, 
+            MenuColorScheme menuColorScheme, 
+            PlaylistPaneColorScheme playlistPaneColorScheme, 
+            SavedListsPaneColorScheme savedListsPaneColorScheme, 
+            SliderColorScheme timeSliderColorScheme, 
+            SliderColorScheme volumeSliderColorScheme, 
+            OverlayColorScheme overlayColorScheme, 
+            UIImageSet imageSet
+    ) {
+        this.font = font;
+        this.frameColor = frameColor;
+        this.contentColor = contentColor;
+        this.defaultButtonColorScheme = defaultButtonColorScheme;
+        this.defaultInputFieldColorScheme = defaultInputFieldColorScheme;
+        this.menuColorScheme = menuColorScheme;
+        this.playlistPaneColorScheme = playlistPaneColorScheme;
+        this.savedListsPaneColorScheme = savedListsPaneColorScheme;
+        this.timeSliderColorScheme = timeSliderColorScheme;
+        this.volumeSliderColorScheme = volumeSliderColorScheme;
+        this.overlayColorScheme = overlayColorScheme;
+        this.imageSet = imageSet;
+    }
 
     @Override
     public DynamicFont font() {
@@ -46,12 +70,12 @@ public class BasicColorScheme implements ColorScheme {
     }
 
     @Override
-    public ButtonColorScheme defaultButtonColorScheme() {
+    public ButtonColorScheme defaultButton() {
         return defaultButtonColorScheme;
     }
 
     @Override
-    public InputFieldColorScheme defaultInputFieldColorScheme() {
+    public InputFieldColorScheme defaultInputField() {
         return defaultInputFieldColorScheme;
     }
 
@@ -71,12 +95,12 @@ public class BasicColorScheme implements ColorScheme {
     }
 
     @Override
-    public SliderColorScheme timeSliderColor() {
+    public SliderColorScheme timeSlider() {
         return timeSliderColorScheme;
     }
 
     @Override
-    public SliderColorScheme volumeColor() {
+    public SliderColorScheme volumeSlider() {
         return volumeSliderColorScheme;
     }
 

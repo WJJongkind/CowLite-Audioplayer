@@ -50,8 +50,8 @@ public class SavedPlaylistsPane extends JScrollPane {
         playlistPane = new JList();
         playlistListModel = new DefaultListModel<>();
         
-        playlistPane.setBackground(colorScheme.savedLists().backgroundColor());
-        playlistPane.setForeground(colorScheme.savedLists().textColor());
+        playlistPane.setBackground(colorScheme.savedLists().getBackgroundColor());
+        playlistPane.setForeground(colorScheme.savedLists().getTextColor());
         playlistPane.addListSelectionListener(selectionListener);
         playlistPane.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
         playlistPane.setModel(playlistListModel);
@@ -59,7 +59,7 @@ public class SavedPlaylistsPane extends JScrollPane {
                 
         super.setViewport(super.createViewport());
         super.getViewport().add(playlistPane);
-        super.getViewport().setBackground(colorScheme.savedLists().backgroundColor());
+        super.getViewport().setBackground(colorScheme.savedLists().getBackgroundColor());
         super.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         super.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         super.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
@@ -127,10 +127,10 @@ public class SavedPlaylistsPane extends JScrollPane {
             Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             setBorder(noFocusBorder);
             if(isSelected) {
-                c.setBackground(colorScheme.highlightBackgroundColor());
-                c.setForeground(colorScheme.highlightTextColor());
+                c.setBackground(colorScheme.getHighlightBackgroundColor());
+                c.setForeground(colorScheme.getHighlightTextColor());
             } else {
-                c.setForeground(colorScheme.textColor());
+                c.setForeground(colorScheme.getTextColor());
                 c.setBackground(getBackground());
             }
             return c;

@@ -15,7 +15,6 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import java.awt.image.BufferedImage;
-import javax.swing.JComponent;
 import cap.gui.colorscheme.UIImageSet;
 import cap.gui.colorscheme.ColorScheme;
 
@@ -95,31 +94,31 @@ public class MusicControlPane extends JPanel {
     // MARK: - Private methods
     
     private void makeButtons(ColorScheme colorScheme) {
-        playButton = makeButton(colorScheme.imageSet().playButton(), Layout.playButtonSize);
+        playButton = makeButton(colorScheme.imageSet().getPlayButtonImageSet(), Layout.playButtonSize);
         playButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> didPressPlay(delegate)));
         
-        pauseButton = makeButton(colorScheme.imageSet().pauseButton(), Layout.pauseButtonSize);
+        pauseButton = makeButton(colorScheme.imageSet().getPauseButtonImageSet(), Layout.pauseButtonSize);
         pauseButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressPauseButton(this)));
         
-        stopButton = makeButton(colorScheme.imageSet().stopButton(), Layout.stopButtonSize);
+        stopButton = makeButton(colorScheme.imageSet().getStopButtonImageSet(), Layout.stopButtonSize);
         stopButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressStopButton(this)));
         
-        nextButton = makeButton(colorScheme.imageSet().nextButton(), Layout.nextButtonSize);
+        nextButton = makeButton(colorScheme.imageSet().getNextButtonImageSet(), Layout.nextButtonSize);
         nextButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressNextButton(this)));
         
-        prevButton = makeButton(colorScheme.imageSet().previousButton(), Layout.previousButtonSize);
+        prevButton = makeButton(colorScheme.imageSet().getPreviousButtonImageSet(), Layout.previousButtonSize);
         prevButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressPreviousButton(this)));
         
-        clearButton = makeButton(colorScheme.imageSet().clearButton(), Layout.clearButtonSize);
+        clearButton = makeButton(colorScheme.imageSet().getClearButtonImageSet(), Layout.clearButtonSize);
         clearButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressClearButton(this)));
 
-        shuffleButton = makeButton(colorScheme.imageSet().shuffleButton(), Layout.shuffleButtonSize);
+        shuffleButton = makeButton(colorScheme.imageSet().getShuffleButtonImageSet(), Layout.shuffleButtonSize);
         shuffleButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> didPressShuffle(delegate)));
-        setButtonImage(shuffleButton, imageSet.shuffleButton(), false);
+        setButtonImage(shuffleButton, imageSet.getShuffleButtonImageSet(), false);
         
-        alphabeticButton = makeButton(colorScheme.imageSet().alphabeticSortButton(), Layout.alphabeticButtonSize);
+        alphabeticButton = makeButton(colorScheme.imageSet().getAlphabeticSortButtonImageSet(), Layout.alphabeticButtonSize);
         alphabeticButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> didPressAlphabeticSort(delegate)));
-        setButtonImage(alphabeticButton, imageSet.alphabeticSortButton(), false);
+        setButtonImage(alphabeticButton, imageSet.getAlphabeticSortButtonImageSet(), false);
     }
     
     private JToggleButton makeButton(ControlImageSet imageSet, Dimension size) {
@@ -158,19 +157,19 @@ public class MusicControlPane extends JPanel {
     
     public void setShuffleEnabled(boolean enabled) {
         if(enabled) {
-            setButtonImage(shuffleButton, imageSet.shuffleButton(), true);
-            setButtonImage(alphabeticButton, imageSet.alphabeticSortButton(), false);
+            setButtonImage(shuffleButton, imageSet.getShuffleButtonImageSet(), true);
+            setButtonImage(alphabeticButton, imageSet.getAlphabeticSortButtonImageSet(), false);
         } else {
-            setButtonImage(shuffleButton, imageSet.shuffleButton(), false);
+            setButtonImage(shuffleButton, imageSet.getShuffleButtonImageSet(), false);
         }
     }
     
     public void setAlphabeticSortEnabled(boolean enabled) {
         if(enabled) {
-            setButtonImage(alphabeticButton, imageSet.alphabeticSortButton(),true);
-            setButtonImage(shuffleButton, imageSet.shuffleButton(), false);
+            setButtonImage(alphabeticButton, imageSet.getAlphabeticSortButtonImageSet(),true);
+            setButtonImage(shuffleButton, imageSet.getShuffleButtonImageSet(), false);
         } else {
-            setButtonImage(alphabeticButton, imageSet.alphabeticSortButton(), false);
+            setButtonImage(alphabeticButton, imageSet.getAlphabeticSortButtonImageSet(), false);
         }
     }
     

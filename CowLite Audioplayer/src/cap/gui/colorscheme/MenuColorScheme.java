@@ -11,8 +11,40 @@ import java.awt.Color;
  *
  * @author Wessel
  */
-public interface MenuColorScheme {
-    public Color menuBarBorderColor();
-    public Color menuTextColor();
-    public Color menuBackgroundColor();
+public class MenuColorScheme {
+    
+    private Color borderColor;
+    private Color textColor;
+    private Color backgroundColor;
+
+    public MenuColorScheme(Color borderColor, Color textColor, Color backgroundColor) {
+        this.borderColor = borderColor;
+        this.textColor = textColor;
+        this.backgroundColor = backgroundColor;
+    }
+    
+    public Color getBorderColor() {
+        return borderColor;
+    }
+    
+    public Color getTextColor() {
+        return textColor;
+    }
+    
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBorderColor(Color borderColor) {
+        this.borderColor = borderColor;
+    }
+
+    public void setTextColor(Color textColor) {
+        this.textColor = textColor;
+    }
+
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+    
 }

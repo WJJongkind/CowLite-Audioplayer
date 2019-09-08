@@ -58,8 +58,8 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane {
         };
         songTableModel.setColumnCount(3);
         
-        songTable.setBackground(colorScheme.playlist().firstBackgroundColor());
-        songTable.setForeground(colorScheme.playlist().textColor());
+        songTable.setBackground(colorScheme.playlist().getFirstBackgroundColor());
+        songTable.setForeground(colorScheme.playlist().getTextColor());
         songTable.setTableHeader(null);
         songTable.setModel(songTableModel);
         songTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -71,7 +71,7 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane {
         
         super.setViewport(super.createViewport());
         super.getViewport().add(songTable);
-        super.getViewport().setBackground(colorScheme.playlist().firstBackgroundColor());
+        super.getViewport().setBackground(colorScheme.playlist().getFirstBackgroundColor());
         super.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         super.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         super.setBorder(BorderFactory.createEmptyBorder());
@@ -167,11 +167,11 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane {
                 value, isSelected, hasFocus, row, column);
             setBorder(noFocusBorder);
             if(isSelected) {
-                c.setBackground(colorScheme.highlightBackgroundColor());
-                c.setForeground(colorScheme.highlightTextColor());
+                c.setBackground(colorScheme.getHighlightBackgroundColor());
+                c.setForeground(colorScheme.getHighlightTextColor());
             } else {
-                c.setForeground(colorScheme.textColor());
-                c.setBackground(row%2==0 ? colorScheme.firstBackgroundColor() : colorScheme.secondBackgroundColor());
+                c.setForeground(colorScheme.getTextColor());
+                c.setBackground(row%2==0 ? colorScheme.getFirstBackgroundColor() : colorScheme.getSecondBackgroundColor());
             }
             return c;
         };

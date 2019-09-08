@@ -56,7 +56,7 @@ public class WindowActionsPane extends JPanel {
         super.setBorder(new AbstractBorder() {
             @Override
             public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-                g.setColor(colorScheme.menu().menuBarBorderColor());
+                g.setColor(colorScheme.menu().getBorderColor());
                 g.drawLine(x, y + height - 1, x + width, y + height - 1);
             }
         });
@@ -87,13 +87,13 @@ public class WindowActionsPane extends JPanel {
     }
     
     private void makeButtons(ColorScheme colorScheme) {
-        minimizeButton = makeButton(colorScheme.imageSet().minimizeScreenButton(), Layout.minimizeButtonSize);
+        minimizeButton = makeButton(colorScheme.imageSet().getMinimizeScreenButtonImageSet(), Layout.minimizeButtonSize);
         minimizeButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressMinimizeButton(this)));
         
-        stretchButton = makeButton(colorScheme.imageSet().stretchScreenButton(), Layout.stretchButtonSize);
+        stretchButton = makeButton(colorScheme.imageSet().getStretchScreenButtonImageSet(), Layout.stretchButtonSize);
         stretchButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressStretchButton(this)));
         
-        closeButton = makeButton(colorScheme.imageSet().closeScreenButton(), Layout.closeButtonSize);
+        closeButton = makeButton(colorScheme.imageSet().getCloseScreenButtonImageSet(), Layout.closeButtonSize);
         closeButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressCloseButton(this)));
     }
     

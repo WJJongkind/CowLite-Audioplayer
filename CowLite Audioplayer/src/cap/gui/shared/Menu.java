@@ -24,7 +24,7 @@ public class Menu extends JMenuBar {
         super.setBorder(new AbstractBorder() {
             @Override
             public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-                g.setColor(colorScheme.menu().menuBarBorderColor());
+                g.setColor(colorScheme.menu().getBorderColor());
                 g.drawLine(x, y + height - 1, x + width, y + height - 1);
             }
         });

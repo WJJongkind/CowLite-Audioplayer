@@ -32,8 +32,8 @@ public class Button extends JButton {
         
         int margin = (int) Math.round(font.get().getSize() / 5.0);
         super.setMargin(new Insets(0, margin, 0, margin));
-        super.setBackground(buttonColorScheme.backgroundColor());
-        super.setForeground(buttonColorScheme.textColor());
+        super.setBackground(buttonColorScheme.getBackgroundColor());
+        super.setForeground(buttonColorScheme.getTextColor());
         super.setFocusPainted(false);
         super.setBorderPainted(false);
         super.setContentAreaFilled(false);
@@ -45,7 +45,7 @@ public class Button extends JButton {
     @Override
     public void paintComponent(Graphics g) {
         // Draw the background
-        g.setColor(getModel().isPressed() ? colorScheme.pressedBackgroundColor() : colorScheme.backgroundColor());
+        g.setColor(getModel().isPressed() ? colorScheme.getPressedBackgroundColor() : colorScheme.getBackgroundColor());
         g.fillRect(0, 0, getWidth(), getHeight());
         
         // Draw remainder of button.

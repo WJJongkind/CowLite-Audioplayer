@@ -15,13 +15,13 @@ public interface ColorScheme {
     public DynamicFont font();
     public Color frameColor();
     public Color defaultContentColor();
-    public ButtonColorScheme defaultButtonColorScheme();
-    public InputFieldColorScheme defaultInputFieldColorScheme();
+    public ButtonColorScheme defaultButton();
+    public InputFieldColorScheme defaultInputField();
     public MenuColorScheme menu();
     public PlaylistPaneColorScheme playlist();
     public SavedListsPaneColorScheme savedLists();
-    public SliderColorScheme timeSliderColor();
-    public SliderColorScheme volumeColor();
+    public SliderColorScheme timeSlider();
+    public SliderColorScheme volumeSlider();
     public OverlayColorScheme overlay();
     public UIImageSet imageSet();
 }

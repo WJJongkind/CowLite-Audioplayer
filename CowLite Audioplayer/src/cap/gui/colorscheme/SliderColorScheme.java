@@ -11,7 +11,30 @@ import java.awt.Color;
  *
  * @author Wessel
  */
-public interface SliderColorScheme {
-    public Color backgroundColor();
-    public Color fillColor();
+public class SliderColorScheme {
+    
+    private Color backgroundColor;
+    private Color fillColor;
+
+    public SliderColorScheme(Color backgroundColor, Color fillColor) {
+        this.backgroundColor = backgroundColor;
+        this.fillColor = fillColor;
+    }
+
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public Color getFillColor() {
+        return fillColor;
+    }
+
+    public void setFillColor(Color fillColor) {
+        this.fillColor = fillColor;
+    }
+    
 }

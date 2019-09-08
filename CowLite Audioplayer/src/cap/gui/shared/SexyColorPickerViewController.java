@@ -91,31 +91,31 @@ public class SexyColorPickerViewController implements ViewController, SexyColorP
         panel = new SexyColorPickerPanel(stave.getColor());
         
         redInputFieldLabel = new JLabel("R:");
-        redInputField = new InputField(colorScheme.defaultInputFieldColorScheme());
+        redInputField = new InputField(colorScheme.defaultInputField());
         redInputField.addChangeListener((sender, text) -> rgbInputFieldValueChanged(sender, text));
         redInputField.setInputCondition(Constants.rgbInputCondition);
         
         greenInputFieldLabel = new JLabel("G:");
-        greenInputField = new InputField(colorScheme.defaultInputFieldColorScheme());
+        greenInputField = new InputField(colorScheme.defaultInputField());
         greenInputField.addChangeListener((sender, text) -> rgbInputFieldValueChanged(sender, text));
         greenInputField.setInputCondition(Constants.rgbInputCondition);
         
         blueInputFieldLabel = new JLabel("B:");
-        blueInputField = new InputField(colorScheme.defaultInputFieldColorScheme());
+        blueInputField = new InputField(colorScheme.defaultInputField());
         blueInputField.addChangeListener((sender, text) -> rgbInputFieldValueChanged(sender, text));
         blueInputField.setInputCondition(Constants.rgbInputCondition);
         
         hexInputFieldLabel = new JLabel("Hex color code:");
-        hexInputField = new InputField(colorScheme.defaultInputFieldColorScheme());
+        hexInputField = new InputField(colorScheme.defaultInputField());
         hexInputField.addChangeListener((sender, text) -> hexInputFieldValueChanged(sender, text));
         hexInputField.setInputCondition(Constants.hexInputCondition);
         
-        confirmButton = new Button("Confirm", colorScheme.defaultButtonColorScheme(), colorScheme.font().m().bold());
+        confirmButton = new Button("Confirm", colorScheme.defaultButton(), colorScheme.font().m().bold());
         confirmButton.addActionListener(e -> {
             unwrappedPerform(delegate, delegate -> delegate.didPressConfirm(this, panel.getSelectedColor()));
         });
         
-        cancelButton = new Button("Cancel", colorScheme.defaultButtonColorScheme(), colorScheme.font().m().bold());
+        cancelButton = new Button("Cancel", colorScheme.defaultButton(), colorScheme.font().m().bold());
         cancelButton.addActionListener(e -> {
             unwrappedPerform(delegate, delegate -> delegate.didPressCancel(this));
         });

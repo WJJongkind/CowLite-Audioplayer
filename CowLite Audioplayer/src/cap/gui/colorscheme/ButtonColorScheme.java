@@ -11,8 +11,40 @@ import java.awt.Color;
  *
  * @author Wessel
  */
-public interface ButtonColorScheme {
-    public Color pressedBackgroundColor();
-    public Color backgroundColor();
-    public Color textColor();
+public class ButtonColorScheme {
+    
+    private Color pressedBackgroundColor;
+    private Color backgroundColor;
+    private Color textColor;
+
+    public ButtonColorScheme(Color pressedBackgroundColor, Color backgroundColor, Color textColor) {
+        this.pressedBackgroundColor = pressedBackgroundColor;
+        this.backgroundColor = backgroundColor;
+        this.textColor = textColor;
+    }
+    
+    public Color getPressedBackgroundColor() {
+        return pressedBackgroundColor;
+    }
+    
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
+    
+    public Color getTextColor() {
+        return textColor;
+    }
+
+    public void setPressedBackgroundColor(Color pressedBackgroundColor) {
+        this.pressedBackgroundColor = pressedBackgroundColor;
+    }
+
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public void setTextColor(Color textColor) {
+        this.textColor = textColor;
+    }
+    
 }

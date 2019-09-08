@@ -11,9 +11,50 @@ import java.awt.Color;
  *
  * @author Wessel
  */
-public interface SavedListsPaneColorScheme {
-    public Color backgroundColor();
-    public Color textColor();
-    public Color highlightBackgroundColor();
-    public Color highlightTextColor();
+public class SavedListsPaneColorScheme {
+    
+    private Color backgroundColor;
+    private Color textColor;
+    private Color highlightBackgroundColor;
+    private Color highlightTextColor;
+
+    public SavedListsPaneColorScheme(Color backgroundColor, Color textColor, Color highlightBackgroundColor, Color highlightTextColor) {
+        this.backgroundColor = backgroundColor;
+        this.textColor = textColor;
+        this.highlightBackgroundColor = highlightBackgroundColor;
+        this.highlightTextColor = highlightTextColor;
+    }
+
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public Color getTextColor() {
+        return textColor;
+    }
+
+    public void setTextColor(Color textColor) {
+        this.textColor = textColor;
+    }
+
+    public Color getHighlightBackgroundColor() {
+        return highlightBackgroundColor;
+    }
+
+    public void setHighlightBackgroundColor(Color highlightBackgroundColor) {
+        this.highlightBackgroundColor = highlightBackgroundColor;
+    }
+
+    public Color getHighlightTextColor() {
+        return highlightTextColor;
+    }
+
+    public void setHighlightTextColor(Color highlightTextColor) {
+        this.highlightTextColor = highlightTextColor;
+    }
+    
 }

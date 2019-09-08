@@ -61,7 +61,7 @@ class AboutScreen extends JPanel {
         c.fill = c.NONE;
         c.insets = new Insets(8, 0, 0, 0);
         
-        button = new Button("Close", layout.defaultButtonColorScheme(), layout.font().m().bold());
+        button = new Button("Close", layout.defaultButton(), layout.font().m().bold());
         button.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressClose(this)));
         
         super.add(button, c);

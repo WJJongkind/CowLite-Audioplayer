@@ -11,10 +11,61 @@ import java.awt.Color;
  *
  * @author Wessel
  */
-public interface PlaylistPaneColorScheme {
-    public Color firstBackgroundColor();
-    public Color secondBackgroundColor();
-    public Color textColor();
-    public Color highlightBackgroundColor();
-    public Color highlightTextColor();
+public class PlaylistPaneColorScheme {
+    
+    private Color firstBackgroundColor;
+    private Color secondBackgroundColor;
+    private Color textColor;
+    private Color highlightBackgroundColor;
+    private Color highlightTextColor;
+
+    public PlaylistPaneColorScheme(Color firstBackgroundColor, Color secondBackgroundColor, Color textColor, Color highlightBackgroundColor, Color highlightTextColor) {
+        this.firstBackgroundColor = firstBackgroundColor;
+        this.secondBackgroundColor = secondBackgroundColor;
+        this.textColor = textColor;
+        this.highlightBackgroundColor = highlightBackgroundColor;
+        this.highlightTextColor = highlightTextColor;
+    }
+
+    public Color getFirstBackgroundColor() {
+        return firstBackgroundColor;
+    }
+
+    public void setFirstBackgroundColor(Color firstBackgroundColor) {
+        this.firstBackgroundColor = firstBackgroundColor;
+    }
+
+    public Color getSecondBackgroundColor() {
+        return secondBackgroundColor;
+    }
+
+    public void setSecondBackgroundColor(Color secondBackgroundColor) {
+        this.secondBackgroundColor = secondBackgroundColor;
+    }
+
+    public Color getTextColor() {
+        return textColor;
+    }
+
+    public void setTextColor(Color textColor) {
+        this.textColor = textColor;
+    }
+
+    public Color getHighlightBackgroundColor() {
+        return highlightBackgroundColor;
+    }
+
+    public void setHighlightBackgroundColor(Color highlightBackgroundColor) {
+        this.highlightBackgroundColor = highlightBackgroundColor;
+    }
+
+    public Color getHighlightTextColor() {
+        return highlightTextColor;
+    }
+
+    public void setHighlightTextColor(Color highlightTextColor) {
+        this.highlightTextColor = highlightTextColor;
+    }
+    
+    
 }
