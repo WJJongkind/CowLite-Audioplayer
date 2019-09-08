@@ -11,7 +11,7 @@ import java.awt.Color;
  *
  * @author Wessel
  */
-public class OverlayColorScheme {
+public class OverlayColorScheme extends ColorSchemeItem<OverlayColorScheme> {
     
     private Color backgroundColor;
     private Color foregroundColor;
@@ -27,6 +27,7 @@ public class OverlayColorScheme {
 
     public void setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
+        notifyObservers();
     }
 
     public Color getForegroundColor() {
@@ -35,6 +36,7 @@ public class OverlayColorScheme {
 
     public void setForegroundColor(Color foregroundColor) {
         this.foregroundColor = foregroundColor;
+        notifyObservers();
     }
     
 }

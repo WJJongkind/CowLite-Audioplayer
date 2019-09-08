@@ -11,7 +11,7 @@ import java.awt.Color;
  *
  * @author Wessel
  */
-public class MenuColorScheme {
+public class MenuColorScheme extends ColorSchemeItem<MenuColorScheme> {
     
     private Color borderColor;
     private Color textColor;
@@ -37,14 +37,17 @@ public class MenuColorScheme {
 
     public void setBorderColor(Color borderColor) {
         this.borderColor = borderColor;
+        notifyObservers();
     }
 
     public void setTextColor(Color textColor) {
         this.textColor = textColor;
+        notifyObservers();
     }
 
     public void setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
+        notifyObservers();
     }
     
 }

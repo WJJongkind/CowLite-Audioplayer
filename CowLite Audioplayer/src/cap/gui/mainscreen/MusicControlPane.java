@@ -71,7 +71,7 @@ public class MusicControlPane extends JPanel {
         imageSet = colorScheme.imageSet();
         makeButtons(colorScheme);
         
-        super.setBackground(colorScheme.frameColor());
+        super.setBackground(colorScheme.general().getFrameColor());
         super.setLayout(new FlowLayout(FlowLayout.LEFT, Layout.spacingBetweenButtons, 0));
         super.add(prevButton);
         super.add(playButton);

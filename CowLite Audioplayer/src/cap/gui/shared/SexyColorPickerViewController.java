@@ -262,7 +262,7 @@ public class SexyColorPickerViewController implements ViewController, SexyColorP
     
     private void layoutRedInputFieldLabel(ColorScheme colorScheme) {
         redInputFieldLabel.setFont(colorScheme.font().m().bold().get());
-        redInputFieldLabel.setForeground(colorScheme.defaultContentColor());
+        redInputFieldLabel.setForeground(colorScheme.general().getContentColor());
         
         GridBagConstraints c = new GridBagConstraints();
         
@@ -299,7 +299,7 @@ public class SexyColorPickerViewController implements ViewController, SexyColorP
     
     private void layoutGreenInputFieldLabel(ColorScheme colorScheme) {
         greenInputFieldLabel.setFont(colorScheme.font().bold().m().get());
-        greenInputFieldLabel.setForeground(colorScheme.defaultContentColor());
+        greenInputFieldLabel.setForeground(colorScheme.general().getContentColor());
         
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 5;
@@ -335,7 +335,7 @@ public class SexyColorPickerViewController implements ViewController, SexyColorP
     
     private void layoutBlueInputFieldLabel(ColorScheme colorScheme) {
         blueInputFieldLabel.setFont(colorScheme.font().bold().m().get());
-        blueInputFieldLabel.setForeground(colorScheme.defaultContentColor());
+        blueInputFieldLabel.setForeground(colorScheme.general().getContentColor());
         
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 7;
@@ -371,7 +371,7 @@ public class SexyColorPickerViewController implements ViewController, SexyColorP
     
     private void layoutHexInputFieldLabel(ColorScheme colorScheme) {
         hexInputFieldLabel.setFont(colorScheme.font().bold().m().get());
-        hexInputFieldLabel.setForeground(colorScheme.defaultContentColor());
+        hexInputFieldLabel.setForeground(colorScheme.general().getContentColor());
         
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 3;

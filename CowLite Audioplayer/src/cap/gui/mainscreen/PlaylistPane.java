@@ -48,7 +48,7 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane {
     // MARK: - Initialisers
     
     public PlaylistPane(ColorScheme colorScheme) {
-        super(colorScheme.frameColor());
+        super(colorScheme.general().getFrameColor());
         songTable = new JTable();
         songTableModel = new DefaultTableModel() {
             @Override

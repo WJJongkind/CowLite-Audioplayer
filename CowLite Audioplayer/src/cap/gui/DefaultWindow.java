@@ -52,8 +52,8 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
     
     public DefaultWindow(ColorScheme colorScheme) {
         super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        super.setBackground(colorScheme.frameColor());
-        super.getContentPane().setBackground(colorScheme.frameColor());
+        super.setBackground(colorScheme.general().getFrameColor());
+        super.getContentPane().setBackground(colorScheme.general().getFrameColor());
         super.setUndecorated(true);
         super.addMouseListener(windowManager);
         super.addMouseMotionListener(windowManager);
@@ -64,7 +64,7 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
         
         contentPane = new JPanel();
         contentPane.setLayout(new GridBagLayout());
-        contentPane.setBackground(colorScheme.frameColor());
+        contentPane.setBackground(colorScheme.general().getFrameColor());
         
         menu = new Menu(colorScheme);
         
@@ -89,10 +89,9 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
         super.add(contentPane);
     }
     
-    // MARK: - JFrame
+    // MARK: - Public methods
     
-    @Override
-    public JPanel getContentPane() {
+    public JPanel getWindowContentPane() {
         return contentPane;
     }
     

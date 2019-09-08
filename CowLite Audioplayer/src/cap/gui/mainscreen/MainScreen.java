@@ -69,7 +69,7 @@ public class MainScreen extends JPanel {
         playlistsSplitPane = new PlaylistsSplitPane(colorScheme, JSplitPane.HORIZONTAL_SPLIT, savedPlaylistsPane, playlistPane);
         playlistsSplitPane.setDividerSize(5);
         
-        super.setBackground(colorScheme.frameColor());
+        super.setBackground(colorScheme.general().getFrameColor());
         layoutComponents();
     }
     

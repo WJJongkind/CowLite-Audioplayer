@@ -20,7 +20,7 @@ import cap.gui.colorscheme.ColorScheme;
 public class Menu extends JMenuBar {
     
     public Menu(ColorScheme colorScheme) {
-        super.setBackground(colorScheme.frameColor());
+        super.setBackground(colorScheme.general().getFrameColor());
         super.setBorder(new AbstractBorder() {
             @Override
             public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {

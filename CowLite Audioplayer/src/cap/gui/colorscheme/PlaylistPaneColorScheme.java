@@ -11,7 +11,7 @@ import java.awt.Color;
  *
  * @author Wessel
  */
-public class PlaylistPaneColorScheme {
+public class PlaylistPaneColorScheme extends ColorSchemeItem<PlaylistPaneColorScheme> {
     
     private Color firstBackgroundColor;
     private Color secondBackgroundColor;
@@ -33,6 +33,7 @@ public class PlaylistPaneColorScheme {
 
     public void setFirstBackgroundColor(Color firstBackgroundColor) {
         this.firstBackgroundColor = firstBackgroundColor;
+        notifyObservers();
     }
 
     public Color getSecondBackgroundColor() {
@@ -41,6 +42,7 @@ public class PlaylistPaneColorScheme {
 
     public void setSecondBackgroundColor(Color secondBackgroundColor) {
         this.secondBackgroundColor = secondBackgroundColor;
+        notifyObservers();
     }
 
     public Color getTextColor() {
@@ -49,6 +51,7 @@ public class PlaylistPaneColorScheme {
 
     public void setTextColor(Color textColor) {
         this.textColor = textColor;
+        notifyObservers();
     }
 
     public Color getHighlightBackgroundColor() {
@@ -57,6 +60,7 @@ public class PlaylistPaneColorScheme {
 
     public void setHighlightBackgroundColor(Color highlightBackgroundColor) {
         this.highlightBackgroundColor = highlightBackgroundColor;
+        notifyObservers();
     }
 
     public Color getHighlightTextColor() {
@@ -65,6 +69,7 @@ public class PlaylistPaneColorScheme {
 
     public void setHighlightTextColor(Color highlightTextColor) {
         this.highlightTextColor = highlightTextColor;
+        notifyObservers();
     }
     
     

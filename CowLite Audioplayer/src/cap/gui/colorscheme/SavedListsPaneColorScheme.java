@@ -11,7 +11,7 @@ import java.awt.Color;
  *
  * @author Wessel
  */
-public class SavedListsPaneColorScheme {
+public class SavedListsPaneColorScheme extends ColorSchemeItem<SavedListsPaneColorScheme> {
     
     private Color backgroundColor;
     private Color textColor;
@@ -31,6 +31,7 @@ public class SavedListsPaneColorScheme {
 
     public void setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
+        notifyObservers();
     }
 
     public Color getTextColor() {
@@ -39,6 +40,7 @@ public class SavedListsPaneColorScheme {
 
     public void setTextColor(Color textColor) {
         this.textColor = textColor;
+        notifyObservers();
     }
 
     public Color getHighlightBackgroundColor() {
@@ -47,6 +49,7 @@ public class SavedListsPaneColorScheme {
 
     public void setHighlightBackgroundColor(Color highlightBackgroundColor) {
         this.highlightBackgroundColor = highlightBackgroundColor;
+        notifyObservers();
     }
 
     public Color getHighlightTextColor() {
@@ -55,6 +58,7 @@ public class SavedListsPaneColorScheme {
 
     public void setHighlightTextColor(Color highlightTextColor) {
         this.highlightTextColor = highlightTextColor;
+        notifyObservers();
     }
     
 }

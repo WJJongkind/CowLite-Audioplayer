@@ -31,11 +31,11 @@ public class GeneralLayoutSettingsPane extends JPanel {
     // MARK: - Initialisers
     
     public GeneralLayoutSettingsPane(ColorScheme colorScheme) {
-        contentComponent = new UICustomizationComponent(colorScheme, "Primary content / text color: ", colorScheme.defaultContentColor());
-        frameComponent = new UICustomizationComponent(colorScheme, "Window background color: ", colorScheme.frameColor());
+        contentComponent = new UICustomizationComponent(colorScheme, "Primary content / text color: ", colorScheme.general().getContentColor());
+        frameComponent = new UICustomizationComponent(colorScheme, "Window background color: ", colorScheme.general().getFrameColor());
         previewWindow = new DefaultWindow(colorScheme);
         
-        super.setBackground(colorScheme.frameColor());
+        super.setBackground(colorScheme.general().getFrameColor());
     }
     
     

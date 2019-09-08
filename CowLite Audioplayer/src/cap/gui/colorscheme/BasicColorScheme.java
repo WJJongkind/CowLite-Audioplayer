@@ -14,8 +14,7 @@ import java.awt.Color;
 public class BasicColorScheme implements ColorScheme {
     
     private DynamicFont font;
-    private Color frameColor;
-    private Color contentColor;
+    private GeneralColorScheme generalColorScheme;
     private ButtonColorScheme defaultButtonColorScheme;
     private InputFieldColorScheme defaultInputFieldColorScheme;
     private MenuColorScheme menuColorScheme;
@@ -28,8 +27,7 @@ public class BasicColorScheme implements ColorScheme {
 
     public BasicColorScheme(
             DynamicFont font, 
-            Color frameColor, 
-            Color contentColor, 
+            GeneralColorScheme generalColorScheme,
             ButtonColorScheme defaultButtonColorScheme, 
             InputFieldColorScheme defaultInputFieldColorScheme, 
             MenuColorScheme menuColorScheme, 
@@ -41,8 +39,7 @@ public class BasicColorScheme implements ColorScheme {
             UIImageSet imageSet
     ) {
         this.font = font;
-        this.frameColor = frameColor;
-        this.contentColor = contentColor;
+        this.generalColorScheme = generalColorScheme;
         this.defaultButtonColorScheme = defaultButtonColorScheme;
         this.defaultInputFieldColorScheme = defaultInputFieldColorScheme;
         this.menuColorScheme = menuColorScheme;
@@ -58,17 +55,12 @@ public class BasicColorScheme implements ColorScheme {
     public DynamicFont font() {
         return font;
     }
-
+    
     @Override
-    public Color frameColor() {
-        return frameColor;
+    public GeneralColorScheme general() {
+        return generalColorScheme;
     }
-
-    @Override
-    public Color defaultContentColor() {
-        return contentColor;
-    }
-
+    
     @Override
     public ButtonColorScheme defaultButton() {
         return defaultButtonColorScheme;

@@ -16,6 +16,7 @@ import java.io.IOException;
 import cap.gui.colorscheme.UIImageSet;
 import cap.gui.colorscheme.ControlImageSet;
 import cap.gui.colorscheme.DynamicFont;
+import cap.gui.colorscheme.GeneralColorScheme;
 import cap.gui.colorscheme.InputFieldColorScheme;
 import cap.gui.colorscheme.OverlayColorScheme;
 import java.awt.Font;
@@ -36,8 +37,7 @@ public class DarkMode extends BasicColorScheme {
     // MARK: - Constants
     
     private static final DynamicFont font = new DynamicFont(new Font("Dialog", Font.PLAIN, 11));
-    private static final Color frameColor = new Color(0x333333);
-    private static final Color defaultContentColor = new Color(0x909090);
+    private static final GeneralColorScheme generalColorScheme = new GeneralColorScheme(new Color(0x333333), new Color(0x909090));
     private static final MenuColorScheme menuColorScheme = new MenuColorScheme(new Color(0x909090), new Color(0x333333), new Color(0x909090));
     private static final PlaylistPaneColorScheme playlistPaneColorScheme = new PlaylistPaneColorScheme(new Color(0x909090), new Color(0xA2A2A2), new Color(0x333333), new Color(0xb00012), Color.white);
     private static final SavedListsPaneColorScheme savedListsColorScheme = new SavedListsPaneColorScheme(new Color(0x909090), new Color(0x333333), new Color(0xb00012), Color.white);
@@ -50,7 +50,7 @@ public class DarkMode extends BasicColorScheme {
     // MARK: - Initialisers
     
     public DarkMode() throws IOException {
-        super(font, frameColor, defaultContentColor, buttonColorScheme, inputFieldColorScheme, menuColorScheme, playlistPaneColorScheme, savedListsColorScheme, timeSliderColorScheme, volumeSliderColorScheme, overlayColorScheme, makeImageSet());
+        super(font, generalColorScheme, buttonColorScheme, inputFieldColorScheme, menuColorScheme, playlistPaneColorScheme, savedListsColorScheme, timeSliderColorScheme, volumeSliderColorScheme, overlayColorScheme, makeImageSet());
     }
     
     // MARK: - Private methods

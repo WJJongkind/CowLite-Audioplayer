@@ -19,9 +19,9 @@ public class SubMenu extends JMenu {
         super(title);
 
         super.setBorderPainted(false);
-        super.getPopupMenu().setBorder(BorderFactory.createLineBorder(colorScheme.frameColor()));
-        super.setForeground(colorScheme.defaultContentColor());
-        super.setBackground(colorScheme.frameColor());
+        super.getPopupMenu().setBorder(BorderFactory.createLineBorder(colorScheme.general().getFrameColor()));
+        super.setForeground(colorScheme.general().getContentColor());
+        super.setBackground(colorScheme.general().getFrameColor());
     }
 
 }

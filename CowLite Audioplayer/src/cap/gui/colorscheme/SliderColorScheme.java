@@ -11,7 +11,7 @@ import java.awt.Color;
  *
  * @author Wessel
  */
-public class SliderColorScheme {
+public class SliderColorScheme extends ColorSchemeItem<SliderColorScheme> {
     
     private Color backgroundColor;
     private Color fillColor;
@@ -27,6 +27,7 @@ public class SliderColorScheme {
 
     public void setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
+        notifyObservers();
     }
 
     public Color getFillColor() {
@@ -35,6 +36,7 @@ public class SliderColorScheme {
 
     public void setFillColor(Color fillColor) {
         this.fillColor = fillColor;
+        notifyObservers();
     }
     
 }

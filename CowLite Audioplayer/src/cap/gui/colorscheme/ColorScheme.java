@@ -12,9 +12,9 @@ import java.awt.Color;
  * @author Wessel
  */
 public interface ColorScheme {
-    public DynamicFont font();
-    public Color frameColor();
-    public Color defaultContentColor();
+    
+    public DynamicFont font(); // TODO for accessibility, make observer structure where if font-scale is increased observers are notified.
+    public GeneralColorScheme general();
     public ButtonColorScheme defaultButton();
     public InputFieldColorScheme defaultInputField();
     public MenuColorScheme menu();
@@ -24,4 +24,5 @@ public interface ColorScheme {
     public SliderColorScheme volumeSlider();
     public OverlayColorScheme overlay();
     public UIImageSet imageSet();
+    
 }

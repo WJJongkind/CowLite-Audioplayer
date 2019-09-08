@@ -33,7 +33,7 @@ public class LayoutScreen extends JTabbedPane {
     // MARK: - Initialisers
     
     public LayoutScreen(ColorScheme colorScheme) {
-        generalPane = new GeneralLayoutSettingsPane();
+        generalPane = new GeneralLayoutSettingsPane(colorScheme);
         playlistPane = new PlaylistLayoutSettingsPane();
         trackPositionPane = new TrackPositionSliderLayoutSettingsPane();
         volumePane = new VolumeSliderLayoutSettingsPane();
@@ -47,8 +47,8 @@ public class LayoutScreen extends JTabbedPane {
         super.addTab("Menu", menuPane);
         super.addTab("Overlay", overlayPane);
         
-        super.setBackground(colorScheme.frameColor());
-        super.setForeground(colorScheme.defaultContentColor());
+        super.setBackground(colorScheme.general().getFrameColor());
+        super.setForeground(colorScheme.general().getContentColor());
         super.setUI(new TabbedPaneUI(colorScheme));
     }
     
@@ -66,8 +66,8 @@ public class LayoutScreen extends JTabbedPane {
         @Override 
         public void installUI(JComponent c) {
             super.installUI(c);
-            super.highlight = colorScheme.defaultContentColor();
-            super.lightHighlight = colorScheme.defaultContentColor();
+            super.highlight = colorScheme.general().getContentColor();
+            super.lightHighlight = colorScheme.general().getContentColor();
             super.shadow = new Color(0, 0, 0, 0);
             super.darkShadow = new Color(0, 0, 0, 0);
             super.focus = new Color(0, 0, 0, 0);
@@ -79,11 +79,11 @@ public class LayoutScreen extends JTabbedPane {
                                           int x, int y, int w, int h,
                                           boolean isSelected ) {
             if(isSelected) {
-                tabPane.setBackgroundAt(tabIndex, colorScheme.defaultContentColor());
-                tabPane.setForegroundAt(tabIndex, colorScheme.frameColor());
+                tabPane.setBackgroundAt(tabIndex, colorScheme.general().getContentColor());
+                tabPane.setForegroundAt(tabIndex, colorScheme.general().getFrameColor());
             } else {
-                tabPane.setBackgroundAt(tabIndex, colorScheme.frameColor());
-                tabPane.setForegroundAt(tabIndex, colorScheme.defaultContentColor());
+                tabPane.setBackgroundAt(tabIndex, colorScheme.general().getFrameColor());
+                tabPane.setForegroundAt(tabIndex, colorScheme.general().getContentColor());
             }
             super.paintTabBackground(g, tabPlacement, tabIndex, x, y, w, h, false);
         }
@@ -109,7 +109,7 @@ public class LayoutScreen extends JTabbedPane {
     public static final void main(String[] args) throws IOException {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().setBackground(new DarkMode().frameColor());
+        frame.getContentPane().setBackground(new DarkMode().general().getFrameColor());
         
         frame.add(new LayoutScreen(new DarkMode()));
         

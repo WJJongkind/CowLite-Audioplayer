@@ -52,7 +52,7 @@ public class WindowActionsPane extends JPanel {
     public WindowActionsPane(ColorScheme colorScheme) {
         super();
         
-        super.setBackground(colorScheme.frameColor());
+        super.setBackground(colorScheme.general().getFrameColor());
         super.setBorder(new AbstractBorder() {
             @Override
             public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {

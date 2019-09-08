@@ -33,7 +33,7 @@ public class PlaylistsSplitPane extends JSplitPane {
         });
         
         super.setBorder(null);
-        super.setBackground(colorScheme.frameColor());
+        super.setBackground(colorScheme.general().getFrameColor());
     }
     
 }

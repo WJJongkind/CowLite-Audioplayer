@@ -11,7 +11,7 @@ import java.awt.Color;
  *
  * @author Wessel
  */
-public class ButtonColorScheme {
+public class ButtonColorScheme extends ColorSchemeItem<ButtonColorScheme> {
     
     private Color pressedBackgroundColor;
     private Color backgroundColor;
@@ -22,29 +22,34 @@ public class ButtonColorScheme {
         this.backgroundColor = backgroundColor;
         this.textColor = textColor;
     }
-    
+
     public Color getPressedBackgroundColor() {
         return pressedBackgroundColor;
-    }
-    
-    public Color getBackgroundColor() {
-        return backgroundColor;
-    }
-    
-    public Color getTextColor() {
-        return textColor;
     }
 
     public void setPressedBackgroundColor(Color pressedBackgroundColor) {
         this.pressedBackgroundColor = pressedBackgroundColor;
+        notifyObservers();
+    }
+
+    public Color getBackgroundColor() {
+        return backgroundColor;
     }
 
     public void setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
+        notifyObservers();
+    }
+
+    public Color getTextColor() {
+        return textColor;
     }
 
     public void setTextColor(Color textColor) {
         this.textColor = textColor;
+        notifyObservers();
     }
+    
+    
     
 }

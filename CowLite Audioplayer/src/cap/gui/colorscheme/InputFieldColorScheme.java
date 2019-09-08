@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
  *
  * @author Wessel
  */
-public class InputFieldColorScheme {
+public class InputFieldColorScheme extends ColorSchemeItem<InputFieldColorScheme> {
     
     private Color backgroundColor;
     private Color textColor;
@@ -23,29 +23,32 @@ public class InputFieldColorScheme {
         this.textColor = textColor;
         this.borderColor = borderColor;
     }
-    
+
     public Color getBackgroundColor() {
         return backgroundColor;
-    }
-    
-    public Color getTextColor() {
-        return textColor;
-    }
-    
-    public Color getBorderColor() {
-        return borderColor;
     }
 
     public void setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
+        notifyObservers();
+    }
+
+    public Color getTextColor() {
+        return textColor;
     }
 
     public void setTextColor(Color textColor) {
         this.textColor = textColor;
+        notifyObservers();
+    }
+
+    public Color getBorderColor() {
+        return borderColor;
     }
 
     public void setBorderColor(Color borderColor) {
         this.borderColor = borderColor;
+        notifyObservers();
     }
     
 }

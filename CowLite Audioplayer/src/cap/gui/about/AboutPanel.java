@@ -19,11 +19,11 @@ import cap.gui.colorscheme.ColorScheme;
 class AboutPanel extends SexyScrollPane {
     
     public AboutPanel(ColorScheme layout) {
-        super(layout.defaultContentColor());
+        super(layout.general().getContentColor());
         
         JTextArea textArea = new JTextArea();
-        textArea.setBackground(layout.frameColor());
-        textArea.setForeground(layout.defaultContentColor());
+        textArea.setBackground(layout.general().getFrameColor());
+        textArea.setForeground(layout.general().getContentColor());
         textArea.setEditable(false);
         textArea.setBorder(null);
         textArea.setLineWrap(true);
@@ -44,7 +44,7 @@ class AboutPanel extends SexyScrollPane {
         
         super.setViewport(super.createViewport());
         super.getViewport().add(textArea);
-        super.getViewport().setBackground(layout.defaultContentColor());
+        super.getViewport().setBackground(layout.general().getContentColor());
         super.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         super.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         super.setBorder(BorderFactory.createEmptyBorder());
