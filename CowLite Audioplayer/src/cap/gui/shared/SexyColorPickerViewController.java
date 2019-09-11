@@ -212,6 +212,7 @@ public class SexyColorPickerViewController implements ViewController, SexyColorP
     
     // MARK: - Private methods
     
+    // TODO make a SexyColorPickerScreen and move all UI logic there.
     private void layoutComponents(ColorScheme colorScheme) {
         view.setLayout(new GridBagLayout());
         

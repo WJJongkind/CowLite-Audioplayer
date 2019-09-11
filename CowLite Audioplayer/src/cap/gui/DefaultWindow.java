@@ -91,9 +91,10 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
     
     // MARK: - Public methods
     
-    public JPanel getWindowContentPane() {
-        return contentPane;
-    }
+    // TODO: maybe not needed?
+//    public JPanel getWindowContentPane() {
+//        return contentPane;
+//    }
     
     // MARK: - Window
 

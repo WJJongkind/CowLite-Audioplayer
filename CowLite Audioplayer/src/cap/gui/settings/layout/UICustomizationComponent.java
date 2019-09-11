@@ -9,6 +9,7 @@ import cap.gui.colorscheme.ColorScheme;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.lang.ref.WeakReference;
@@ -47,11 +48,23 @@ public class UICustomizationComponent extends JPanel {
         label.setFont(colorScheme.font().m().get());
         label.setForeground(colorScheme.general().getContentColor());
         
-        button = new JButton();
+        button = new JButton() {
+            @Override
+            public void paintComponent(Graphics g) {
+                // Draw the background
+                g.setColor(initialColor);
+                g.fillRect(0, 0, getWidth(), getHeight());
+
+                // Draw remainder of button.
+                super.paintComponent(g);
+            }
+        };
         button.setPreferredSize(new Dimension(colorScheme.font().m().getSize(), colorScheme.font().m().getSize()));
         button.setBackground(initialColor);
         button.setBorder(BorderFactory.createLineBorder(colorScheme.general().getContentColor(), Layout.buttonBorderWidth));
         button.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressSelectColorButton(this)));
+        button.setFocusPainted(false);
+        button.setContentAreaFilled(false);
         
         super.setBackground(new Color(0, 0, 0, 0));
         
