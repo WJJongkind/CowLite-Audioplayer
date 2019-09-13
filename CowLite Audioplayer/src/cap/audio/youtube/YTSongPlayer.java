@@ -6,14 +6,20 @@
 package cap.audio.youtube;
 
 import cap.audio.SongPlayer;
+import cap.util.HeadlessBrowser;
+import cap.util.ResultCarryingCountdownLatch;
+import static cap.util.SugarySyntax.doTry;
+import static cap.util.SugarySyntax.tryParseInt;
 import static cap.util.SugarySyntax.unwrappedPerform;
-import com.teamdev.jxbrowser.chromium.Browser;
-import com.teamdev.jxbrowser.chromium.Callback;
 import filedatareader.FileDataReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
 
 /**
  *
@@ -21,14 +27,23 @@ import java.util.ArrayList;
  */
 public class YTSongPlayer implements SongPlayer<YouTubeSong> {
     
+    // MARK: - Associated types & constants
+    
+    private static final class Constants {
+        public static final String readyMessage = "CowLite-READY";
+        public static final String stateMessage = "CowLite-STATE";
+    }
+
+    
     // MARK: - Shared properties
     
     private static String videoPlayerHtml;
     
     // MARK: - Private final properties
     
-    private final Browser browser = new Browser();
+    private final HeadlessBrowser browser;
     private final ArrayList<WeakReference<SongPlayerObserver<YouTubeSong>>> observers = new ArrayList<>();
+    private final YTSocket ytSocket;
     
     // MARK: - Private properties
     
@@ -44,14 +59,39 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
             reader.setPath("resources" + File.separatorChar + "html" + File.separatorChar + "YTAudioPlayer.html");
             videoPlayerHtml = reader.getDataString();
         }
+        ytSocket = new YTSocket();
+        ytSocket.start();
+        
+        // WebEngine
+        browser = new HeadlessBrowser();
     }
 
     @Override
     public boolean play() {
+        ResultCarryingCountdownLatch<Boolean> latch = new ResultCarryingCountdownLatch<>(1);
+        
+        browser.setConsoleListener(message -> {
+            if(message != null && message.contains(Constants.stateMessage)) {
+                Integer value;
+                if((value = tryParseInt(message.replace(Constants.stateMessage, ""))) != null) {
+                    switch(value) {
+                        case 0:
+                            latch.countDown(false);
+                            break;
+                        default:
+                            latch.countDown(true);
+                            break;
+                    }
+                }
+            }
+        });
         browser.executeJavaScript("player.playVideo()");
+        
         playerState = PlayerState.playing;
         unwrappedPerform(observers, observer -> observer.stateChanged(this, playerState));
-        return true; // TODO perhaps there's a way to detect if video actually starts playing?
+        return doTry(true, () -> {
+            return latch.awaitResult();
+        });
     }
 
     @Override
@@ -59,6 +99,7 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
         if(playerState == PlayerState.playing) {
             playerState = PlayerState.paused;
             browser.executeJavaScript("player.pauseVideo()");
+            
             unwrappedPerform(observers, observer -> observer.stateChanged(this, playerState));
         }
     }
@@ -69,6 +110,7 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
             playerState = PlayerState.stopped;
             browser.executeJavaScript("player.pauseVideo()");
             browser.executeJavaScript("player.seekTo(0, true)");
+            
             unwrappedPerform(observers, observer -> observer.stateChanged(this, playerState));
         }
     }
@@ -82,7 +124,7 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
     public void setVolume(double volume) {
         this.volume = volume;
         browser.executeJavaScript("player.setVolume(" + (int)(volume * 100) + ")");
-        
+
         unwrappedPerform(observers, observer -> observer.volumeChanged(this, volume));
     }
 
@@ -97,13 +139,18 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
         
         currentSong = song;
         String html = videoPlayerHtml.replace("#VIDEO_PLACEHOLDER#", song.getId()).replace("#VOLUME_PLACEHOLDER#", "" + (int)(volume * 100));
-        Browser.invokeAndWaitFinishLoadingMainFrame(browser, new Callback<Browser>() {
-            @Override
-            public void invoke(Browser t) {
-                browser.loadHTML(html);
+        ytSocket.setHTML(html);
+        
+        CountDownLatch latch = new CountDownLatch(1);
+        browser.setConsoleListener((message) -> {
+            if(Constants.readyMessage.equals(message)) {
+                latch.countDown();
             }
         });
+        browser.loadWebPage("http://localhost:6969");
+        browser.executeJavaScript("loadIframeAPI()");
         
+        try { latch.await(); } catch (InterruptedException ex) {}
         unwrappedPerform(observers, observer -> observer.songChanged(this, song));
     }
 
@@ -123,8 +170,8 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
 
     @Override
     public long getPosition() {
-        double position = browser.executeJavaScriptAndReturnValue("player.getCurrentTime()").asNumber().getValue();
-        return (long)(position * 1000);
+        Number playerTime = browser.executeJavaScript("player.getCurrentTime()");
+        return Math.round(playerTime.doubleValue() * 1000);
     }
 
     @Override
@@ -140,6 +187,56 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
     @Override
     public void removeObserver(SongPlayerObserver<YouTubeSong> observer) {
         observers.remove(new WeakReference<>(observer));
+    }
+    
+    // MARK: - Private associated types
+    
+    // Required because YouTube blocks playing some videos in browsers when they are not
+    // being played from a domain (e.g. when playing a YT video from a .html file).
+    // We trick YouTube by hosting the video on localhost... Sucks but is required for
+    // a reliable experience.
+    private class YTSocket extends Thread {
+        
+        private final ServerSocket serverSocket;
+        private String html = "";
+        
+        public YTSocket() throws IOException {
+            serverSocket = new ServerSocket(6969);
+        }
+        
+        @Override
+        public void run() {
+            while(true) {
+                try {
+                    Socket client = null;
+                    while((client = serverSocket.accept()) != null) {
+                        try (PrintWriter out = new PrintWriter(client.getOutputStream())) {
+                            out.println("HTTP/1.1 200 OK");
+                            out.println("Content-Type: text/html; charset: utf8");
+                            out.println("\r\n");
+                            synchronized(html) {
+                                out.println(html);
+                            }
+                            out.flush();
+                            out.close();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        client.close();
+                    }
+
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        
+        public void setHTML(String html) {
+            synchronized(this.html) {
+                this.html = html;
+            }
+        }
+        
     }
     
 }

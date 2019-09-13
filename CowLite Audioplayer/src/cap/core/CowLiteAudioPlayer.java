@@ -11,7 +11,6 @@ import cap.core.services.PlaylistStore;
 import cap.gui.DefaultWindow;
 import cap.gui.colorscheme.darkmode.DarkMode;
 import com.sun.jna.NativeLibrary;
-import com.teamdev.jxbrowser.chromium.BrowserPreferences;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +28,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.util.HashMap;
+import javafx.embed.swing.JFXPanel;
 import javax.swing.JFrame;
 
 /**
@@ -109,9 +109,9 @@ public class CowLiteAudioPlayer {
     }
 
     private static void configureGlobalEnvironment() {
-        // JxBrowser preferences
-        BrowserPreferences.setChromiumSwitches("--disable-web-security", "--allow-file-access-from-files", "--allow-file-access", "--autoplay-policy=no-user-gesture-required");
-
+        // Initialize JavaFX toolkit
+        new JFXPanel();
+        
         // VLC for audio decoding support
         NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), "lib");
 

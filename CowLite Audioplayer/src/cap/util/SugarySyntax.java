@@ -13,6 +13,18 @@ import java.util.Collection;
  * @author Wessel
  */
 public class SugarySyntax {
+
+    public interface TargetedAction<T> {
+        public void perform(T delegate);
+    }
+    
+    public interface Tryable {
+        public void block() throws Exception;
+    }
+    
+    public interface NonVoidTryable<T> {
+        public T block() throws Exception;
+    }
     
     public static <T> T nilCoalesce(T primary, T secondary) {
         return primary != null ? primary : secondary;
@@ -143,7 +155,106 @@ public class SugarySyntax {
         return sum;
     }
     
-    public interface TargetedAction<T> {
-        public void perform(T delegate);
+    // TODO convert to doTry where possible
+    public static void doTry(Tryable tryable) {
+        try {
+            tryable.block();
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
     }
+    
+    public static <T> T doTry(T defaultValue, NonVoidTryable<T> tryable) {
+        try {
+            return tryable.block();
+        } catch(Exception e) {
+            return defaultValue;
+        }
+    }
+
+    public static boolean isByte(String string) {
+        try {
+            Byte.parseByte(string);
+            return true;
+        } catch(Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean isShort(String string) {
+        try {
+            Short.parseShort(string);
+            return true;
+        } catch(Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean isInt(String string) {
+        try {
+            Integer.parseInt(string);
+            return true;
+        } catch(Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean isFloat(String string) {
+        try {
+            Float.parseFloat(string);
+            return true;
+        } catch(Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean isDouble(String string) {
+        try {
+            Double.parseDouble(string);
+            return true;
+        } catch(Exception e) {
+            return false;
+        }
+    }
+
+    public static Byte tryParseByte(String string) {
+        try {
+            return Byte.parseByte(string);
+        } catch(Exception e) {
+            return null;
+        }
+    }
+
+    public static Short tryParseShort(String string) {
+        try {
+            return Short.parseShort(string);
+        } catch(Exception e) {
+            return null;
+        }
+    }
+
+    public static Integer tryParseInt(String string) {
+        try {
+            return Integer.parseInt(string);
+        } catch(Exception e) {
+            return null;
+        }
+    }
+
+    public static Float tryParseFloat(String string) {
+        try {
+            return Float.parseFloat(string);
+        } catch(Exception e) {
+            return null;
+        }
+    }
+
+    public static Double tryParseDouble(String string) {
+        try {
+            return Double.parseDouble(string);
+        } catch(Exception e) {
+            return null;
+        }
+    }
+    
 }
