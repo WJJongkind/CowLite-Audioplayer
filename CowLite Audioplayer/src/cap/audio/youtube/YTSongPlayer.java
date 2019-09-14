@@ -69,44 +69,46 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
 
     @Override
     public boolean play() {
-        if(currentSong == null) {
-            return false;
-        }
-          
-        ResultCarryingCountdownLatch<Boolean> latch = new ResultCarryingCountdownLatch<>(1);
-        browser.setConsoleListener(message -> {
-            if(message != null && message.contains(Constants.stateMessage)) {
-                Integer value;
-                if((value = tryParseInt(message.replace(Constants.stateMessage, ""))) != null) {
-                    switch(value) {
-                        case 0:
-                            isFinished = true;
-                            latch.countDown(false);
-                            break;
-                        default:
-                            latch.countDown(true);
-                            break;
+        synchronized(this) {
+            if(currentSong == null) {
+                return false;
+            }
+
+            ResultCarryingCountdownLatch<Boolean> latch = new ResultCarryingCountdownLatch<>(1);
+            browser.setConsoleListener(message -> {
+                if(message != null && message.contains(Constants.stateMessage)) {
+                    Integer value;
+                    if((value = tryParseInt(message.replace(Constants.stateMessage, ""))) != null) {
+                        switch(value) {
+                            case 0:
+                                isFinished = true;
+                                latch.countDown(false);
+                                break;
+                            default:
+                                latch.countDown(true);
+                                break;
+                        }
                     }
                 }
+            });
+            browser.executeJavaScript("play()");
+
+            try {
+                boolean didStart = latch.awaitResult();
+
+                if(didStart) {
+                    playerState = PlayerState.playing;
+                    unwrappedPerform(observers, observer -> observer.stateChanged(this, playerState));
+                }
+
+                return didStart;
+            } catch(Exception e) {
+                // We don't really know what went wrong here. This case should theoretically
+                // not happen. If it does, just set isFinished to true.
+                e.printStackTrace();
+                isFinished = true;
+                return false;
             }
-        });
-        browser.executeJavaScript("play()");
-        
-        try {
-            boolean didStart = latch.awaitResult();
-            
-            if(didStart) {
-                playerState = PlayerState.playing;
-                unwrappedPerform(observers, observer -> observer.stateChanged(this, playerState));
-            }
-            
-            return didStart;
-        } catch(Exception e) {
-            // We don't really know what went wrong here. This case should theoretically
-            // not happen. If it does, just set isFinished to true.
-            e.printStackTrace();
-            isFinished = true;
-            return false;
         }
     }
 
@@ -151,28 +153,30 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
 
     @Override
     public void setSong(YouTubeSong song) {
-        stop();
-        isFinished = false;
-        currentSong = song;
-        
-        if(song == null) {
-            return;
-        }
-        
-        String html = videoPlayerHtml.replace("#VIDEO_PLACEHOLDER#", song.getId()).replace("#VOLUME_PLACEHOLDER#", "" + (int)(volume * 100));
-        ytSocket.setHTML(html);
-        
-        CountDownLatch latch = new CountDownLatch(1);
-        browser.setConsoleListener((message) -> {
-            if(Constants.readyMessage.equals(message)) {
-                latch.countDown();
+        synchronized(this) {
+            stop();
+            isFinished = false;
+            currentSong = song;
+
+            if(song == null) {
+                return;
             }
-        });
-        browser.loadWebPage("http://localhost:6969");
-        browser.executeJavaScript("loadIframeAPI()");
-        
-        try { latch.await(); } catch (InterruptedException ex) {}
-        unwrappedPerform(observers, observer -> observer.songChanged(this, song));
+
+            String html = videoPlayerHtml.replace("#VIDEO_PLACEHOLDER#", song.getId()).replace("#VOLUME_PLACEHOLDER#", "" + (int)(volume * 100));
+            ytSocket.setHTML(html);
+
+            CountDownLatch latch = new CountDownLatch(1);
+            browser.setConsoleListener((message) -> {
+                if(Constants.readyMessage.equals(message)) {
+                    latch.countDown();
+                }
+            });
+            browser.loadWebPage("http://localhost:6969");
+            browser.executeJavaScript("loadIframeAPI()");
+
+            try { latch.await(); } catch (InterruptedException ex) {}
+            unwrappedPerform(observers, observer -> observer.songChanged(this, song));
+        }
     }
 
     @Override

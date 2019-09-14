@@ -16,7 +16,6 @@ import com.google.api.services.youtube.model.PlaylistItemListResponse;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoListResponse;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -32,6 +31,12 @@ import java.util.regex.Pattern;
 public class YouTubeService {
     
     // MARK: - Associated types & constants
+    
+    public interface PlaylistReceiver {
+        
+        public void songLoaded(YouTubeSong song);
+        
+    }
     
     private static class Constants {
         public static final Pattern ytVideoIdPattern = Pattern.compile("\\?v=([a-zA-Z-_\\d]+)&?");
@@ -58,7 +63,7 @@ public class YouTubeService {
         String videoId = queryParts.get("v");
         
         YouTube.Videos.List list = youTube.videos().list("snippet,contentDetails,status");
-        list.setFields("items(snippet/title,snippet/description,snippet/channelTitle,contentDetails/duration,status/embeddable)");
+        list.setFields("items(snippet/title,snippet/channelTitle,contentDetails/duration,status/embeddable)");
         list.setId(videoId);
         list.setKey("AIzaSyC2_YRcTE9916fsmA0_KRnef43GbLzz8m0");
         VideoListResponse response = list.execute();
@@ -72,11 +77,40 @@ public class YouTubeService {
         }
     }
     
-    public List<YouTubeSong> readUrl(String url) throws MalformedURLException, IOException {
+    public void readUrl(String url, PlaylistReceiver receiver) {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    // Try to see if it is a playlist first. If so, obtain all videos in the playlist.
+                    final Counter counter = new Counter();
+                    readPlaylistUrl(url, song -> {
+                        counter.count++;
+                        receiver.songLoaded(song);
+                    });
+                    
+                    if(counter.count > 0) {
+                        return;
+                    }
+                    
+                    // Try to see if it is a YouTube video url (not playlist).
+                    YouTubeSong song = getYouTubeSongByUrl(new URL(url));
+                    if(song != null) {
+                        receiver.songLoaded(song);
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }.start();
+    }
+    
+    public List<YouTubeSong> readUrl(String url) {
         try {
             // Try to see if it is a playlist first. If so, obtain all videos in the playlist.
-            List<YouTubeSong> ytPlaylist = readPlaylistUrl(url);
-            if(ytPlaylist != null) {
+            List<YouTubeSong> ytPlaylist = new ArrayList<>();
+            readPlaylistUrl(url, song -> ytPlaylist.add(song));
+            if(!ytPlaylist.isEmpty()) {
                 return ytPlaylist;
             }
             
@@ -87,14 +121,15 @@ public class YouTubeService {
                 songList.add(song);
                 return songList;
             }
-        } catch (Exception e) {}
-            return new ArrayList<>();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
     
-    private List<YouTubeSong> readPlaylistUrl(String url) {
+    private void readPlaylistUrl(String url, PlaylistLoaderDelegate delegate) {
         try {
             Matcher playlistMatcher = Constants.ytPlaylistPattern.matcher(url);
-            ArrayList<YouTubeSong> playlistSongs = new ArrayList<>();
             if(playlistMatcher.find()) {
                 // Obtain Playlist ID
                 String playlistId = playlistMatcher.group(1);
@@ -113,19 +148,26 @@ public class YouTubeService {
 
                     for(PlaylistItem item : playlistItemResult.getItems()) {
                         try {
-                            playlistSongs.add(getYouTubeSongByUrl(new URL("https://www.youtube.com/watch?v=" + item.getContentDetails().getVideoId())));
+                            delegate.songLoaded(getYouTubeSongByUrl(new URL("https://www.youtube.com/watch?v=" + item.getContentDetails().getVideoId())));
                         } catch(Exception e) {}
                     }
                     nextToken = playlistItemResult.getNextPageToken();
                 } while (nextToken != null);
-                
-                return playlistSongs;
             }
         }catch(Exception e) {
             e.printStackTrace();
         }
-        
-        return null;
+    }
+    
+    // MARK: - Private associated types
+    
+    private interface PlaylistLoaderDelegate {
+        public void songLoaded(YouTubeSong song);
+    }
+    
+    // Required because we cannot mutate atomic properties from lambdas / inner classes
+    private class Counter {
+        int count = 0;
     }
     
 }

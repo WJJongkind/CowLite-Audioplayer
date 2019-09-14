@@ -21,6 +21,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import cap.gui.colorscheme.ColorScheme;
+import java.util.ArrayList;
 
 /**
  *
@@ -101,6 +102,28 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane {
         super.repaint();
     }
     
+    public void addSong(SongType song) {
+        if(songs == null) {
+            songs = new ArrayList<>();
+        }
+        songs.add(song);
+        
+        int selectedIndex = Math.max(0, songTable.getSelectedRow());
+        String[] newRow = {song.getSongName(), song.getArtistName(), song.getAlbumName()};
+        songTableModel.addRow(newRow);
+        
+        songTable.getSelectionModel().removeListSelectionListener(songSelectionListener);
+        songTable.setRowSelectionInterval(selectedIndex, selectedIndex);
+        songTable.getSelectionModel().addListSelectionListener(songSelectionListener);
+        
+        if(songs.size() == 0) {
+            return;
+        }
+        
+        super.revalidate();
+        super.repaint();
+    }
+    
     public void setDelegate(SongSelectionDelegate delegate) {
         this.delegate = new WeakReference<>(delegate);
     }
@@ -135,7 +158,7 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane {
         }
         
         SongSelectionDelegate strongDelegate = delegate.get();
-        if(delegate != null) {
+        if(delegate != null && songTable.getSelectedRow() > -1) {
             strongDelegate.didSelectSong(songs.get(songTable.getSelectedRow()));
         }
     }

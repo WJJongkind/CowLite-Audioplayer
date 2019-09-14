@@ -91,7 +91,9 @@ public class PlaylistPlayer {
             currentSongIndex = Math.max(0, playlist.getSongs().indexOf(song));
         }
         
-        player.setSong(playlist.getSong(currentSongIndex));
+        if(player.getSong() != playlist.getSong(currentSongIndex)) {
+            player.setSong(playlist.getSong(currentSongIndex));
+        }
     }
     
     // MARK: - ActionListener for Timer

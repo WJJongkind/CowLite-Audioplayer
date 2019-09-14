@@ -17,6 +17,7 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import cap.gui.colorscheme.ColorScheme;
+import java.awt.Point;
 import javax.swing.event.ListSelectionListener;
 
 /**
@@ -47,7 +48,17 @@ public class SavedPlaylistsPane extends JScrollPane {
     // MARK: - Initialiser
     
     public SavedPlaylistsPane(ColorScheme colorScheme) {
-        playlistPane = new JList();
+        playlistPane = new JList() {
+            @Override
+            public int locationToIndex(Point location) {
+                int index = super.locationToIndex(location);
+                if (index != -1 && !getCellBounds(index, index).contains(location)) {
+                    return -1;
+                } else {
+                    return index;
+                }
+            }
+        };
         playlistListModel = new DefaultListModel<>();
         
         playlistPane.setBackground(colorScheme.savedLists().getBackgroundColor());

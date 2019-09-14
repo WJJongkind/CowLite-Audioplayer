@@ -38,6 +38,9 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 import cap.gui.colorscheme.ColorScheme;
+import static cap.util.SugarySyntax.doTry;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JComponent;
 
 /**
@@ -198,7 +201,10 @@ public class MainScreenViewController implements SongPlayerObserver<Song>, MainS
     @Override
     public void didPressClearButton(MusicControlPane sender) {
         playlistPlayer.getPlayer().stop();
-        playlistPlayer.setPlaylist(new Playlist());
+        Playlist.PlaylistMode mode = playlistPlayer.getPlaylist().getMode();
+        Playlist newPlaylist = new Playlist();
+        newPlaylist.setMode(mode);
+        playlistPlayer.setPlaylist(newPlaylist);
         mainScreen.getPlaylistPane().setSongs(playlistPlayer.getPlaylist().getSongs());
         mainScreen.getSavedPlaylistsPane().clearSelection();
     }
@@ -336,6 +342,8 @@ public class MainScreenViewController implements SongPlayerObserver<Song>, MainS
     
     // MARK: - Keybindings for pasting YouTube videos
     
+    private YouTubeLoadingProcessingThread processingThread; // TODO tidy up
+    private Thread thread; // TODO tidy up
     private void mapKeystrokes() {
         mainScreen.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl V"), "tryPasteUrl");
         mainScreen.getActionMap().put("tryPasteUrl", new AbstractAction() {
@@ -347,14 +355,19 @@ public class MainScreenViewController implements SongPlayerObserver<Song>, MainS
                     if(pastedData != null) {
                         String text = (String) pastedData;
                         
-                        List<YouTubeSong> foundSongs = youTubeService.readUrl(text);
-                        for(YouTubeSong foundSong : foundSongs) {
-                            playlistPlayer.getPlaylist().addSong(foundSong);
-                        }
+                        // TODO tidy this code up
+                        processingThread = new YouTubeLoadingProcessingThread();
+                        processingThread.start();
+                        thread = new Thread() {
+                            @Override
+                            public void run() {
+                                youTubeService.readUrl(text, song -> {
+                                    processingThread.queue.add(song);
+                                });
+                            }
+                        };
                         
-                        playlistPlayer.refresh();
-                        mainScreen.getPlaylistPane().setSongs(playlistPlayer.getPlaylist().getSongs());
-                        mainScreen.getPlaylistPane().repaint();
+                        thread.start();
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -362,6 +375,27 @@ public class MainScreenViewController implements SongPlayerObserver<Song>, MainS
                 }
             }
         });
+    }
+    
+    private class YouTubeLoadingProcessingThread extends Thread {
+                            
+        public boolean isFinished = false;
+        public LinkedBlockingQueue<YouTubeSong> queue = new LinkedBlockingQueue<>();
+
+        @Override
+        public void run() {
+            while(!isFinished || !queue.isEmpty()) {
+                doTry(() -> {
+                    YouTubeSong song = queue.poll(30, TimeUnit.SECONDS);
+                    if(song != null) {
+                        playlistPlayer.getPlaylist().addSong(song);
+                        playlistPlayer.refresh();
+                        mainScreen.getPlaylistPane().setSongs(playlistPlayer.getPlaylist().getSongs());
+                        mainScreen.getPlaylistPane().setActiveSong(playlistPlayer.getPlayer().getSong());
+                    }
+                });
+            }
+        }
     }
     
 }
