@@ -6,7 +6,7 @@
 package cap.gui.overlay;
 
 import cap.audio.Song;
-import cap.audio.SongPlayer;
+import cap.audio.files.FileSong;
 import cap.gui.colorscheme.ColorScheme;
 import cap.gui.colorscheme.OverlayColorScheme;
 import cap.util.MillisecondsToTimestampConverter;
@@ -96,7 +96,16 @@ class SongInfoPanel extends JComponent {
     }
     
     public void setSong(Song song) {
-        artistSongText = song.getArtistName() + " - " + song.getSongName();
+        if(song == null) {
+            artistSongText = "";
+            return;
+        }
+        
+        if(song instanceof FileSong) {
+            artistSongText = song.getArtistName() + " - " + song.getSongName();
+        } else {
+            artistSongText = song.getSongName();
+        }
     }
     
     public void setShouldDrawInfo(boolean shouldDrawInfo) {

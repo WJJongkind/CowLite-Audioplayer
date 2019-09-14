@@ -5,7 +5,7 @@
         <div id="player"></div>
 
         <script>
-            var self = this;
+            var volume = #VOLUME_PLACEHOLDER#;
             
             /* 2. This code loads the IFrame Player API code asynchronously. */
             function loadIframeAPI() {
@@ -30,15 +30,31 @@
                 });
             }
             
+            function setVolume(newVolume) {
+                volume = newVolume;
+                
+                /* Fix for volume not being properly set... Probably some bug in YouTube's iFrame API */
+                player.setVolume(volume - 1);
+                player.setVolume(volume + 1);
+                player.setVolume(volume);
+            }
+            
+            function play() {
+                /* Fix for volume not being properly set... Probably some bug in YouTube's iFrame API */
+                player.playVideo();
+                player.pauseVideo();
+                setVolume(volume);
+                player.playVideo();
+            }
+            
             function onPlayerReady(event) {
+                /* Notify java code that player is ready */
                 console.log('CowLite-READY');
             }
             
             function playerStateChange(event) {
                 /* Fix for volume not being properly set... Probably some bug in YouTube's iFrame API */
-                player.setVolume(#VOLUME_PLACEHOLDER# - 1);
-                player.setVolume(#VOLUME_PLACEHOLDER# + 1);
-                player.setVolume(#VOLUME_PLACEHOLDER#);
+                setVolume(volume);
                 
                 /* Notify java code that we're live */
                 console.log('CowLite-STATE' + event.data);

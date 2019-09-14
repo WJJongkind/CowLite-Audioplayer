@@ -20,7 +20,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -58,7 +57,7 @@ public class YouTubeService {
         Map<String, String> queryParts = QueryReader.readQuery(query);
         String videoId = queryParts.get("v");
         
-        YouTube.Videos.List list = youTube.videos().list("snippet,contentDetails, status");
+        YouTube.Videos.List list = youTube.videos().list("snippet,contentDetails,status");
         list.setFields("items(snippet/title,snippet/description,snippet/channelTitle,contentDetails/duration,status/embeddable)");
         list.setId(videoId);
         list.setKey("AIzaSyC2_YRcTE9916fsmA0_KRnef43GbLzz8m0");

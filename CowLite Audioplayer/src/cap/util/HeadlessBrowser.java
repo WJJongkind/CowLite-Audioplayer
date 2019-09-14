@@ -57,6 +57,7 @@ public class HeadlessBrowser {
             
             return latch.awaitResult();
         } catch (InterruptedException ex) {
+            ex.printStackTrace();
             return null;
         }
     }

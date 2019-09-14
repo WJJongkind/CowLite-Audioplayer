@@ -50,6 +50,7 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
     private YouTubeSong currentSong;
     private double volume = 0.5;
     private PlayerState playerState = PlayerState.stopped;
+    private boolean isFinished = false;
     
     // MARK: - Initialisers
     
@@ -68,14 +69,18 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
 
     @Override
     public boolean play() {
+        if(currentSong == null) {
+            return false;
+        }
+          
         ResultCarryingCountdownLatch<Boolean> latch = new ResultCarryingCountdownLatch<>(1);
-        
         browser.setConsoleListener(message -> {
             if(message != null && message.contains(Constants.stateMessage)) {
                 Integer value;
                 if((value = tryParseInt(message.replace(Constants.stateMessage, ""))) != null) {
                     switch(value) {
                         case 0:
+                            isFinished = true;
                             latch.countDown(false);
                             break;
                         default:
@@ -85,13 +90,24 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
                 }
             }
         });
-        browser.executeJavaScript("player.playVideo()");
+        browser.executeJavaScript("play()");
         
-        playerState = PlayerState.playing;
-        unwrappedPerform(observers, observer -> observer.stateChanged(this, playerState));
-        return doTry(true, () -> {
-            return latch.awaitResult();
-        });
+        try {
+            boolean didStart = latch.awaitResult();
+            
+            if(didStart) {
+                playerState = PlayerState.playing;
+                unwrappedPerform(observers, observer -> observer.stateChanged(this, playerState));
+            }
+            
+            return didStart;
+        } catch(Exception e) {
+            // We don't really know what went wrong here. This case should theoretically
+            // not happen. If it does, just set isFinished to true.
+            e.printStackTrace();
+            isFinished = true;
+            return false;
+        }
     }
 
     @Override
@@ -123,7 +139,7 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
     @Override
     public void setVolume(double volume) {
         this.volume = volume;
-        browser.executeJavaScript("player.setVolume(" + (int)(volume * 100) + ")");
+        browser.executeJavaScript("setVolume(" + (int)(volume * 100) + ")");
 
         unwrappedPerform(observers, observer -> observer.volumeChanged(this, volume));
     }
@@ -136,8 +152,13 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
     @Override
     public void setSong(YouTubeSong song) {
         stop();
-        
+        isFinished = false;
         currentSong = song;
+        
+        if(song == null) {
+            return;
+        }
+        
         String html = videoPlayerHtml.replace("#VIDEO_PLACEHOLDER#", song.getId()).replace("#VOLUME_PLACEHOLDER#", "" + (int)(volume * 100));
         ytSocket.setHTML(html);
         
@@ -171,7 +192,7 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
     @Override
     public long getPosition() {
         Number playerTime = browser.executeJavaScript("player.getCurrentTime()");
-        return Math.round(playerTime.doubleValue() * 1000);
+        return isFinished ? currentSong.getDuration() : Math.round(playerTime.doubleValue() * 1000);
     }
 
     @Override
