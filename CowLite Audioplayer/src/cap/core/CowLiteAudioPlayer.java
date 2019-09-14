@@ -4,6 +4,7 @@ import cap.control.HotkeyListener;
 import cap.audio.DynamicSongPlayer;
 import cap.audio.Playlist;
 import cap.audio.PlaylistPlayer;
+import cap.audio.SongPlayer;
 import cap.control.HotkeyListener.Control;
 import cap.core.services.AppStateService;
 import cap.core.services.PlaylistService;
@@ -61,19 +62,22 @@ public class CowLiteAudioPlayer {
     public static void main(String[] args) throws IOException, URISyntaxException {
         // Configure the application-wide environment
         configureGlobalEnvironment();
-
+        
         // UI layout
         ColorScheme colorScheme = new DarkMode();
-
+        
+        // Song player for music playback
+        DynamicSongPlayer songPlayer = new DynamicSongPlayer();
+        
         // Overlay. We alreayd need this because the overlay has an inherent preferred size which we will give as input to the appstate service as a default value.
-        SongInfoOverlay overlay = new SongInfoOverlay(colorScheme);
-
+        SongInfoOverlay overlay = new SongInfoOverlay(colorScheme, songPlayer);
+        
         // App state that persists through sessions
         int centerX = (int) Math.round(Toolkit.getDefaultToolkit().getScreenSize().width / 2.0 - overlay.getWidth() / 2.0);
         AppStateService appStateService = new AppStateService(controls, 0.5, Playlist.PlaylistMode.normal, new Dimension(1280, 720), new Point(200, 200), overlay.getSize(), new Point(centerX, 0), false, false);
 
         // Music playback
-        PlaylistPlayer playlistPlayer = new PlaylistPlayer(new DynamicSongPlayer());
+        PlaylistPlayer playlistPlayer = new PlaylistPlayer(songPlayer);
         playlistPlayer.getPlayer().setVolume(appStateService.getVolume());
         playlistPlayer.getPlaylist().setMode(appStateService.getPlaylistMode());
 

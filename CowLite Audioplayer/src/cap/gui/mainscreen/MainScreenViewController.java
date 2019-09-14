@@ -42,6 +42,7 @@ import static cap.util.SugarySyntax.doTry;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -390,8 +391,11 @@ public class MainScreenViewController implements SongPlayerObserver<Song>, MainS
                     if(song != null) {
                         playlistPlayer.getPlaylist().addSong(song);
                         playlistPlayer.refresh();
-                        mainScreen.getPlaylistPane().setSongs(playlistPlayer.getPlaylist().getSongs());
-                        mainScreen.getPlaylistPane().setActiveSong(playlistPlayer.getPlayer().getSong());
+                        
+                        SwingUtilities.invokeLater(() -> {
+                            mainScreen.getPlaylistPane().setSongs(playlistPlayer.getPlaylist().getSongs());
+                            mainScreen.getPlaylistPane().setActiveSong(playlistPlayer.getPlayer().getSong());
+                        });
                     }
                 });
             }

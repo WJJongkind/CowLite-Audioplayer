@@ -6,6 +6,7 @@
 package cap.audio.youtube;
 
 import cap.util.QueryReader;
+import static cap.util.SugarySyntax.doTry;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -65,7 +67,7 @@ public class YouTubeService {
         YouTube.Videos.List list = youTube.videos().list("snippet,contentDetails,status");
         list.setFields("items(snippet/title,snippet/channelTitle,contentDetails/duration,status/embeddable)");
         list.setId(videoId);
-        list.setKey("AIzaSyC2_YRcTE9916fsmA0_KRnef43GbLzz8m0");
+        list.setKey("AIzaSyChx2TLuzXcvmokuJkeT60fV1rDYRsS_Y8");
         VideoListResponse response = list.execute();
         
         Video video = response.getItems().get(0);
@@ -138,24 +140,65 @@ public class YouTubeService {
                 YouTube.PlaylistItems.List playlistItemRequest = youTube.playlistItems().list("contentDetails");
                 playlistItemRequest.setPlaylistId(playlistId);
                 playlistItemRequest.setFields("items(contentDetails/videoId),nextPageToken");
-                playlistItemRequest.setKey("AIzaSyC2_YRcTE9916fsmA0_KRnef43GbLzz8m0");
+                playlistItemRequest.setKey("AIzaSyChx2TLuzXcvmokuJkeT60fV1rDYRsS_Y8");
+                playlistItemRequest.setMaxResults(Long.valueOf(50));
                 String nextToken = "";
                 
+                String videoIds = "";
                 // Iterate over the videos in the playlist, and transform them to a usable format
                 do {
                     playlistItemRequest.setPageToken(nextToken);
                     PlaylistItemListResponse playlistItemResult = playlistItemRequest.execute();
 
                     for(PlaylistItem item : playlistItemResult.getItems()) {
-                        try {
-                            delegate.songLoaded(getYouTubeSongByUrl(new URL("https://www.youtube.com/watch?v=" + item.getContentDetails().getVideoId())));
-                        } catch(Exception e) {}
+                        videoIds = videoIds + item.getContentDetails().getVideoId() + ",";
                     }
                     nextToken = playlistItemResult.getNextPageToken();
                 } while (nextToken != null);
+                
+                if(!videoIds.isEmpty()) {
+                    getMetaData(delegate, videoIds.substring(0, videoIds.length() - 1).split(","));
+                }
             }
         }catch(Exception e) {
             e.printStackTrace();
+        }
+    }
+    
+    // TODO do this as well for saved  playlists.... Saves a lot of your daily quote.
+    private void getMetaData(PlaylistLoaderDelegate delegate, String... videoIds) throws IOException {
+        // We have to group the videos by 50, as YT only allows obtaining data for 50 videos per result.
+        String[] queryGroups = new String[(videoIds.length / 50) + (videoIds.length % 50 == 0 ? 0 : 1)];
+        for(int i = 0; i < (videoIds.length / 50) + (videoIds.length % 50 == 0 ? 0 : 1); i++) {
+            queryGroups[i] = String.join(",", Arrays.copyOfRange(videoIds, i * 50, Math.min((i + 1) * 50, videoIds.length)));
+        }
+        
+        // Iterate over the various groups and obtain the video data.
+        for(String queryGroup : queryGroups) {
+            YouTube.Videos.List request = youTube.videos().list("snippet,contentDetails,status,id");
+            request.setFields("items(snippet/title,snippet/channelTitle,contentDetails/duration,status/embeddable,id),nextPageToken");
+            request.setId(queryGroup);
+            request.setMaxResults(Long.valueOf(50));
+            request.setKey("AIzaSyChx2TLuzXcvmokuJkeT60fV1rDYRsS_Y8");
+
+            String nextToken = "";
+            do {
+                request.setPageToken(nextToken);
+                VideoListResponse response = request.execute();
+
+                for(Video video : response.getItems()) {
+                    doTry(() -> {
+                        delegate.songLoaded(new YouTubeSong(
+                                new URL("https://www.youtube.com/watch?v=" + video.getId()), 
+                                video.getSnippet().getTitle(), 
+                                video.getSnippet().getChannelTitle(), 
+                                video.getId(), 
+                                Duration.parse(video.getContentDetails().getDuration()).toMillis()));
+                    });
+                }
+
+                nextToken = response.getNextPageToken();
+            }while(nextToken != null);
         }
     }
     

@@ -89,15 +89,18 @@ class SongInfoPanel extends JComponent {
     
     public void setVolume(double volume) {
         volumeText = "Volume: " + (int)(100 * volume) + "%";
+        repaint();
     }
     
     public void setTimes(long songDuration, long position) {
         playerPositionText = MillisecondsToTimestampConverter.convert(position) + " | " + MillisecondsToTimestampConverter.convert(songDuration);
+        repaint();
     }
     
     public void setSong(Song song) {
         if(song == null) {
             artistSongText = "";
+            repaint();
             return;
         }
         
@@ -106,6 +109,7 @@ class SongInfoPanel extends JComponent {
         } else {
             artistSongText = song.getSongName();
         }
+        repaint();
     }
     
     public void setShouldDrawInfo(boolean shouldDrawInfo) {

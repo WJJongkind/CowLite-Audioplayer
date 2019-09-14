@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import javax.swing.JFrame;
+import javax.swing.Timer;
 
 /**
  *
@@ -27,17 +28,25 @@ public class SongInfoOverlay extends JFrame implements MouseMotionListener, Mous
         public static final int maximumWidth = 380;
     }
     
+    private static final class Constants {
+        public static final int refreshInterval = 500;
+    }
+    
     // MARK: - Private properties
     
+    private final SongPlayer songPlayer;
     private final SongInfoPanel infoPanel;
+    private final Timer timer;
     private boolean isMovable = false;
     private Point previousMousePoint = null;
     
     // MARK: - Initialisers
     
-    public SongInfoOverlay(ColorScheme colorScheme) {
+    public SongInfoOverlay(ColorScheme colorScheme, SongPlayer songPlayer) {
+        this.songPlayer = songPlayer;
         this.infoPanel = new SongInfoPanel(colorScheme);
         infoPanel.setShouldDrawInfo(false);
+        this.timer = new Timer(Constants.refreshInterval, e -> updateTrackPosition());
         
         super.add(infoPanel);
         super.setUndecorated(true);
@@ -49,6 +58,8 @@ public class SongInfoOverlay extends JFrame implements MouseMotionListener, Mous
         super.addMouseMotionListener(this);
         super.addMouseListener(this);
         super.setType(JFrame.Type.UTILITY);
+        
+        this.timer.start();
     }
     
     // MARK: - Public methods
@@ -104,7 +115,6 @@ public class SongInfoOverlay extends JFrame implements MouseMotionListener, Mous
     @Override
     public void volumeChanged(SongPlayer<Song> player, double volume) {
         infoPanel.setVolume(volume);
-        infoPanel.repaint();
     }
 
     @Override
@@ -116,13 +126,17 @@ public class SongInfoOverlay extends JFrame implements MouseMotionListener, Mous
             infoPanel.setSong(song);
             infoPanel.setTimes(song.getDuration(), 0);
         }
-        infoPanel.repaint();
     }
 
     @Override
     public void positionChanged(SongPlayer<Song> player, long position) {
         infoPanel.setTimes(player.getDuration(), player.getPosition()); // TODO improve me
-        infoPanel.repaint();
+    }
+    
+    // MARK: - Timer ActionListener
+    
+    private void updateTrackPosition() {
+        infoPanel.setTimes(songPlayer.getDuration(), songPlayer.getPosition());
     }
     
 }
