@@ -41,28 +41,40 @@ public class YouTubeService {
     }
     
     private static class Constants {
+        // TODO add support for youtu.be links
         public static final Pattern ytVideoIdPattern = Pattern.compile("\\?v=([a-zA-Z-_\\d]+)&?");
         public static final Pattern ytPlaylistPattern = Pattern.compile("&list=([a-zA-Z-_\\d]+)&?");
     }
     
     // MARK: - Shared properties
     
-        private static final YouTube youTube = 
-            new YouTube.Builder(
-                    new NetHttpTransport(), 
-                    new JacksonFactory(), 
-                    new HttpRequestInitializer() {
-                        @Override
-                        public void initialize(HttpRequest hr)  {}
-                    }
-            ).setApplicationName("CowLite Audioplayer").build();
+    private static final YouTube youTube = 
+        new YouTube.Builder(
+                new NetHttpTransport(), 
+                new JacksonFactory(), 
+                new HttpRequestInitializer() {
+                    @Override
+                    public void initialize(HttpRequest hr)  {}
+                }
+        ).setApplicationName("CowLite Audioplayer").build();
         
-    // MARK: - Methods
+    // MARK: - Public methods
         
-    public YouTubeSong getYouTubeSongByUrl(URL url) throws IOException, VideoNotEmbeddableException {
+    public String getVideoId(URL url) {
         String query = url.toString().substring(url.toString().indexOf("?") + 1);
         Map<String, String> queryParts = QueryReader.readQuery(query);
-        String videoId = queryParts.get("v");
+        return queryParts.get("v");
+    }
+        
+    public List<YouTubeSong> getYouTubeSongs(String... videoIds) throws IOException {
+        ArrayList<YouTubeSong> songs = new ArrayList<>();
+        getMetaData(song -> songs.add(song), videoIds);
+        
+        return songs;
+    }
+        
+    public YouTubeSong getYouTubeSongByUrl(URL url) throws IOException, VideoNotEmbeddableException {
+        String videoId = getVideoId(url);
         
         YouTube.Videos.List list = youTube.videos().list("snippet,contentDetails,status");
         list.setFields("items(snippet/title,snippet/channelTitle,contentDetails/duration,status/embeddable)");
@@ -100,7 +112,7 @@ public class YouTubeService {
                     if(song != null) {
                         receiver.songLoaded(song);
                     }
-                } catch (Exception ex) {
+                } catch (VideoNotEmbeddableException | IOException ex) {
                     ex.printStackTrace();
                 }
             }
@@ -129,8 +141,9 @@ public class YouTubeService {
         return new ArrayList<>();
     }
     
-    private void readPlaylistUrl(String url, PlaylistLoaderDelegate delegate) {
-        try {
+    // MARK: - Private methods
+    
+    private void readPlaylistUrl(String url, PlaylistLoaderDelegate delegate) throws IOException {
             Matcher playlistMatcher = Constants.ytPlaylistPattern.matcher(url);
             if(playlistMatcher.find()) {
                 // Obtain Playlist ID
@@ -147,25 +160,25 @@ public class YouTubeService {
                 String videoIds = "";
                 // Iterate over the videos in the playlist, and transform them to a usable format
                 do {
-                    playlistItemRequest.setPageToken(nextToken);
-                    PlaylistItemListResponse playlistItemResult = playlistItemRequest.execute();
+                    try {
+                        playlistItemRequest.setPageToken(nextToken);
+                        PlaylistItemListResponse playlistItemResult = playlistItemRequest.execute();
 
-                    for(PlaylistItem item : playlistItemResult.getItems()) {
-                        videoIds = videoIds + item.getContentDetails().getVideoId() + ",";
+                        for(PlaylistItem item : playlistItemResult.getItems()) {
+                            videoIds = videoIds + item.getContentDetails().getVideoId() + ",";
+                        }
+                        nextToken = playlistItemResult.getNextPageToken();
+                    }catch(Exception e) {
+                        e.printStackTrace();
                     }
-                    nextToken = playlistItemResult.getNextPageToken();
                 } while (nextToken != null);
                 
                 if(!videoIds.isEmpty()) {
                     getMetaData(delegate, videoIds.substring(0, videoIds.length() - 1).split(","));
                 }
             }
-        }catch(Exception e) {
-            e.printStackTrace();
-        }
     }
     
-    // TODO do this as well for saved  playlists.... Saves a lot of your daily quote.
     private void getMetaData(PlaylistLoaderDelegate delegate, String... videoIds) throws IOException {
         // We have to group the videos by 50, as YT only allows obtaining data for 50 videos per result.
         String[] queryGroups = new String[(videoIds.length / 50) + (videoIds.length % 50 == 0 ? 0 : 1)];

@@ -40,7 +40,7 @@ public class SavedPlaylistsPane extends JScrollPane {
     
     // MARK: - Private properties
     
-    private final ListSelectionListener selectionListener = e -> didSelectPlaylist(e.getFirstIndex());
+    private final ListSelectionListener selectionListener = e -> didSelectPlaylist();
     
     private WeakReference<PlayListSelectionDelegate> delegate;
     private List<Playlist> playlists;
@@ -102,7 +102,8 @@ public class SavedPlaylistsPane extends JScrollPane {
     
     // MARK: - ListSelectionListener
     
-    private void didSelectPlaylist(int index) {
+    private void didSelectPlaylist() {
+        int index = playlistPane.getSelectedIndex();
         unwrappedPerform(delegate, delegate -> delegate.didSelectPlaylist(index >= playlists.size() ? null : playlists.get(index)));
     }
     

@@ -209,13 +209,37 @@ public class MainScreenViewController implements SongPlayerObserver<Song>, MainS
         mainScreen.getPlaylistPane().setSongs(playlistPlayer.getPlaylist().getSongs());
         mainScreen.getSavedPlaylistsPane().clearSelection();
     }
+    
+    private class Stopwatch {
+        
+        private long startTime = 0;
+        
+        public void start() {
+            startTime = System.currentTimeMillis();
+        }
+        
+        public long stop() {
+            return System.currentTimeMillis() - startTime;
+        }
+        
+    }
 
     @Override
     public void didSelectPlaylist(Playlist playlist) {
-        Playlist newPlaylist = nilCoalesce(playlist, new Playlist());
-        newPlaylist.setMode(playlistPlayer.getPlaylist().getMode());
-        playlistPlayer.setPlaylist(newPlaylist);
-        mainScreen.getPlaylistPane().setSongs(newPlaylist.getSongs());
+        Stopwatch timer = new Stopwatch();
+        timer.start();
+        Playlist selectedPlaylist = nilCoalesce(playlist, new Playlist());
+        System.out.println(timer.stop());
+        timer.start();
+        selectedPlaylist.setMode(playlistPlayer.getPlaylist().getMode());
+        System.out.println(timer.stop());
+        timer.start();
+        playlistPlayer.setPlaylist(selectedPlaylist);
+        System.out.println(timer.stop());
+        timer.start();
+        mainScreen.getPlaylistPane().setSongs(selectedPlaylist.getSongs());
+        System.out.println(timer.stop());
+        timer.start();
     }
 
     @Override

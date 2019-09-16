@@ -8,6 +8,7 @@ package cap.core.services;
 import cap.audio.Playlist;
 import cap.audio.Song;
 import cap.audio.files.FileSong;
+import cap.audio.youtube.YouTubeService;
 import cap.audio.youtube.YouTubeSong;
 import static cap.util.SugarySyntax.doTry;
 import filedatareader.FileDataReader;
@@ -18,11 +19,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
@@ -53,14 +54,19 @@ class LazyLoadingPlaylistService implements LazyLoadingPlaylistServiceInterface 
         }
     }
     
+    // MARK: - Constants
+    
     private static final Pattern songEntryRegex = Pattern.compile("([a-z][a-z])-(.+)");
     private static final JFileChooser fileChooser = new  JFileChooser();
     
-    // MARK: - Service methods
+    // MARK: - Private properties
+    
+    private final YouTubeService youTubeService = new YouTubeService();
+    
+    // MARK: - LazyLoadingPlaylistServiceInterface
     
     @Override
-    public Playlist loadPlaylist(File file) throws IOException{
-        // TODO implement some sort of caching mechanism
+    public Playlist loadPlaylist(File file) throws IOException {
         FileDataReader reader = new FileDataReader();
         reader.setPath(file);
         
@@ -68,33 +74,50 @@ class LazyLoadingPlaylistService implements LazyLoadingPlaylistServiceInterface 
         Playlist playlist = new Playlist();
         playlist.setName(lines.get(0));
         
-        // TODO improve this. Group by YT songs and file songs. Then load YT songs in batch to save quota cost for YT data api
+        ArrayList<Song> songs = new ArrayList<>();
+        HashMap<String, Integer> indexedYouTubeSongUrls = new HashMap<>();
+        
         for(int i = 1; i < lines.size(); i++) {
-            
             Matcher matcher = songEntryRegex.matcher(lines.get(i));
             if(matcher.matches()) {
                 try {
                     SongType type = SongType.lookup.get(matcher.group(1));
                     URL songUrl = new URL(matcher.group(2));
                     
-                    Song song = null;
                     switch(type) {
                         case file:
-                            song = new FileSong(new File(songUrl.toURI().getPath()));
+                            songs.add(new FileSong(new File(songUrl.toURI().getPath())));
                             break;
                         case YouTube:
-                            try {
-                                song = new YouTubeSong(songUrl);
-                            }catch(Exception e) {}
+                            indexedYouTubeSongUrls.put(youTubeService.getVideoId(songUrl), i - 1);
                             break;
                     }
-                    if(song != null) {
-                        playlist.addSong(song);
-                    }
                 } catch (URISyntaxException ex) {
-                    Logger.getLogger(LazyLoadingPlaylistService.class.getName()).log(Level.SEVERE, null, ex);
+                    ex.printStackTrace();
                 }
             }
+        }
+        
+        // Load YouTube songs in a batch to save costs for hitting the YT Data API
+        List<YouTubeSong> youTubeSongs = youTubeService.getYouTubeSongs(indexedYouTubeSongUrls.keySet().toArray(new String[indexedYouTubeSongUrls.size()]));
+        
+        // We have to sort them first, because otherwise we may get an out-of-bounds exception when
+        // a higher indexed song is added before lower indexed songs.
+        youTubeSongs.sort(new Comparator<YouTubeSong>() {
+            @Override
+            public int compare(YouTubeSong firstSong, YouTubeSong secondSong) {
+                return indexedYouTubeSongUrls.get(firstSong.getId()) - indexedYouTubeSongUrls.get(secondSong.getId());
+            }
+        });
+        
+        // TODO maybe we can reduce the amount of for-loops a bit....?
+        for(YouTubeSong song : youTubeSongs) {
+            int index = indexedYouTubeSongUrls.get(song.getId());
+            songs.add(index, song);
+        }
+        
+        for(Song song : songs) {
+            playlist.addSong(song);
         }
         
         return playlist;
@@ -128,6 +151,7 @@ class LazyLoadingPlaylistService implements LazyLoadingPlaylistServiceInterface 
     public void loadPlaylist(LazyLoadablePlaylist playlist) {
         doTry(() -> {
             Playlist storedList = loadPlaylist(playlist.file);
+            System.out.println(storedList.getName());
             playlist.setSongs(storedList.getSongsInOriginalOrder());
         }); // Can't really do much in the catch clausule unfortinately
     }

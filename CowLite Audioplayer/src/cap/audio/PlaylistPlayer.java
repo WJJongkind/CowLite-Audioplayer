@@ -42,6 +42,7 @@ public class PlaylistPlayer {
             currentSongIndex = -1;
             player.setSong(null);
         } else {
+            // TODO this causes lag with YouTube songs. Fix in YTAudioPlayer with some optimizations
             player.setSong(playlist.getSongs().get(0));
             currentSongIndex = 0;
         }
