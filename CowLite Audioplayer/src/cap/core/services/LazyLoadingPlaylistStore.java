@@ -26,10 +26,11 @@ public class LazyLoadingPlaylistStore implements PlaylistStoreInterface {
     
     // MARK: - Private properties
     
-    private final List<PlaylistReference> playlists = new ArrayList<>();
+    private final List<PlaylistReference> playlistReferences = new ArrayList<>();
     private final List<WeakReference<PlaylistStoreObserver>> observers = new ArrayList<>();
     private final File storeFile;
     private final LazyLoadingPlaylistService playlistService;
+    private final BackgroundPlaylistLoadingThread backgroundLoadingThread;
     
     // MARK: - Initialisers
     
@@ -41,14 +42,19 @@ public class LazyLoadingPlaylistStore implements PlaylistStoreInterface {
         reader.setPath(file);
         
         List<String> storedPlaylistPaths = reader.getDataStringLines();
+        ArrayList<LazyLoadablePlaylist> playlists = new ArrayList<>();
         
         for(String playlistFilePath : storedPlaylistPaths) {
             File playlistFile = new File(playlistFilePath);
             reader.setPath(playlistFile);
             String name = reader.getDataStringLines().get(0);
-            Playlist playlist = new LazyLoadablePlaylist(name, playlistFile, playlistService);
-            playlists.add(new PlaylistReference(playlist, playlistFile));
+            LazyLoadablePlaylist playlist = new LazyLoadablePlaylist(name, playlistFile, playlistService);
+            playlistReferences.add(new PlaylistReference(playlist, playlistFile));
+            playlists.add(playlist);
         }
+        
+        this.backgroundLoadingThread = new BackgroundPlaylistLoadingThread(playlistService, playlists);
+        this.backgroundLoadingThread.start(); // TODO maybe make this configurable?
     }
     
     // MARK: - PlaylistStoreInterface
@@ -57,7 +63,7 @@ public class LazyLoadingPlaylistStore implements PlaylistStoreInterface {
     public void addPlaylist(Playlist playlist, File file) throws IOException {
         removePlaylistReference(playlist);
         playlistService.savePlayList(playlist, file);
-        playlists.add(new PlaylistReference(playlist, file));
+        playlistReferences.add(new PlaylistReference(playlist, file));
         updateSaveFile();
         unwrappedPerform(observers, observer -> observer.didAddPlaylist(this, playlist));
     }
@@ -65,7 +71,7 @@ public class LazyLoadingPlaylistStore implements PlaylistStoreInterface {
     @Override
     public List<Playlist> getPlaylists() {
         ArrayList<Playlist> playlists = new ArrayList<>();
-        for(PlaylistReference reference : this.playlists) {
+        for(PlaylistReference reference : this.playlistReferences) {
             playlists.add(reference.playlist);
         }
         return playlists;
@@ -86,7 +92,7 @@ public class LazyLoadingPlaylistStore implements PlaylistStoreInterface {
     // MARK: - Private methods
     
     private void removePlaylistReference(Playlist playlist) {
-        Iterator<PlaylistReference> playlistIterator = playlists.iterator();
+        Iterator<PlaylistReference> playlistIterator = playlistReferences.iterator();
         
         while(playlistIterator.hasNext()) {
             PlaylistReference reference = playlistIterator.next();
@@ -104,7 +110,7 @@ public class LazyLoadingPlaylistStore implements PlaylistStoreInterface {
             storeFile.getParentFile().mkdirs();
             storeFile.createNewFile();
             out = new PrintWriter(storeFile);
-            for(PlaylistReference reference: playlists) {
+            for(PlaylistReference reference: playlistReferences) {
                 out.println(reference.file);
             }
             out.flush();

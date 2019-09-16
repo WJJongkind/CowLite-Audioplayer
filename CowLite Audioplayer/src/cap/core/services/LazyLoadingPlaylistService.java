@@ -60,6 +60,7 @@ class LazyLoadingPlaylistService implements LazyLoadingPlaylistServiceInterface 
     
     @Override
     public Playlist loadPlaylist(File file) throws IOException{
+        // TODO implement some sort of caching mechanism
         FileDataReader reader = new FileDataReader();
         reader.setPath(file);
         
@@ -101,6 +102,7 @@ class LazyLoadingPlaylistService implements LazyLoadingPlaylistServiceInterface 
     
     @Override
     public void savePlayList(Playlist playList, File target) throws FileNotFoundException {
+        // TODO implement some sort of caching mechanism
         PrintWriter out = null;
         try {
             out = new PrintWriter(new FileOutputStream(target));

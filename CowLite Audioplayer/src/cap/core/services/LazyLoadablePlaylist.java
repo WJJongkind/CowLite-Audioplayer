@@ -82,7 +82,7 @@ class LazyLoadablePlaylist extends Playlist {
     
     protected boolean setState(State state) {
         synchronized(state) {
-            if(this.state == state) {
+            if(this.state.compareTo(state) >= 0) {
                 return false;
             }
 
