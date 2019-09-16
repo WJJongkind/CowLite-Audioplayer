@@ -14,7 +14,9 @@ import java.io.IOException;
  *
  * @author Wessel
  */
-public interface PlaylistServiceInterface {
-    public Playlist loadPlayList(File file) throws IOException;
-    public void savePlayList(Playlist playList, File target) throws FileNotFoundException;
+interface PlaylistServiceInterface {
+    
+    Playlist loadPlaylist(File file) throws IOException;
+    void savePlayList(Playlist playList, File target) throws FileNotFoundException;
+    
 }

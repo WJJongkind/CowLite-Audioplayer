@@ -17,6 +17,7 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import cap.gui.colorscheme.ColorScheme;
+import static cap.util.SugarySyntax.unwrappedPerform;
 import java.awt.Point;
 import javax.swing.event.ListSelectionListener;
 
@@ -29,7 +30,7 @@ public class SavedPlaylistsPane extends JScrollPane {
     // MARK: - Associated types & constants
     
     public interface PlayListSelectionDelegate {
-        public void didSelectPlayList(Playlist playList);
+        public void didSelectPlaylist(Playlist playList);
     }
     
     // MARK: - UI properties
@@ -102,14 +103,7 @@ public class SavedPlaylistsPane extends JScrollPane {
     // MARK: - ListSelectionListener
     
     private void didSelectPlaylist(int index) {
-        if(delegate == null) {
-            return;
-        }
-        
-        PlayListSelectionDelegate strongDelegate = delegate.get();
-        if(strongDelegate != null) {
-            strongDelegate.didSelectPlayList(index >= playlists.size() ? null : playlists.get(index));
-        }
+        unwrappedPerform(delegate, delegate -> delegate.didSelectPlaylist(index >= playlists.size() ? null : playlists.get(index)));
     }
     
     // MARK: - Private associated types

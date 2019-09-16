@@ -4,11 +4,9 @@ import cap.control.HotkeyListener;
 import cap.audio.DynamicSongPlayer;
 import cap.audio.Playlist;
 import cap.audio.PlaylistPlayer;
-import cap.audio.SongPlayer;
 import cap.control.HotkeyListener.Control;
 import cap.core.services.AppStateService;
-import cap.core.services.PlaylistService;
-import cap.core.services.PlaylistStore;
+import cap.core.services.LazyLoadingPlaylistStore;
 import cap.gui.DefaultWindow;
 import cap.gui.colorscheme.darkmode.DarkMode;
 import com.sun.jna.NativeLibrary;
@@ -82,7 +80,7 @@ public class CowLiteAudioPlayer {
         playlistPlayer.getPlaylist().setMode(appStateService.getPlaylistMode());
 
         // Storing playlists
-        PlaylistStore playlistStore = new PlaylistStore(new File("resources" + File.separatorChar + "persistence" + File.separatorChar + "playlists.store"), new PlaylistService());
+        LazyLoadingPlaylistStore playlistStore = new LazyLoadingPlaylistStore(new File("resources" + File.separatorChar + "persistence" + File.separatorChar + "playlists.store"));
 
         // Hotkey events for when the app is not focussed
         HotkeyListener hotkeyListener = new HotkeyListener(appStateService.getControls());

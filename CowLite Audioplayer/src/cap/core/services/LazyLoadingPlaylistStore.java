@@ -22,27 +22,31 @@ import java.util.List;
  *
  * @author Wessel
  */
-public class PlaylistStore implements PlaylistStoreInterface {
+public class LazyLoadingPlaylistStore implements PlaylistStoreInterface {
     
     // MARK: - Private properties
     
     private final List<PlaylistReference> playlists = new ArrayList<>();
     private final List<WeakReference<PlaylistStoreObserver>> observers = new ArrayList<>();
     private final File storeFile;
-    private final PlaylistServiceInterface playlistService;
+    private final LazyLoadingPlaylistService playlistService;
     
     // MARK: - Initialisers
     
-    public PlaylistStore(File file, PlaylistServiceInterface playlistService) throws IOException, URISyntaxException {
+    public LazyLoadingPlaylistStore(File file) throws IOException, URISyntaxException {
         this.storeFile = file;
-        this.playlistService = playlistService;
+        this.playlistService = new LazyLoadingPlaylistService();
         
         FileDataReader reader = new FileDataReader();
         reader.setPath(file);
         
-        for(String playlistFilePath : reader.getDataStringLines()) {
+        List<String> storedPlaylistPaths = reader.getDataStringLines();
+        
+        for(String playlistFilePath : storedPlaylistPaths) {
             File playlistFile = new File(playlistFilePath);
-            Playlist playlist = playlistService.loadPlayList(playlistFile);
+            reader.setPath(playlistFile);
+            String name = reader.getDataStringLines().get(0);
+            Playlist playlist = new LazyLoadablePlaylist(name, playlistFile, playlistService);
             playlists.add(new PlaylistReference(playlist, playlistFile));
         }
     }
@@ -115,8 +119,8 @@ public class PlaylistStore implements PlaylistStoreInterface {
     // MARK: - Private associated types
     
     private class PlaylistReference {
-        Playlist playlist;
-        File file;
+        public Playlist playlist;
+        public File file;
         
         public PlaylistReference(Playlist playlist, File file) {
             this.playlist = playlist;

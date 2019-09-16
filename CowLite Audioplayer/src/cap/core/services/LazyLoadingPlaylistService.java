@@ -9,6 +9,7 @@ import cap.audio.Playlist;
 import cap.audio.Song;
 import cap.audio.files.FileSong;
 import cap.audio.youtube.YouTubeSong;
+import static cap.util.SugarySyntax.doTry;
 import filedatareader.FileDataReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,14 +26,12 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
-import cap.core.services.PlaylistStoreInterface;
-import java.net.MalformedURLException;
 
 /**
  *
  * @author Wessel
  */
-public class PlaylistService implements PlaylistServiceInterface {
+class LazyLoadingPlaylistService implements LazyLoadingPlaylistServiceInterface {
     
     // MARK: - Associated types & constants
     
@@ -60,7 +59,7 @@ public class PlaylistService implements PlaylistServiceInterface {
     // MARK: - Service methods
     
     @Override
-    public Playlist loadPlayList(File file) throws IOException{
+    public Playlist loadPlaylist(File file) throws IOException{
         FileDataReader reader = new FileDataReader();
         reader.setPath(file);
         
@@ -68,6 +67,7 @@ public class PlaylistService implements PlaylistServiceInterface {
         Playlist playlist = new Playlist();
         playlist.setName(lines.get(0));
         
+        // TODO improve this. Group by YT songs and file songs. Then load YT songs in batch to save quota cost for YT data api
         for(int i = 1; i < lines.size(); i++) {
             
             Matcher matcher = songEntryRegex.matcher(lines.get(i));
@@ -91,7 +91,7 @@ public class PlaylistService implements PlaylistServiceInterface {
                         playlist.addSong(song);
                     }
                 } catch (URISyntaxException ex) {
-                    Logger.getLogger(PlaylistService.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(LazyLoadingPlaylistService.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -119,4 +119,15 @@ public class PlaylistService implements PlaylistServiceInterface {
             out.close();
         }
     }
+    
+    // MARK: - Protected methods
+    
+    @Override
+    public void loadPlaylist(LazyLoadablePlaylist playlist) {
+        doTry(() -> {
+            Playlist storedList = loadPlaylist(playlist.file);
+            playlist.setSongs(storedList.getSongsInOriginalOrder());
+        }); // Can't really do much in the catch clausule unfortinately
+    }
+    
 }
