@@ -21,7 +21,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import cap.gui.colorscheme.ColorScheme;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.ArrayList;
+import javax.swing.JViewport;
 
 /**
  *
@@ -141,6 +144,9 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane {
         } else {
             songTable.clearSelection();
         }
+        
+        // Ensuring that the active song becomes visible
+        songTable.scrollRectToVisible(songTable.getCellRect(index, 0, true));
         
         songTable.getSelectionModel().addListSelectionListener(songSelectionListener);
         super.revalidate();
