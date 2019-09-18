@@ -145,11 +145,11 @@ public class MainScreenViewController implements SongPlayerObserver<Song>, MainS
     }
 
     @Override
-    public boolean didPressPlayButton(MusicControlPane sender) {
+    public void didPressPlayButton(MusicControlPane sender) {
         if(playlistPlayer.getPlayer().getSong() == null) {
-            return playlistPlayer.playNextSong();
+            playlistPlayer.playNextSong();
         } else {
-            return playlistPlayer.getPlayer().play();
+            playlistPlayer.getPlayer().play();
         }
     }
 
@@ -210,36 +210,12 @@ public class MainScreenViewController implements SongPlayerObserver<Song>, MainS
         mainScreen.getSavedPlaylistsPane().clearSelection();
     }
     
-    private class Stopwatch {
-        
-        private long startTime = 0;
-        
-        public void start() {
-            startTime = System.currentTimeMillis();
-        }
-        
-        public long stop() {
-            return System.currentTimeMillis() - startTime;
-        }
-        
-    }
-
     @Override
     public void didSelectPlaylist(Playlist playlist) {
-        Stopwatch timer = new Stopwatch();
-        timer.start();
         Playlist selectedPlaylist = nilCoalesce(playlist, new Playlist());
-        System.out.println(timer.stop());
-        timer.start();
         selectedPlaylist.setMode(playlistPlayer.getPlaylist().getMode());
-        System.out.println(timer.stop());
-        timer.start();
         playlistPlayer.setPlaylist(selectedPlaylist);
-        System.out.println(timer.stop());
-        timer.start();
         mainScreen.getPlaylistPane().setSongs(selectedPlaylist.getSongs());
-        System.out.println(timer.stop());
-        timer.start();
     }
 
     @Override

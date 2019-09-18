@@ -28,7 +28,7 @@ public interface SongPlayer<T extends Song> {
     
     // MARK: - Interface, audio controls
     
-    public boolean play();
+    public void play();
     public void pause();
     public void stop();
     public PlayerState getPlayerState();

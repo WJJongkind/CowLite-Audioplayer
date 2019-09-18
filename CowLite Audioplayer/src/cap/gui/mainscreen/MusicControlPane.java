@@ -27,7 +27,7 @@ public class MusicControlPane extends JPanel {
     // MARK: - Associated types
     
     public interface MusicControlPaneDelegate {
-        public boolean didPressPlayButton(MusicControlPane sender);
+        public void didPressPlayButton(MusicControlPane sender);
         public void didPressPauseButton(MusicControlPane sender);
         public void didPressPreviousButton(MusicControlPane sender);
         public void didPressNextButton(MusicControlPane sender);
@@ -176,11 +176,7 @@ public class MusicControlPane extends JPanel {
     // MARK: - Private functions
     
     private void didPressPlay(MusicControlPaneDelegate delegate) {
-        if(delegate.didPressPlayButton(this)) {
-            enablePauseButton();
-        } else {
-            enablePlayButton();
-        }
+        delegate.didPressPlayButton(this);
     }
     
     private void didPressShuffle(MusicControlPaneDelegate delegate) {

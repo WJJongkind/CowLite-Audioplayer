@@ -14,6 +14,10 @@ import java.util.Collection;
  */
 public class SugarySyntax {
 
+    public interface Action {
+        public void perform();
+    }
+    
     public interface TargetedAction<T> {
         public void perform(T delegate);
     }

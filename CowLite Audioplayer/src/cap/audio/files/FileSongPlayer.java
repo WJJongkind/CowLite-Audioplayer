@@ -39,14 +39,13 @@ public class FileSongPlayer implements SongPlayer<FileSong> {
     // MARK: - SongPlayer
 
     @Override
-    public boolean play() {
+    public void play() {
         mediaPlayer.controls().play();
         PlayerState oldState = state;
         state = mediaPlayer.media().isValid() && mediaPlayer.status().isPlayable() ? PlayerState.playing : PlayerState.stopped;
         if(oldState != state) {
             unwrappedPerform(observers, observer -> observer.stateChanged(this, state));
         }
-        return state == PlayerState.playing;
     }
 
     @Override

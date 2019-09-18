@@ -72,23 +72,21 @@ public class ApplicationCoordinator implements Coordinator, HotkeyListener.Hotke
             playlistPlayer.getPlayer().stop();
         }
         
-        if(playlistPlayer.getPlayer().getSong() == null ? playlistPlayer.playNextSong() : playlistPlayer.getPlayer().play()) {
-            // TODO Make sure pause button is set
+        if(playlistPlayer.getPlayer().getSong() == null) {
+            playlistPlayer.playNextSong();
         } else {
-            // TODO make sure play button is set
+            playlistPlayer.getPlayer().play();
         }
     }
 
     @Override
     public void didPressPause() {
         playlistPlayer.getPlayer().pause();
-        // TODO set play button
     }
 
     @Override
     public void didPressStop() {
         playlistPlayer.getPlayer().stop();
-        // TODO set play button
     }
 
     @Override

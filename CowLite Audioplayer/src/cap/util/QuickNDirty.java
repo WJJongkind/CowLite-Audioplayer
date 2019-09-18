@@ -43,4 +43,19 @@ public class QuickNDirty {
        frame.add(container, c);
        frame.setVisible(true);
    }
+   
+    public static final class Stopwatch {
+        
+        private long startTime = 0;
+        
+        public void start() {
+            startTime = System.currentTimeMillis();
+        }
+        
+        public long stop() {
+            return System.currentTimeMillis() - startTime;
+        }
+        
+    }
+
 }

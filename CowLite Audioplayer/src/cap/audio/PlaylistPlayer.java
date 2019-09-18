@@ -6,6 +6,7 @@
 package cap.audio;
 
 import cap.audio.Playlist.PlaylistMode;
+import cap.util.QuickNDirty.Stopwatch;
 import javax.swing.Timer;
 
 /**
@@ -56,16 +57,16 @@ public class PlaylistPlayer {
         return player;
     }
     
-    public boolean playNextSong() {
+    public void playNextSong() {
         changeSongIndex(1);
         player.setSong(playlist.getSongs().get(currentSongIndex));
-        return player.play();
+        player.play();
     }
     
-    public boolean playPreviousSong() {
+    public void playPreviousSong() {
         changeSongIndex(-1);
         player.setSong(playlist.getSongs().get(currentSongIndex));
-        return player.play();
+        player.play();
     }
     
     public void  playSongIfPresentInPlaylist(Song song) {

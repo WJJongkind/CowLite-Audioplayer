@@ -13,7 +13,7 @@ import static cap.util.SugarySyntax.unwrappedPerform;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import javax.swing.Timer;
+import java.util.Iterator;
 
 /**
  *
@@ -46,34 +46,24 @@ public class DynamicSongPlayer implements SongPlayer<Song> {
     // MARK: - SongPlayer
 
     @Override
-    public boolean play() {
+    public void play() {
         PlayerState oldState = getPlayerState();
-        boolean result = activePlayer == null ? false : activePlayer.play();
-        if(getPlayerState() != oldState) {
-            unwrappedPerform(observers, observer -> observer.stateChanged(this, getPlayerState()));
+        if(activePlayer != null) {
+            activePlayer.play();
         }
-        return result;
     }
 
     @Override
     public void pause() {
         if(activePlayer != null) {
-            PlayerState oldState = getPlayerState();
             activePlayer.pause();
-            if(getPlayerState() != oldState) {
-                unwrappedPerform(observers, observer -> observer.stateChanged(this, getPlayerState()));
-            }
         }
     }
 
     @Override
     public void stop() {
         if(activePlayer != null) {
-            PlayerState oldState = getPlayerState();
             activePlayer.stop();
-            if(getPlayerState() != oldState) {
-                unwrappedPerform(observers, observer -> observer.stateChanged(this, getPlayerState()));
-            }
         }
     }
 
@@ -92,8 +82,6 @@ public class DynamicSongPlayer implements SongPlayer<Song> {
         
         fileSongPlayer.setVolume(volume);
         ytSongPlayer.setVolume(volume);
-        
-        unwrappedPerform(observers, observer -> observer.volumeChanged(this, volume));
     }
 
     @Override
@@ -106,16 +94,16 @@ public class DynamicSongPlayer implements SongPlayer<Song> {
         stop();
         
         if(song instanceof FileSong) {
+            swapObservers(ytSongPlayer, fileSongPlayer);
             fileSongPlayer.setSong((FileSong) song);
             activePlayer = fileSongPlayer;
         } else if(song instanceof YouTubeSong) {
+            swapObservers(fileSongPlayer, ytSongPlayer);
             ytSongPlayer.setSong((YouTubeSong) song);
             activePlayer = ytSongPlayer;
         } else if(song == null && activePlayer != null) {
             activePlayer.setSong(null);
         }
-        
-        unwrappedPerform(observers, observer -> observer.songChanged(this, song));
     }
 
     @Override
@@ -127,7 +115,6 @@ public class DynamicSongPlayer implements SongPlayer<Song> {
     public void seek(long toPosition) {
         if(activePlayer != null && activePlayer.getSong() != null) {
             activePlayer.seek(toPosition);
-            unwrappedPerform(observers, observer -> observer.positionChanged(this, toPosition));
         }
     }
 
@@ -149,6 +136,23 @@ public class DynamicSongPlayer implements SongPlayer<Song> {
     @Override
     public void removeObserver(SongPlayerObserver<Song> observer) {
         observers.remove(new WeakReference<>(observer));
+    }
+    
+    // MARK: - Private methods
+    
+    private void swapObservers(SongPlayer oldPlayer, SongPlayer newPlayer) {
+        Iterator<WeakReference<SongPlayerObserver<Song>>> observerIterator = observers.iterator();
+        
+        while(observerIterator.hasNext()) {
+            WeakReference<SongPlayerObserver<Song>> nextObserverRef = observerIterator.next();
+            SongPlayerObserver<Song> observer = nextObserverRef.get();
+            if(observer == null) {
+                observerIterator.remove();
+            } else {
+                oldPlayer.removeObserver(observer);
+                newPlayer.addObserver(observer);
+            }
+        }
     }
     
 }

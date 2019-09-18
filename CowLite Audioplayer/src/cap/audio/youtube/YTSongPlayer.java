@@ -5,10 +5,12 @@
  */
 package cap.audio.youtube;
 
+import cap.audio.Song;
 import cap.audio.SongPlayer;
+import cap.gui.shared.ActivityQueue;
+import cap.gui.shared.ActivityQueue.ActivityToken;
 import cap.util.HeadlessBrowser;
-import cap.util.ResultCarryingCountdownLatch;
-import static cap.util.SugarySyntax.doTry;
+import cap.util.QuickNDirty.Stopwatch;
 import static cap.util.SugarySyntax.tryParseInt;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import filedatareader.FileDataReader;
@@ -41,16 +43,20 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
     
     // MARK: - Private final properties
     
-    private final HeadlessBrowser browser;
+    private final ActivityQueue activityQueue = new ActivityQueue();
+    private final HeadlessBrowser browser = new HeadlessBrowser();
     private final ArrayList<WeakReference<SongPlayerObserver<YouTubeSong>>> observers = new ArrayList<>();
-    private final YTSocket ytSocket;
+    private final YTSocket ytSocket = new YTSocket();
     
     // MARK: - Private properties
     
     private YouTubeSong currentSong;
-    private double volume = 0.5;
     private PlayerState playerState = PlayerState.stopped;
+    private ActivityToken playSongToken;
+    private ActivityToken setSongToken;
     private boolean isFinished = false;
+    private double volume = 0.5;
+    
     
     // MARK: - Initialisers
     
@@ -60,56 +66,41 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
             reader.setPath("resources" + File.separatorChar + "html" + File.separatorChar + "YTAudioPlayer.html");
             videoPlayerHtml = reader.getDataString();
         }
-        ytSocket = new YTSocket();
-        ytSocket.start();
         
-        // WebEngine
-        browser = new HeadlessBrowser();
+        ytSocket.start();
+        activityQueue.start();
     }
 
     @Override
-    public boolean play() {
-        synchronized(this) {
-            if(currentSong == null) {
-                return false;
-            }
-
-            ResultCarryingCountdownLatch<Boolean> latch = new ResultCarryingCountdownLatch<>(1);
+    public void play() {
+        if(playSongToken != null) {
+            playSongToken.cancelActivity();
+        }
+        
+        if(currentSong == null) {
+            return;
+        }
+        
+        activityQueue.submitActivity(() -> {
             browser.setConsoleListener(message -> {
-                if(message != null && message.contains(Constants.stateMessage)) {
-                    Integer value;
-                    if((value = tryParseInt(message.replace(Constants.stateMessage, ""))) != null) {
-                        switch(value) {
-                            case 0:
-                                isFinished = true;
-                                latch.countDown(false);
-                                break;
-                            default:
-                                latch.countDown(true);
-                                break;
-                        }
+                Integer value;
+                if(message != null && message.contains(Constants.stateMessage) && (value = tryParseInt(message.replace(Constants.stateMessage, ""))) != null) {
+                    switch(value) {
+                        case 0:
+                            isFinished = true;
+                            break;
+                        case 1:
+                        case 3:
+                            if(playerState == PlayerState.playing) {
+                                return;
+                            }
+                            playerState = PlayerState.playing;
+                            unwrappedPerform(observers, observer -> observer.stateChanged(this, playerState));
                     }
                 }
             });
             browser.executeJavaScript("play()");
-
-            try {
-                boolean didStart = latch.awaitResult();
-
-                if(didStart) {
-                    playerState = PlayerState.playing;
-                    unwrappedPerform(observers, observer -> observer.stateChanged(this, playerState));
-                }
-
-                return didStart;
-            } catch(Exception e) {
-                // We don't really know what went wrong here. This case should theoretically
-                // not happen. If it does, just set isFinished to true.
-                e.printStackTrace();
-                isFinished = true;
-                return false;
-            }
-        }
+        });
     }
 
     @Override
@@ -153,9 +144,15 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
 
     @Override
     public void setSong(YouTubeSong song) {
-        synchronized(this) {
+        if(setSongToken != null) {
+            setSongToken.cancelActivity();
+        }
+        if(playSongToken != null) {
+            setSongToken.cancelActivity();
+        }
+        
+        setSongToken = activityQueue.submitActivity(() -> {
             stop();
-            isFinished = false;
             currentSong = song;
 
             if(song == null) {
@@ -173,10 +170,14 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
             });
             browser.loadWebPage("http://localhost:6969");
             browser.executeJavaScript("loadIframeAPI()");
+            isFinished = false;
 
-            try { latch.await(); } catch (InterruptedException ex) {}
-            unwrappedPerform(observers, observer -> observer.songChanged(this, song));
-        }
+            try { latch.await(); } catch (InterruptedException ex) {} 
+        });
+        
+        // Because the setting of songs and playing of songs is handled on the activityQueue, it is
+        // fine to already notify observers that the song is changed.
+        unwrappedPerform(observers, observer -> observer.songChanged(this, song));
     }
 
     @Override
@@ -195,13 +196,27 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
 
     @Override
     public long getPosition() {
-        Number playerTime = browser.executeJavaScript("player.getCurrentTime()");
-        return isFinished ? currentSong.getDuration() : Math.round(playerTime.doubleValue() * 1000);
+        // Avoids hypothetical nullpointerexception where null check says song isn't null, but then when obtaining duration it is null.
+        Song currentSong = this.currentSong;
+        
+        if(currentSong == null) {
+            return -1;
+        } else {
+            Number playerTime = browser.executeJavaScript("player.getCurrentTime()");
+            
+            if(playerTime == null) {
+                return -1;
+            }
+            
+            return isFinished ? currentSong.getDuration() : Math.round(playerTime.doubleValue() * 1000);
+        }
     }
 
     @Override
     public long getDuration() {
-        return currentSong != null ? currentSong.getDuration() : null;
+        // Avoids hypothetical nullpointerexception where null check says song isn't null, but then when obtaining duration it is null.
+        Song currentSong = this.currentSong;
+        return currentSong != null ? currentSong.getDuration() : -1;
     }
 
     @Override
