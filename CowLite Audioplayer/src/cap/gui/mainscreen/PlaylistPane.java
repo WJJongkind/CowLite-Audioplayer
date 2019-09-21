@@ -42,7 +42,6 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane implemen
     
     private List<SongType> songs;
     private WeakReference<SongSelectionDelegate> delegate;
-    private ListSelectionListener songSelectionListener;
     
     // MARK: - Initialisers
     
@@ -63,9 +62,9 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane implemen
     // MARK: - Getters & Setters
     
     public void setSongs(List<SongType> songs) {
-        songTable.getSelectionModel().removeListSelectionListener(songSelectionListener);
-        
         this.songs = songs;
+        
+        songTable.setDelegate(null);
         songTable.clearRows();
         
         for(Song song : songs) {
@@ -73,12 +72,9 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane implemen
             songTable.addRow(newRow);
         }
         
-        if(songs.size() == 0) {
-            return;
-        }
+        songTable.selectRow(0);
+        songTable.setDelegate(this);
         
-        songTable.setRowSelectionInterval(0, 0);
-        songTable.getSelectionModel().addListSelectionListener(songSelectionListener);
         super.revalidate();
         super.repaint();
     }
@@ -93,14 +89,10 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane implemen
         String[] newRow = {song.getSongName(), song.getArtistName(), song.getAlbumName()};
         songTable.addRow(newRow);
         
-        songTable.getSelectionModel().removeListSelectionListener(songSelectionListener);
-        songTable.setRowSelectionInterval(selectedIndex, selectedIndex);
-        songTable.getSelectionModel().addListSelectionListener(songSelectionListener);
-        
-        if(songs.size() == 0) {
-            return;
-        }
-        
+//        songTable.getSelectionModel().removeListSelectionListener(songSelectionListener);
+//        songTable.setSelectedRow(selectedIndex, selectedIndex);
+//        songTable.getSelectionModel().addListSelectionListener(songSelectionListener);
+//        
         super.revalidate();
         super.repaint();
     }
@@ -114,19 +106,18 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane implemen
             return;
         }
         
-        songTable.getSelectionModel().removeListSelectionListener(songSelectionListener);
+        songTable.setDelegate(null);
         int index = songs.indexOf(song);
+        songTable.selectRow(songs.indexOf(song));
+        songTable.setDelegate(this);
         
-        if(index != -1) {
-            songTable.selectRow(index);
-        } else {
-            songTable.clearSelection();
+        if(index < 0) {
+            return;
         }
         
         // Ensuring that the active song becomes visible
         songTable.scrollRectToVisible(songTable.getCellRect(index, 0, true));
         
-        songTable.getSelectionModel().addListSelectionListener(songSelectionListener);
         super.revalidate();
         super.repaint();
     }

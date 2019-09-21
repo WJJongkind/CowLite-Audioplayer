@@ -227,6 +227,7 @@ public class MainScreenViewController implements SongPlayerObserver<Song>, MainS
     public void songMoved(Song song, int index) {
         playlistPlayer.getPlaylist().removeSong(song);
         playlistPlayer.getPlaylist().addSong(song, index);
+        playlistPlayer.setSongIfPresentInPlaylist(song);
     }
     
     

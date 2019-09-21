@@ -78,6 +78,14 @@ public class PlaylistPlayer {
         }
     }
     
+    public void setSongIfPresentInPlaylist(Song song) {
+        int index = playlist.getSongs().indexOf(song);
+        if(index != -1) {
+            currentSongIndex = index;
+            player.setSong(song);
+        }
+    }
+    
     public void setIsShuffled(boolean shuffled) {
         playlist.setMode(PlaylistMode.shuffled);
     }

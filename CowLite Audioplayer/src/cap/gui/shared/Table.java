@@ -7,21 +7,15 @@ package cap.gui.shared;
 
 import cap.gui.colorscheme.DynamicFont;
 import cap.gui.colorscheme.TableColorScheme;
-import static cap.util.SugarySyntax.doTry;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.dnd.DragSource;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.lang.ref.WeakReference;
-import javax.activation.ActivationDataFlavor;
-import javax.activation.DataHandler;
 import javax.swing.DropMode;
-import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -46,18 +40,23 @@ public class Table extends JTable {
     // MARK: - Private properties
     
     private final Table self = this; // Required for inner classes...
+    private final ReorderableTableModel tableModel;
     
     private WeakReference<Delegate> delegate;
+    private boolean muteDelegate = false;
     
     // MARK: - Initialisers
 
     public Table(TableColorScheme colorScheme, DynamicFont font, int columnCount) {
-        super.setTransferHandler(new TableRowTransferHandler());
-        ReorderableTableModel model = new ReorderableTableModel();
-        model.setColumnCount(columnCount);
-        super.setModel(model);
+        tableModel = new ReorderableTableModel();
+        tableModel.setColumnCount(columnCount);
+        super.setModel(tableModel);
         super.getSelectionModel().addListSelectionListener(event -> rowSelected(event));
         super.setDefaultRenderer(Object.class, new AlternatingRowRenderer(colorScheme));
+        MouseHandler mouseHandler = new MouseHandler();
+        super.addMouseListener(mouseHandler);
+        super.addMouseMotionListener(mouseHandler);
+        super.setTransferHandler(null);
         
         super.setBackground(colorScheme.getFirstBackgroundColor());
         super.setForeground(colorScheme.getTextColor());
@@ -87,10 +86,9 @@ public class Table extends JTable {
         model.addRow(row);
         
         // Don't notify delegate of selection as we are not changing the selected item.
-        WeakReference<Delegate> delegateRef = delegate;
-        delegate = null;
+        muteDelegate = true;
         selectRow(selectedIndex);
-        delegate = delegateRef;
+        muteDelegate = false;
         
         super.revalidate();
         super.repaint();
@@ -105,14 +103,27 @@ public class Table extends JTable {
     }
     
     public void selectRow(int row) {
+        if(row == -1) {
+            clearSelection();
+            return;
+        }
+        
+        if(row > getModel().getRowCount()) {
+            return;
+        }
+        
         super.setRowSelectionInterval(row, row);
     }
     
     // MARK: - ListSelectionListener
     
     private void rowSelected(ListSelectionEvent event) {
-        super.revalidate();
-        super.repaint();
+        getParent().revalidate();
+        getParent().repaint();
+        
+        if(muteDelegate) {
+            return;
+        }
         
         int row = super.getSelectedRow();
         if(event.getValueIsAdjusting() || row == -1) {
@@ -123,6 +134,57 @@ public class Table extends JTable {
     }
     
     // MARK: - Private associated types
+    
+    private class MouseHandler implements MouseListener, MouseMotionListener {
+        
+        private Integer start = null;
+        private Integer row = null;
+        
+        @Override
+        public void mouseClicked(MouseEvent event) {}
+
+        @Override
+        public void mousePressed(MouseEvent event) {
+            row = self.rowAtPoint(event.getPoint());
+            start = row;
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent event) {
+            unwrappedPerform(delegate, delegate -> delegate.didMoveRow(self, start, row));
+            row = null;
+            start = null;
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent event) {}
+
+        @Override
+        public void mouseExited(MouseEvent event) {}
+
+        @Override
+        public void mouseDragged(MouseEvent event) {
+            int currentRow = self.rowAtPoint(event.getPoint());
+            
+            if(row == null || currentRow == row) {
+                return;
+            }
+            
+            tableModel.moveRow(row, row, currentRow);
+            row = currentRow;
+            muteDelegate = true;
+            self.selectRow(currentRow);
+            muteDelegate = false;
+            
+            self.getParent().revalidate();
+            self.getParent().repaint();
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent event) {
+        }
+        
+    }
     
     private class AlternatingRowRenderer extends DefaultTableCellRenderer {
         
@@ -161,65 +223,11 @@ public class Table extends JTable {
     
     private class ReorderableTableModel extends DefaultTableModel {
         
-        public void reorder(int fromIndex, int toIndex) {
-            super.moveRow(fromIndex, fromIndex, toIndex);
-        }
-        
         @Override
         public boolean isCellEditable(int row, int column) {
             return false;
         }
         
-    }
-
-    private class TableRowTransferHandler extends TransferHandler {
-        
-        private final DataFlavor localObjectFlavor = new ActivationDataFlavor(Integer.class, "application/x-java-Integer;class=java.lang.Integer", "Integer Row Index");
-
-        @Override
-        protected Transferable createTransferable(JComponent c) {
-            return new DataHandler(getSelectedRow(), localObjectFlavor.getMimeType());
-        }
-
-        @Override
-        public boolean canImport(TransferHandler.TransferSupport info) {
-            boolean b = info.isDrop() && info.isDataFlavorSupported(localObjectFlavor);
-            setCursor(b ? DragSource.DefaultMoveDrop : DragSource.DefaultMoveNoDrop);
-            return b;
-        }
-
-        @Override
-        public int getSourceActions(JComponent c) {
-            return TransferHandler.COPY_OR_MOVE;
-        }
-
-        @Override
-        public boolean importData(TransferHandler.TransferSupport info) {
-            JTable target = (JTable) info.getComponent();
-            JTable.DropLocation dropLocation = (JTable.DropLocation) info.getDropLocation();
-            int max = getModel().getRowCount();
-            int dropIndex = Math.max(0, Math.min(max, dropLocation.getRow()));
-            
-            target.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            return doTry(false, () -> {
-                Integer fromRow = (Integer) info.getTransferable().getTransferData(localObjectFlavor);
-                if (fromRow != -1 && fromRow != dropIndex) {
-                    int toRow = fromRow > dropIndex ? dropIndex : dropIndex - 1;
-                    ((ReorderableTableModel) getModel()).reorder(fromRow, toRow);
-                    unwrappedPerform(delegate, delegate -> delegate.didMoveRow(self, fromRow, toRow));
-                    return true;
-                }
-                
-                return false;
-            });
-        }
-
-        @Override
-        protected void exportDone(JComponent c, Transferable t, int act) {
-            if ((act == TransferHandler.MOVE) || (act == TransferHandler.NONE)) {
-                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            }
-        }
     }
 
 }
