@@ -71,7 +71,7 @@ public class PlaylistPlayer {
     
     public void  playSongIfPresentInPlaylist(Song song) {
         int index = playlist.getSongs().indexOf(song);
-        if(index != -1) {
+        if(index != -1 && currentSongIndex != index) {
             currentSongIndex = index;
             player.setSong(song);
             player.play();

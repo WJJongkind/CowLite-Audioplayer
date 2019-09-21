@@ -85,7 +85,7 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane implemen
         }
         songs.add(song);
         
-        int selectedIndex = Math.max(0, songTable.getSelectedRow());
+//        int selectedIndex = Math.max(0, songTable.getSelectedRow());
         String[] newRow = {song.getSongName(), song.getArtistName(), song.getAlbumName()};
         songTable.addRow(newRow);
         
@@ -140,43 +140,6 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane implemen
         super.repaint();
         
         unwrappedPerform(delegate, delegate -> delegate.songMoved(song, to));
-    }
-    
-    // MARK: - Private associated types
-    
-    private class AlternatingRowRenderer extends DefaultTableCellRenderer {
-        
-        // MARK: - Private properties
-        
-        private final TableColorScheme colorScheme;
-        
-        // MARK: - Initialisers
-        
-        public AlternatingRowRenderer(TableColorScheme colorScheme) {
-            this.colorScheme = colorScheme;
-        }
-        
-        // MARK: - DefaultTableCellRenderer
-        
-        @Override
-        public Component getTableCellRendererComponent(JTable table, 
-                                                       Object value, 
-                                                       boolean isSelected, 
-                                                       boolean hasFocus,
-                                                       int row, 
-                                                       int column) {
-            Component c = super.getTableCellRendererComponent(table, 
-                value, isSelected, hasFocus, row, column);
-            setBorder(noFocusBorder);
-            if(isSelected) {
-                c.setBackground(colorScheme.getHighlightBackgroundColor());
-                c.setForeground(colorScheme.getHighlightTextColor());
-            } else {
-                c.setForeground(colorScheme.getTextColor());
-                c.setBackground(row%2==0 ? colorScheme.getFirstBackgroundColor() : colorScheme.getSecondBackgroundColor());
-            }
-            return c;
-        };
     }
     
 }

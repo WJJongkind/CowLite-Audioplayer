@@ -151,6 +151,9 @@ public class Table extends JTable {
 
         @Override
         public void mouseReleased(MouseEvent event) {
+            if(start == null || start == row) {
+                return;
+            }
             unwrappedPerform(delegate, delegate -> delegate.didMoveRow(self, start, row));
             row = null;
             start = null;
