@@ -87,6 +87,10 @@ public class SavedPlaylistsPane extends JScrollPane {
         this.playlists = playlists;
         playlistListModel.clear();
         
+        playlists.sort((a, b) -> {
+            return a.getName().compareTo(b.getName());
+        });
+        
         for(Playlist playlist: playlists) {
             playlistListModel.addElement(playlist.getName());
         }
@@ -104,7 +108,12 @@ public class SavedPlaylistsPane extends JScrollPane {
     
     private void didSelectPlaylist() {
         int index = playlistPane.getSelectedIndex();
-        unwrappedPerform(delegate, delegate -> delegate.didSelectPlaylist(index >= playlists.size() ? null : playlists.get(index)));
+        
+        if(index == -1) {
+            return;
+        }
+        
+        unwrappedPerform(delegate, delegate -> delegate.didSelectPlaylist(playlists.get(index)));
     }
     
     // MARK: - Private associated types

@@ -16,7 +16,7 @@ public class BasicColorScheme implements ColorScheme {
     private ButtonColorScheme defaultButtonColorScheme;
     private InputFieldColorScheme defaultInputFieldColorScheme;
     private MenuColorScheme menuColorScheme;
-    private PlaylistPaneColorScheme playlistPaneColorScheme;
+    private TableColorScheme playlistPaneColorScheme;
     private SavedListsPaneColorScheme savedListsPaneColorScheme;
     private SliderColorScheme timeSliderColorScheme;
     private SliderColorScheme volumeSliderColorScheme;
@@ -29,7 +29,7 @@ public class BasicColorScheme implements ColorScheme {
             ButtonColorScheme defaultButtonColorScheme, 
             InputFieldColorScheme defaultInputFieldColorScheme, 
             MenuColorScheme menuColorScheme, 
-            PlaylistPaneColorScheme playlistPaneColorScheme, 
+            TableColorScheme playlistPaneColorScheme, 
             SavedListsPaneColorScheme savedListsPaneColorScheme, 
             SliderColorScheme timeSliderColorScheme, 
             SliderColorScheme volumeSliderColorScheme, 
@@ -75,7 +75,7 @@ public class BasicColorScheme implements ColorScheme {
     }
 
     @Override
-    public PlaylistPaneColorScheme playlist() {
+    public TableColorScheme playlist() {
         return playlistPaneColorScheme;
     }
 

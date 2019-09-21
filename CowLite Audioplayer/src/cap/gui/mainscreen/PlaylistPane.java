@@ -7,41 +7,36 @@ package cap.gui.mainscreen;
 
 import cap.gui.shared.SexyScrollPane;
 import cap.audio.Song;
-import cap.gui.colorscheme.PlaylistPaneColorScheme;
+import cap.gui.colorscheme.TableColorScheme;
 import java.awt.Component;
-import java.awt.Font;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import cap.gui.colorscheme.ColorScheme;
-import java.awt.Point;
-import java.awt.Rectangle;
+import cap.gui.shared.Table;
+import static cap.util.SugarySyntax.unwrappedPerform;
 import java.util.ArrayList;
-import javax.swing.JViewport;
 
 /**
  *
  * @author Wessel
  */
-public class PlaylistPane<SongType extends Song> extends SexyScrollPane {
+public class PlaylistPane<SongType extends Song> extends SexyScrollPane implements Table.Delegate {
     
     // MARK: - Associated types & constants
     
     public interface SongSelectionDelegate<SongType extends Song> {
         public void didSelectSong(SongType song);
+        public void songMoved(SongType song, int index);
     }
     
     // MARK: - UI elements
     
-    private final JTable songTable;
-    private final DefaultTableModel songTableModel;
+    private final Table songTable;
     
     // MARK: - Private elements
     
@@ -53,25 +48,8 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane {
     
     public PlaylistPane(ColorScheme colorScheme) {
         super(colorScheme.general().getFrameColor());
-        songTable = new JTable();
-        songTableModel = new DefaultTableModel() {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        songTableModel.setColumnCount(3);
-        
-        songTable.setBackground(colorScheme.playlist().getFirstBackgroundColor());
-        songTable.setForeground(colorScheme.playlist().getTextColor());
-        songTable.setTableHeader(null);
-        songTable.setModel(songTableModel);
-        songTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        songTable.getSelectionModel().addListSelectionListener((songSelectionListener = e -> didSelectSong(e)));
-        songTable.setShowGrid(false);
-        songTable.setFont(songTable.getFont().deriveFont(Font.BOLD));
-        songTable.setDefaultRenderer(Object.class, new AlternatingRowRenderer(colorScheme.playlist()));
-        
+        songTable = new Table(colorScheme.playlist(), colorScheme.font().s().bold(), 3);
+        songTable.setDelegate(this);
         
         super.setViewport(super.createViewport());
         super.getViewport().add(songTable);
@@ -88,11 +66,11 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane {
         songTable.getSelectionModel().removeListSelectionListener(songSelectionListener);
         
         this.songs = songs;
-        songTableModel.setRowCount(0);
+        songTable.clearRows();
         
         for(Song song : songs) {
             String[] newRow = {song.getSongName(), song.getArtistName(), song.getAlbumName()};
-            songTableModel.addRow(newRow);
+            songTable.addRow(newRow);
         }
         
         if(songs.size() == 0) {
@@ -113,7 +91,7 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane {
         
         int selectedIndex = Math.max(0, songTable.getSelectedRow());
         String[] newRow = {song.getSongName(), song.getArtistName(), song.getAlbumName()};
-        songTableModel.addRow(newRow);
+        songTable.addRow(newRow);
         
         songTable.getSelectionModel().removeListSelectionListener(songSelectionListener);
         songTable.setRowSelectionInterval(selectedIndex, selectedIndex);
@@ -140,7 +118,7 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane {
         int index = songs.indexOf(song);
         
         if(index != -1) {
-            songTable.setRowSelectionInterval(index, index);
+            songTable.selectRow(index);
         } else {
             songTable.clearSelection();
         }
@@ -153,20 +131,24 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane {
         super.repaint();
     }
     
-    // MARK: - ListSelectionListener
+    // MARK: - TableDelegate
     
-    private void didSelectSong(ListSelectionEvent event) {
+    @Override
+    public void didSelectRow(Table sender, int row) {
+        unwrappedPerform(delegate, delegate -> delegate.didSelectSong(songs.get(row)));
+    }
+
+    @Override
+    public void didMoveRow(Table sender, int from, int to) {
+        SongType song = songs.remove(from);
+        songs.add(to, song);
+        
+        songTable.selectRow(to);
+        
         super.revalidate();
         super.repaint();
         
-        if(event.getValueIsAdjusting()) {
-            return;
-        }
-        
-        SongSelectionDelegate strongDelegate = delegate.get();
-        if(delegate != null && songTable.getSelectedRow() > -1) {
-            strongDelegate.didSelectSong(songs.get(songTable.getSelectedRow()));
-        }
+        unwrappedPerform(delegate, delegate -> delegate.songMoved(song, to));
     }
     
     // MARK: - Private associated types
@@ -175,11 +157,11 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane {
         
         // MARK: - Private properties
         
-        private final PlaylistPaneColorScheme colorScheme;
+        private final TableColorScheme colorScheme;
         
         // MARK: - Initialisers
         
-        public AlternatingRowRenderer(PlaylistPaneColorScheme colorScheme) {
+        public AlternatingRowRenderer(TableColorScheme colorScheme) {
             this.colorScheme = colorScheme;
         }
         

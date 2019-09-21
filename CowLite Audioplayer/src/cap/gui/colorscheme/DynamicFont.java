@@ -23,8 +23,8 @@ public final class DynamicFont {
         
         // MARK: - Default sizes
         
-        public static final float xs = 8;
-        public static final float s = 11;
+        public static final float xs = 10;
+        public static final float s = 12;
         public static final float m = 15;
         public static final float l = 19;
         public static final float xl = 24;

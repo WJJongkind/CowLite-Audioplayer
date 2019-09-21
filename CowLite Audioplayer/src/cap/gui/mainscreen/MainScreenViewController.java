@@ -49,7 +49,7 @@ import javax.swing.SwingUtilities;
  * @author Wessel
  */
 public class MainScreenViewController implements SongPlayerObserver<Song>, MainScreen.MainScreenDelegate, ViewController, DropTargetListener, PlaylistStoreInterface.PlaylistStoreObserver {
-    
+
     // MARK: - Constants & associated types
     
     private static class Consants {
@@ -222,6 +222,13 @@ public class MainScreenViewController implements SongPlayerObserver<Song>, MainS
     public void didSelectSong(Song song) {
         playlistPlayer.playSongIfPresentInPlaylist(song);
     }
+    
+    @Override
+    public void songMoved(Song song, int index) {
+        playlistPlayer.getPlaylist().removeSong(song);
+        playlistPlayer.getPlaylist().addSong(song, index);
+    }
+    
     
     // MARK: - ViewController
     

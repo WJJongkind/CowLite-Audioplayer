@@ -58,18 +58,50 @@ public class Playlist {
     
     // MARK: - Getters & Setters
     
+    public void addSong(Song song) {
+        songs.add(song);
+        randomInsertSong(song);
+        alphabeticallyInsertSong(song);
+    }
+    
+    public void addSong(Song song, int index) {
+        
+        switch(mode) {
+            case normal:
+                songs.add(index, song);
+                randomInsertSong(song);
+                alphabeticallyInsertSong(song);
+                break;
+            case shuffled:
+                songs.add(song);
+                shuffledSongs.add(index, song);
+                alphabeticallyInsertSong(song);
+                break;
+            case alphabetic:
+                // Doesn't make sense here to use index.
+                songs.add(song);
+                randomInsertSong(song);
+                alphabeticallyInsertSong(song);
+                break; 
+        }
+    }
+    
+    public void removeSong(Song song) {
+        songs.remove(song);
+        shuffledSongs.remove(song);
+        alphabeticallySortedSongs.remove(song);
+    }
+    
+    public void removeSong(int index) {
+        removeSong(getSongs().get(index));
+    }
+    
     public void setName(String name) {
         this.name = name;
     }
     
     public String getName() {
         return name;
-    }
-    
-    public void addSong(Song song) {
-        songs.add(song);
-        randomInsertSong(song);
-        alphabeticallyInsertSong(song);
     }
     
     public List<Song> getSongsInOriginalOrder() {

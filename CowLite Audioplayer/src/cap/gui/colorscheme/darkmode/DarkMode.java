@@ -8,7 +8,7 @@ package cap.gui.colorscheme.darkmode;
 import cap.gui.colorscheme.BasicColorScheme;
 import cap.gui.colorscheme.ButtonColorScheme;
 import cap.gui.colorscheme.MenuColorScheme;
-import cap.gui.colorscheme.PlaylistPaneColorScheme;
+import cap.gui.colorscheme.TableColorScheme;
 import cap.gui.colorscheme.SavedListsPaneColorScheme;
 import cap.gui.colorscheme.SliderColorScheme;
 import java.awt.Color;
@@ -39,7 +39,7 @@ public class DarkMode extends BasicColorScheme {
     private static final DynamicFont font = new DynamicFont(new Font("Dialog", Font.PLAIN, 11));
     private static final GeneralColorScheme generalColorScheme = new GeneralColorScheme(new Color(0x333333), new Color(0x909090));
     private static final MenuColorScheme menuColorScheme = new MenuColorScheme(new Color(0x909090), new Color(0x333333), new Color(0x909090));
-    private static final PlaylistPaneColorScheme playlistPaneColorScheme = new PlaylistPaneColorScheme(new Color(0x909090), new Color(0xA2A2A2), new Color(0x333333), new Color(0xb00012), Color.white);
+    private static final TableColorScheme playlistPaneColorScheme = new TableColorScheme(new Color(0x909090), new Color(0xA2A2A2), new Color(0x333333), new Color(0xb00012), Color.white);
     private static final SavedListsPaneColorScheme savedListsColorScheme = new SavedListsPaneColorScheme(new Color(0x909090), new Color(0x333333), new Color(0xb00012), Color.white);
     private static final SliderColorScheme timeSliderColorScheme = new SliderColorScheme(new Color(0x909090), new Color(0xb00012));
     private static final SliderColorScheme volumeSliderColorScheme = new SliderColorScheme(new Color(0x909090), new Color(0xb00012));

@@ -18,7 +18,7 @@ public interface ColorScheme {
     public ButtonColorScheme defaultButton();
     public InputFieldColorScheme defaultInputField();
     public MenuColorScheme menu();
-    public PlaylistPaneColorScheme playlist();
+    public TableColorScheme playlist();
     public SavedListsPaneColorScheme savedLists();
     public SliderColorScheme timeSlider();
     public SliderColorScheme volumeSlider();
