@@ -72,7 +72,7 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane implemen
             songTable.addRow(newRow);
         }
         
-        songTable.selectRow(0);
+        songTable.selectModelRow(0);
         songTable.setDelegate(this);
         
         super.revalidate();
@@ -108,7 +108,7 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane implemen
         
         songTable.setDelegate(null);
         int index = songs.indexOf(song);
-        songTable.selectRow(songs.indexOf(song));
+        songTable.selectModelRow(songs.indexOf(song));
         songTable.setDelegate(this);
         
         if(index < 0) {
@@ -134,7 +134,7 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane implemen
         SongType song = songs.remove(from);
         songs.add(to, song);
         
-        songTable.selectRow(to);
+        songTable.selectModelRow(to);
         
         super.revalidate();
         super.repaint();

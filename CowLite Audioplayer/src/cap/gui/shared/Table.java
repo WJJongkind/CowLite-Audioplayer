@@ -87,7 +87,7 @@ public class Table extends JTable {
         
         // Don't notify delegate of selection as we are not changing the selected item.
         muteDelegate = true;
-        selectRow(selectedIndex);
+        selectViewRow(selectedIndex);
         muteDelegate = false;
         
         super.revalidate();
@@ -102,22 +102,37 @@ public class Table extends JTable {
         super.repaint();
     }
     
-    public void selectRow(int row) {
+    public void selectViewRow(int row) {
         if(row == -1) {
             clearSelection();
             return;
         }
         
-        if(row > getModel().getRowCount()) {
+        if(row >= super.getRowCount()) {
             return;
         }
         
         super.setRowSelectionInterval(row, row);
     }
     
+    public void selectModelRow(int row) {
+        if(row == -1) {
+            super.clearSelection();
+            return;
+        }
+        
+        if(row > tableModel.getRowCount()) {
+            return;
+        }
+        
+        selectViewRow(super.convertRowIndexToView(row));
+    }
+    
     // MARK: - ListSelectionListener
     
     private void rowSelected(ListSelectionEvent event) {
+        // Parent is repainted due to the custom JScrollPane we use in this application.
+        // Otherwise graphical glitches will occur.
         getParent().revalidate();
         getParent().repaint();
         
@@ -126,11 +141,13 @@ public class Table extends JTable {
         }
         
         int row = super.getSelectedRow();
-        if(event.getValueIsAdjusting() || row == -1) {
+        if(row == -1 || event.getValueIsAdjusting()) {
             return;
         }
         
-        unwrappedPerform(delegate, delegate -> delegate.didSelectRow(this, row));
+        int modelIndex = super.convertRowIndexToModel(row);
+        
+        unwrappedPerform(delegate, delegate -> delegate.didSelectRow(this, modelIndex));
     }
     
     // MARK: - Private associated types
@@ -145,7 +162,8 @@ public class Table extends JTable {
 
         @Override
         public void mousePressed(MouseEvent event) {
-            row = self.rowAtPoint(event.getPoint());
+            int rowIndex = self.rowAtPoint(event.getPoint());
+            row = self.convertRowIndexToModel(rowIndex);
             start = row;
         }
 
@@ -167,7 +185,8 @@ public class Table extends JTable {
 
         @Override
         public void mouseDragged(MouseEvent event) {
-            int currentRow = self.rowAtPoint(event.getPoint());
+            int viewRowIndex = self.rowAtPoint(event.getPoint());
+            int currentRow = self.convertRowIndexToModel(viewRowIndex);
             
             if(row == null || currentRow == row) {
                 return;
@@ -176,16 +195,17 @@ public class Table extends JTable {
             tableModel.moveRow(row, row, currentRow);
             row = currentRow;
             muteDelegate = true;
-            self.selectRow(currentRow);
+            self.selectViewRow(viewRowIndex);
             muteDelegate = false;
             
+            // Parent is repainted due to the custom JScrollPane we use in this application.
+            // Otherwise graphical glitches will occur.
             self.getParent().revalidate();
             self.getParent().repaint();
         }
 
         @Override
-        public void mouseMoved(MouseEvent event) {
-        }
+        public void mouseMoved(MouseEvent event) {}
         
     }
     
