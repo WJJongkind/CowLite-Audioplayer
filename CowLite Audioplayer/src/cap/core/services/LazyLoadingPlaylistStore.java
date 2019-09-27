@@ -6,6 +6,7 @@
 package cap.core.services;
 
 import cap.audio.Playlist;
+import static cap.util.SugarySyntax.doTry;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import filedatareader.FileDataReader;
 import java.io.File;
@@ -30,7 +31,8 @@ public class LazyLoadingPlaylistStore implements PlaylistStoreInterface {
     private final List<WeakReference<PlaylistStoreObserver>> observers = new ArrayList<>();
     private final File storeFile;
     private final LazyLoadingPlaylistService playlistService;
-    private final BackgroundPlaylistLoadingThread backgroundLoadingThread;
+    
+    private BackgroundPlaylistLoadingThread backgroundLoadingThread;
     
     // MARK: - Initialisers
     
@@ -38,23 +40,25 @@ public class LazyLoadingPlaylistStore implements PlaylistStoreInterface {
         this.storeFile = file;
         this.playlistService = new LazyLoadingPlaylistService();
         
-        FileDataReader reader = new FileDataReader();
-        reader.setPath(file);
-        
-        List<String> storedPlaylistPaths = reader.getDataStringLines();
-        ArrayList<LazyLoadablePlaylist> playlists = new ArrayList<>();
-        
-        for(String playlistFilePath : storedPlaylistPaths) {
-            File playlistFile = new File(playlistFilePath);
-            reader.setPath(playlistFile);
-            String name = reader.getDataStringLines().get(0);
-            LazyLoadablePlaylist playlist = new LazyLoadablePlaylist(name, playlistFile, playlistService);
-            playlistReferences.add(new PlaylistReference(playlist, playlistFile));
-            playlists.add(playlist);
-        }
-        
-        this.backgroundLoadingThread = new BackgroundPlaylistLoadingThread(playlistService, playlists);
-        this.backgroundLoadingThread.start(); // TODO maybe make this configurable?
+        doTry(() -> {
+            FileDataReader reader = new FileDataReader();
+            reader.setPath(file);
+
+            List<String> storedPlaylistPaths = reader.getDataStringLines();
+            ArrayList<LazyLoadablePlaylist> playlists = new ArrayList<>();
+
+            for(String playlistFilePath : storedPlaylistPaths) {
+                File playlistFile = new File(playlistFilePath);
+                reader.setPath(playlistFile);
+                String name = reader.getDataStringLines().get(0);
+                LazyLoadablePlaylist playlist = new LazyLoadablePlaylist(name, playlistFile, playlistService);
+                playlistReferences.add(new PlaylistReference(playlist, playlistFile));
+                playlists.add(playlist);
+            }
+
+            this.backgroundLoadingThread = new BackgroundPlaylistLoadingThread(playlistService, playlists);
+            this.backgroundLoadingThread.start(); // TODO maybe make this configurable?
+        });
     }
     
     // MARK: - PlaylistStoreInterface

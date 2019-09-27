@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cap.gui.shared;
+package cap.util;
 
 import static cap.util.SugarySyntax.doTry;
 import java.util.concurrent.LinkedBlockingDeque;

@@ -7,10 +7,9 @@ package cap.audio.youtube;
 
 import cap.audio.Song;
 import cap.audio.SongPlayer;
-import cap.gui.shared.ActivityQueue;
-import cap.gui.shared.ActivityQueue.ActivityToken;
+import cap.util.ActivityQueue;
+import cap.util.ActivityQueue.ActivityToken;
 import cap.util.HeadlessBrowser;
-import cap.util.QuickNDirty.Stopwatch;
 import static cap.util.SugarySyntax.tryParseInt;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import filedatareader.FileDataReader;
