@@ -6,7 +6,6 @@
 package cap.audio;
 
 import cap.audio.Playlist.PlaylistMode;
-import cap.util.QuickNDirty.Stopwatch;
 import javax.swing.Timer;
 
 /**
@@ -18,8 +17,8 @@ public class PlaylistPlayer {
     // MARK: - Private properties
     
     private final Timer timer;
-    
     private final SongPlayer player;
+    
     private Playlist playlist;
     private int currentSongIndex;
     
@@ -43,7 +42,6 @@ public class PlaylistPlayer {
             currentSongIndex = -1;
             player.setSong(null);
         } else {
-            // TODO this causes lag with YouTube songs. Fix in YTAudioPlayer with some optimizations
             player.setSong(playlist.getSongs().get(0));
             currentSongIndex = 0;
         }

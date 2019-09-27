@@ -196,6 +196,7 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
     @Override
     public long getPosition() {
         // Avoids hypothetical nullpointerexception where null check says song isn't null, but then when obtaining duration it is null.
+        // This may happen due to the usage of ActivityQueue.
         Song currentSong = this.currentSong;
         
         if(currentSong == null) {
@@ -214,6 +215,7 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
     @Override
     public long getDuration() {
         // Avoids hypothetical nullpointerexception where null check says song isn't null, but then when obtaining duration it is null.
+        // This may happen due to the usage of ActivityQueue.
         Song currentSong = this.currentSong;
         return currentSong != null ? currentSong.getDuration() : -1;
     }

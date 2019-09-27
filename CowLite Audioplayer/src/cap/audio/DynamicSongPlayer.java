@@ -9,7 +9,6 @@ import cap.audio.files.FileSongPlayer;
 import cap.audio.youtube.YTSongPlayer;
 import cap.audio.files.FileSong;
 import cap.audio.youtube.YouTubeSong;
-import static cap.util.SugarySyntax.unwrappedPerform;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -20,12 +19,6 @@ import java.util.Iterator;
  * @author Wessel
  */
 public class DynamicSongPlayer implements SongPlayer<Song> {
-    
-    // MARK: - Constants
-    
-    private static final class Constants {
-        public static final int positionChangedTimerInterval = 30;
-    }
     
     // MARK: - Private properties
     
@@ -47,7 +40,6 @@ public class DynamicSongPlayer implements SongPlayer<Song> {
 
     @Override
     public void play() {
-        PlayerState oldState = getPlayerState();
         if(activePlayer != null) {
             activePlayer.play();
         }

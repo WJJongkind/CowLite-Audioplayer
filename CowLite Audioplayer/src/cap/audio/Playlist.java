@@ -50,11 +50,12 @@ public class Playlist {
     
     // MARK: - Private properties
     
-    private PlaylistMode mode = PlaylistMode.normal;
-    private String name;
     private final ArrayList<Song> songs = new ArrayList<>();
     private final ArrayList<Song> shuffledSongs = new ArrayList<>();
     private final ArrayList<Song> alphabeticallySortedSongs = new ArrayList<>();
+    
+    private PlaylistMode mode = PlaylistMode.normal;
+    private String name;
     
     // MARK: - Getters & Setters
     

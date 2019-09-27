@@ -20,10 +20,13 @@ public class FileSongPlayer implements SongPlayer<FileSong> {
     
     // MARK: - Constants
     
-    private static final double defaultVolume = 0.5;
-    private final ArrayList<WeakReference<SongPlayerObserver<FileSong>>> observers = new ArrayList<>();
+    private static final class Constants {
+        public static final double defaultVolume = 0.5;
+    }
     
     // MARK: - Private properties
+    
+    private final ArrayList<WeakReference<SongPlayerObserver<FileSong>>> observers = new ArrayList<>();
     
     private MediaPlayer mediaPlayer;
     private FileSong activeSong;
@@ -33,7 +36,7 @@ public class FileSongPlayer implements SongPlayer<FileSong> {
     
     public FileSongPlayer() {
         mediaPlayer = new MediaPlayerFactory().mediaPlayers().newMediaPlayer();
-        setVolume(defaultVolume);
+        setVolume(Constants.defaultVolume);
     }
     
     // MARK: - SongPlayer
@@ -130,12 +133,6 @@ public class FileSongPlayer implements SongPlayer<FileSong> {
     @Override
     public void removeObserver(SongPlayerObserver<FileSong> observer) {
         observers.remove(new WeakReference<>(observer));
-    }
-    
-    // MARK: - ActionListener for timer
-    
-    private void notifyPositionChanged() {
-        unwrappedPerform(observers, observer -> observer.positionChanged(this, getPosition()));
     }
     
 }

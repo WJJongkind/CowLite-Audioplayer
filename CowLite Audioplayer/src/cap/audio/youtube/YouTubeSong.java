@@ -6,11 +6,6 @@
 package cap.audio.youtube;
 
 import cap.audio.Song;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.youtube.YouTube;
 import java.io.IOException;
 import java.net.URL;
 
@@ -20,17 +15,11 @@ import java.net.URL;
  */
 public class YouTubeSong implements Song {
     
-    // MARK: - Shared properties
+    // MARK: - Constants
     
-    private static final YouTube youTube = 
-            new YouTube.Builder(
-                    new NetHttpTransport(), 
-                    new JacksonFactory(), 
-                    new HttpRequestInitializer() {
-                        @Override
-                        public void initialize(HttpRequest hr)  {}
-                    }
-            ).setApplicationName("CowLite Audioplayer").build();
+    private static final class Constants {
+        public static final YouTubeService youtubeService = new YouTubeService();
+    }
     
     // MARK: - Private properties
 
@@ -44,7 +33,7 @@ public class YouTubeSong implements Song {
     // MARK: - Public Initialisers
     
     public YouTubeSong(URL url) throws IOException, VideoNotEmbeddableException {
-        YouTubeSong info = new YouTubeService().getYouTubeSongByUrl(url);
+        YouTubeSong info = Constants.youtubeService.getYouTubeSongByUrl(url);
         this.duration = info.duration;
         this.songName = info.songName;
         this.albumName = info.albumName;
