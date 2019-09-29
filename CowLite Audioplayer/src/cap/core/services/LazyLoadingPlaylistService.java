@@ -72,12 +72,12 @@ class LazyLoadingPlaylistService implements LazyLoadingPlaylistServiceInterface 
         
         List<String> lines = reader.getDataStringLines();
         Playlist playlist = new Playlist();
-        playlist.setName(lines.get(0));
+        playlist.setName(file.getName());
         
         ArrayList<Song> songs = new ArrayList<>();
         HashMap<String, Integer> indexedYouTubeSongUrls = new HashMap<>();
         
-        for(int i = 1; i < lines.size(); i++) {
+        for(int i = 0; i < lines.size(); i++) {
             Matcher matcher = songEntryRegex.matcher(lines.get(i));
             if(matcher.matches()) {
                 try {
@@ -89,7 +89,7 @@ class LazyLoadingPlaylistService implements LazyLoadingPlaylistServiceInterface 
                             songs.add(new FileSong(new File(songUrl.toURI().getPath())));
                             break;
                         case YouTube:
-                            indexedYouTubeSongUrls.put(youTubeService.getVideoId(songUrl), i - 1);
+                            indexedYouTubeSongUrls.put(youTubeService.getVideoId(songUrl), i);
                             break;
                     }
                 } catch (URISyntaxException ex) {
@@ -129,7 +129,6 @@ class LazyLoadingPlaylistService implements LazyLoadingPlaylistServiceInterface 
         PrintWriter out = null;
         try {
             out = new PrintWriter(new FileOutputStream(target));
-            out.println(playList.getName());
             for(Song song : playList.getSongs()) {
                 if(song instanceof FileSong) {
                     out.println(SongType.file.type + "-" + song.getUrl().toString());

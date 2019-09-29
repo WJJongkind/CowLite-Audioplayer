@@ -49,9 +49,7 @@ public class LazyLoadingPlaylistStore implements PlaylistStoreInterface {
 
             for(String playlistFilePath : storedPlaylistPaths) {
                 File playlistFile = new File(playlistFilePath);
-                reader.setPath(playlistFile);
-                String name = reader.getDataStringLines().get(0);
-                LazyLoadablePlaylist playlist = new LazyLoadablePlaylist(name, playlistFile, playlistService);
+                LazyLoadablePlaylist playlist = new LazyLoadablePlaylist(playlistFile.getName(), playlistFile, playlistService);
                 playlistReferences.add(new PlaylistReference(playlist, playlistFile));
                 playlists.add(playlist);
             }
