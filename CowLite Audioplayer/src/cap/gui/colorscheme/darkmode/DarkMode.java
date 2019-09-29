@@ -49,18 +49,17 @@ public class DarkMode extends BasicColorScheme {
     
     // MARK: - Initialisers
     
-    public DarkMode() throws IOException {
-        super(font, generalColorScheme, buttonColorScheme, inputFieldColorScheme, menuColorScheme, playlistPaneColorScheme, savedListsColorScheme, timeSliderColorScheme, volumeSliderColorScheme, overlayColorScheme, makeImageSet());
+    public DarkMode(File resourcesFolder) throws IOException {
+        super(font, generalColorScheme, buttonColorScheme, inputFieldColorScheme, menuColorScheme, playlistPaneColorScheme, savedListsColorScheme, timeSliderColorScheme, volumeSliderColorScheme, overlayColorScheme, makeImageSet(resourcesFolder));
     }
     
     // MARK: - Private methods
     
-    private static UIImageSet makeImageSet() throws IOException {
+    private static UIImageSet makeImageSet(File resourcesFolder) throws IOException {
         if(imageSet != null) {
             return imageSet;
         }
-        
-        String basePath = "resources" + File.separatorChar + "graphics" + File.separatorChar; // TODO make configurable somewhere
+        String basePath = resourcesFolder.getAbsolutePath() + File.separatorChar + "graphics" + File.separatorChar;
 
         BufferedImage playDefault = ImageIO.read(new File(basePath + "play.png"));
         BufferedImage playPressed = ImageIO.read(new File(basePath + "playpressed.png"));

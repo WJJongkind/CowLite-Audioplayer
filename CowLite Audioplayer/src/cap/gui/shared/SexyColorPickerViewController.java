@@ -427,49 +427,4 @@ public class SexyColorPickerViewController implements ViewController, SexyColorP
         view.add(container, c);
     }
     
-    
-    
-    
-    
-    
-    public static void main(String[] args) throws IOException {
-        
-        
-        JFrame frame = new JFrame();
-        frame.setSize(1280, 720);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        JPanel panel = new JPanel();
-        panel.setBackground(new Color(0, 0, 0, 0));
-        panel.setSize(1000, 1000);
-        frame.getContentPane().add(panel);
-        panel.setLayout(new GridBagLayout());
-        
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.fill = c.BOTH;
-        c.weighty = 1;
-        c.weightx = 1;
-        
-        
-        SexyColorPickerViewController scp = new SexyColorPickerViewController(new DarkMode());
-        Window defaultWindow = new DefaultWindow(new DarkMode());
-        defaultWindow.presentViewController(scp);
-        
-        defaultWindow.setSize(new Dimension(500, 250));
-        defaultWindow.setVisible(true);
-        
-        
-//        panel.add(scp.getView(), c);
-//        
-//        frame.setUndecorated(true);
-//        frame.setBackground(new Color(0, 0, 0, 0));
-//        frame.setVisible(true);
-    }
-    
-    
-    
 }

@@ -62,7 +62,7 @@ public class CowLiteAudioPlayer {
         configureGlobalEnvironment();
         
         // UI layout
-        ColorScheme colorScheme = new DarkMode();
+        ColorScheme colorScheme = new DarkMode(new File("resources"));
         
         // Song player for music playback
         DynamicSongPlayer songPlayer = new DynamicSongPlayer();

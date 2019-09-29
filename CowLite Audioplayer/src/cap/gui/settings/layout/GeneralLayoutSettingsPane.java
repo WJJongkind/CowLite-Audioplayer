@@ -155,19 +155,4 @@ public class GeneralLayoutSettingsPane extends JPanel {
         
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    public static void main(String[] args) throws IOException {
-        preview(new GeneralLayoutSettingsPane(new DarkMode(), new DarkMode()));
-    }
-    
 }

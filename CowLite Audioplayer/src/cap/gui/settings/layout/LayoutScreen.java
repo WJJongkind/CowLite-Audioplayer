@@ -93,32 +93,4 @@ public class LayoutScreen extends JTabbedPane {
         
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    public static final void main(String[] args) throws IOException {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().setBackground(new DarkMode().general().getFrameColor());
-        
-        frame.add(new LayoutScreen(new DarkMode()));
-        
-        frame.setVisible(true);
-    }
-    
-    
-    
 }
