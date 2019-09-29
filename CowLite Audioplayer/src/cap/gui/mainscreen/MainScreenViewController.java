@@ -12,6 +12,7 @@ import cap.audio.Song;
 import cap.audio.SongPlayer;
 import cap.audio.SongPlayer.SongPlayerObserver;
 import cap.audio.files.FileSong;
+import cap.audio.files.FileSongPlayer;
 import cap.audio.youtube.YouTubeService;
 import cap.audio.youtube.YouTubeSong;
 import cap.core.services.PlaylistStoreInterface;
@@ -29,10 +30,7 @@ import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
@@ -54,13 +52,6 @@ public class MainScreenViewController implements SongPlayerObserver<Song>, MainS
     
     private static class Consants {
         public static final int updateInterval = 50;
-        public static final Set<String> supportedFileTypes = new HashSet<>();
-        
-        static {
-            // TODO probably should inject these...? Or make them a property on the relevant player?
-            String[] supportedExtensions = {"3pg", "aac", "act", "aiff", "flac", "gsm", "m4a", "m4p", "mp3", "ogg", "oga", "mogg", "opus", "vox", "webm", "wma", "mp4", "avi", "wmv", "wav", "flv", "mov"};
-            supportedFileTypes.addAll(Arrays.asList(supportedExtensions));
-        }
     }
     
     // MARK: - Private properties
@@ -285,7 +276,7 @@ public class MainScreenViewController implements SongPlayerObserver<Song>, MainS
                     // Add new songs to the playlist
                     for(File f : collected) {
                         String fileType = getFileExtension(f);
-                        if(fileType != null && Consants.supportedFileTypes.contains(fileType.toLowerCase())) {
+                        if(fileType != null && FileSongPlayer.supportedFileTypes.contains(fileType.toLowerCase())) {
                             playlistPlayer.getPlaylist().addSong(new FileSong(f));
                         }
                     }

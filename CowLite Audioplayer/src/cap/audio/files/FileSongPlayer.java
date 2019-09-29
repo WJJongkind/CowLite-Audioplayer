@@ -9,6 +9,9 @@ import cap.audio.SongPlayer;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 
@@ -20,6 +23,13 @@ public class FileSongPlayer implements SongPlayer<FileSong> {
     
     // MARK: - Constants
     
+    public static final Set<String> supportedFileTypes = new HashSet<>();
+
+    static {
+        String[] supportedExtensions = {"3pg", "aac", "act", "aiff", "flac", "gsm", "m4a", "m4p", "mp3", "ogg", "oga", "mogg", "opus", "vox", "webm", "wma", "mp4", "avi", "wmv", "wav", "flv", "mov"};
+        supportedFileTypes.addAll(Arrays.asList(supportedExtensions));
+    }
+        
     private static final class Constants {
         public static final double defaultVolume = 0.5;
     }

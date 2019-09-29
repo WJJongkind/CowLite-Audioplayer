@@ -5,6 +5,8 @@
  */
 package cap.audio;
 
+import java.util.Set;
+
 /**
  *
  * @author Wessel
