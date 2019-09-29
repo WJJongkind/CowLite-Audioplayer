@@ -8,6 +8,7 @@ package cap.gui.mainscreen;
 import cap.gui.shared.Slider;
 import java.lang.ref.WeakReference;
 import cap.gui.colorscheme.ColorScheme;
+import static cap.util.SugarySyntax.unwrappedPerform;
 
 /**
  *
@@ -46,9 +47,6 @@ public class VolumeSlider extends Slider {
     // MARK: - ChangeListener
     
     private void didChangeVolume() {
-        VolumeSliderDelegate strongDelegate = delegate.get();
-        if(strongDelegate != null) {
-            strongDelegate.didChangeVolume(getValue());
-        }
+        unwrappedPerform(delegate, delegate -> delegate.didChangeVolume(getValue()));
     }
 }

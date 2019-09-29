@@ -4,12 +4,12 @@ import cap.gui.shared.Slider;
 import cap.gui.mainscreen.MusicControlPane.MusicControlPaneDelegate;
 import cap.gui.mainscreen.PlaylistPane.SongSelectionDelegate;
 import cap.gui.mainscreen.SavedPlaylistsPane.PlayListSelectionDelegate;
-import cap.gui.mainscreen.TimeSlider.TrackPositionDelegate;
 import cap.gui.mainscreen.VolumeSlider.VolumeSliderDelegate;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import cap.gui.colorscheme.ColorScheme;
+import cap.gui.mainscreen.TimeSlider.TimeSliderDelegate;
 
 /**
  * (c) Copyright
@@ -20,7 +20,7 @@ public class MainScreen extends JPanel {
     
     // MARK: - Associated types & constants
     
-    public interface MainScreenDelegate extends MusicControlPaneDelegate, PlayListSelectionDelegate, SongSelectionDelegate, TrackPositionDelegate, VolumeSliderDelegate {
+    public interface MainScreenDelegate extends MusicControlPaneDelegate, PlayListSelectionDelegate, SongSelectionDelegate, TimeSliderDelegate, VolumeSliderDelegate {
     }
     
     private class Layout {

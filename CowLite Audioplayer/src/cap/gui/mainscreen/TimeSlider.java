@@ -8,6 +8,7 @@ package cap.gui.mainscreen;
 import cap.gui.shared.Slider;
 import java.lang.ref.WeakReference;
 import cap.gui.colorscheme.ColorScheme;
+import static cap.util.SugarySyntax.unwrappedPerform;
 
 /**
  *
@@ -17,13 +18,15 @@ public class TimeSlider extends Slider {
     
     // MARK: - Associated types & constants
     
-    public interface TrackPositionDelegate {
+    public interface TimeSliderDelegate {
         public void didChangeTrackPosition(double newValue);
     }
     
     // MARK: - Private properties
     
-    private WeakReference<TrackPositionDelegate> delegate = new WeakReference<>(null);
+    private WeakReference<TimeSliderDelegate> delegate = new WeakReference<>(null);
+    
+    // MARK: - Initialisers
     
     public TimeSlider(ColorScheme colorScheme) {
         super(Orientation.horizontal);
@@ -37,17 +40,14 @@ public class TimeSlider extends Slider {
     
     // MARK: - Getters & Setters
     
-    public void setDelegate(TrackPositionDelegate delegate) {
+    public void setDelegate(TimeSliderDelegate delegate) {
         this.delegate = new WeakReference<>(delegate);
     }
     
     // MARK: - ChangeListener
     
     private void didChangePosition() {
-        TrackPositionDelegate strongDelegate = delegate.get();
-        if(strongDelegate != null) {
-            strongDelegate.didChangeTrackPosition(getValue());
-        }
+        unwrappedPerform(delegate, delegate -> delegate.didChangeTrackPosition(getValue()));
     }
     
 }

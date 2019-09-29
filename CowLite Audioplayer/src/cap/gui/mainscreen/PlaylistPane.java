@@ -7,15 +7,10 @@ package cap.gui.mainscreen;
 
 import cap.gui.shared.SexyScrollPane;
 import cap.audio.Song;
-import cap.gui.colorscheme.TableColorScheme;
-import java.awt.Component;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import cap.gui.colorscheme.ColorScheme;
 import cap.gui.shared.Table;
 import static cap.util.SugarySyntax.unwrappedPerform;
@@ -85,14 +80,9 @@ public class PlaylistPane<SongType extends Song> extends SexyScrollPane implemen
         }
         songs.add(song);
         
-//        int selectedIndex = Math.max(0, songTable.getSelectedRow());
         String[] newRow = {song.getSongName(), song.getArtistName(), song.getAlbumName()};
         songTable.addRow(newRow);
         
-//        songTable.getSelectionModel().removeListSelectionListener(songSelectionListener);
-//        songTable.setSelectedRow(selectedIndex, selectedIndex);
-//        songTable.getSelectionModel().addListSelectionListener(songSelectionListener);
-//        
         super.revalidate();
         super.repaint();
     }
