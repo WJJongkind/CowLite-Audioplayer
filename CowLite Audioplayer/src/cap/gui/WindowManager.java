@@ -31,7 +31,7 @@ public class WindowManager extends MouseAdapter {
     private static final int SOUTH = 4;
     private static final int EAST = 8;
     
-    private static final Insets dragInsets = new Insets(5, 5, 5, 5);
+    private static final Insets dragInsets = new Insets(8, 8, 8, 8);
     private static final int moveInset = 10;
     
     private enum State {
@@ -108,20 +108,22 @@ public class WindowManager extends MouseAdapter {
         //  on the original bounds of the component and mouse pressed location.
         if(e.getPoint().y > dragInsets.top && e.getPoint().y <= dragInsets.top + moveInset) {
             state = State.moving;
-        } else {
+        } else if((e.getPoint().y >= 0 && e.getPoint().y < dragInsets.top) || // Top
+                   e.getPoint().y > e.getComponent().getHeight() - dragInsets.bottom || // Bottom
+                  (e.getPoint().x >= 0 && e.getPoint().x < dragInsets.left) || // Left
+                   e.getPoint().x > e.getComponent().getWidth() - dragInsets.right) { // Right
             state = State.resizing;
         }
         
-        // The mouseMoved event continually updates this variable
-        if (direction == 0 && state != State.moving) {
-            return;
-        }
-
         Component source = e.getComponent();
         pressed = e.getPoint();
         SwingUtilities.convertPointToScreen(pressed, source);
         bounds = source.getBounds();
 
+        if (state != State.resizing) {
+            return;
+        }
+        
         //  Making sure autoscrolls is false will allow for smoother resizing
         //  of components
         if (source instanceof JComponent) {
@@ -165,7 +167,7 @@ public class WindowManager extends MouseAdapter {
 
     }
     
-    // MARK: - Private properties
+    // MARK: - Private methods
 
     private void changeBounds(Component source, int direction, Rectangle bounds, Point pressed, Point current) {
         int x = bounds.x;

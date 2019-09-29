@@ -36,7 +36,7 @@ public class WindowActionsPane extends JPanel {
     }
     
     private static class Layout {
-        public static final int spacing = 8;
+        public static final Insets buttonInsets = new Insets(4, 0, 4, 8);
         public static final Dimension minimizeButtonSize = new Dimension(10, 10);
         public static final Dimension stretchButtonSize = new Dimension(10, 10);
         public static final Dimension closeButtonSize = new Dimension(10, 10);
@@ -44,7 +44,7 @@ public class WindowActionsPane extends JPanel {
     
     // MARK: - Private properties
     
-    private JToggleButton minimizeButton, stretchButton, closeButton;
+    private final JToggleButton minimizeButton, stretchButton, closeButton;
     private WeakReference<WindowActionsPaneDelegate> delegate;
     
     // MARK: - Initialisers
@@ -61,7 +61,14 @@ public class WindowActionsPane extends JPanel {
             }
         });
         
-        makeButtons(colorScheme);
+        minimizeButton = makeButton(colorScheme.imageSet().getMinimizeScreenButtonImageSet(), Layout.minimizeButtonSize);
+        minimizeButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressMinimizeButton(this)));
+        
+        stretchButton = makeButton(colorScheme.imageSet().getStretchScreenButtonImageSet(), Layout.stretchButtonSize);
+        stretchButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressStretchButton(this)));
+        
+        closeButton = makeButton(colorScheme.imageSet().getCloseScreenButtonImageSet(), Layout.closeButtonSize);
+        closeButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressCloseButton(this)));
         
         super.setLayout(new GridBagLayout());
         
@@ -73,7 +80,7 @@ public class WindowActionsPane extends JPanel {
         c.weightx = 1;
         c.weighty = 1;
         c.fill = c.BOTH;
-        c.insets = new Insets(4, 0, 4, Layout.spacing);
+        c.insets = Layout.buttonInsets;
         
         super.add(minimizeButton, c);
         
@@ -84,17 +91,6 @@ public class WindowActionsPane extends JPanel {
         c.gridx++;
         
         super.add(closeButton, c);
-    }
-    
-    private void makeButtons(ColorScheme colorScheme) {
-        minimizeButton = makeButton(colorScheme.imageSet().getMinimizeScreenButtonImageSet(), Layout.minimizeButtonSize);
-        minimizeButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressMinimizeButton(this)));
-        
-        stretchButton = makeButton(colorScheme.imageSet().getStretchScreenButtonImageSet(), Layout.stretchButtonSize);
-        stretchButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressStretchButton(this)));
-        
-        closeButton = makeButton(colorScheme.imageSet().getCloseScreenButtonImageSet(), Layout.closeButtonSize);
-        closeButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressCloseButton(this)));
     }
     
     private JToggleButton makeButton(ControlImageSet imageSet, Dimension size) {

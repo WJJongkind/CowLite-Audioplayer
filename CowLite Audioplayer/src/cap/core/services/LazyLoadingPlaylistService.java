@@ -151,7 +151,6 @@ class LazyLoadingPlaylistService implements LazyLoadingPlaylistServiceInterface 
     public void loadPlaylist(LazyLoadablePlaylist playlist) {
         doTry(() -> {
             Playlist storedList = loadPlaylist(playlist.file);
-            System.out.println(storedList.getName());
             playlist.setSongs(storedList.getSongsInOriginalOrder());
         }); // Can't really do much in the catch clausule unfortinately
     }

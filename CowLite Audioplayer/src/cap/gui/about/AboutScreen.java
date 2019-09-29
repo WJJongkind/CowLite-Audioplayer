@@ -15,6 +15,7 @@ import java.awt.Insets;
 import cap.gui.colorscheme.ColorScheme;
 import static cap.util.SugarySyntax.unwrappedPerform;
 import java.lang.ref.WeakReference;
+import javax.swing.border.Border;
 
 /**
  *
@@ -30,15 +31,21 @@ class AboutScreen extends JPanel {
         
     }
     
+    private static final class Layout {
+        public static final int marginBetweenTextFieldAndButton = 8;
+        public static final Border border = new EmptyBorder(8, 8, 16, 8);
+    }
+    
     // MARK: - Private properties
     
+    private final Button button;
+    
     private WeakReference<AboutScreenDelegate> delegate;
-    private Button button;
     
     // MARK: - Initialisers
     
     public AboutScreen(ColorScheme layout) {
-        super.setBorder(new EmptyBorder(8, 8, 16, 8));
+        super.setBorder(Layout.border);
         super.setBackground(new Color(0, 0, 0, 0));
         
         AboutPanel aboutPanel = new AboutPanel(layout);
@@ -59,7 +66,7 @@ class AboutScreen extends JPanel {
         c.weightx = 0;
         c.weighty = 0;
         c.fill = c.NONE;
-        c.insets = new Insets(8, 0, 0, 0);
+        c.insets = new Insets(Layout.marginBetweenTextFieldAndButton, 0, 0, 0);
         
         button = new Button("Close", layout.defaultButton(), layout.font().m().bold());
         button.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressClose(this)));
