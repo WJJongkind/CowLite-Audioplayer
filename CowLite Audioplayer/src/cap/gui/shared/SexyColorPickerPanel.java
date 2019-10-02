@@ -178,14 +178,24 @@ public class SexyColorPickerPanel extends JComponent implements MouseListener, M
     }
     
     private void calculateBaseColorAndSetPosition(Color color) {
+        /*
+            We determine the base color of the given color by first translating the
+            color to what it would be when y = 0 on the actual color picker panel. This is
+            done by determining the brightness of the color. If any of the components
+            of the provided color has value 255, then it means the brightness of the
+            color is 100%.
+        */
         int r = color.getRed();
         int g = color.getGreen();
         int b = color.getBlue();
         
-        // TODO maybe move this to panel class and from there expose function getBaseColor?
         double darkeningFactor = maxDouble(r / 255.0, g / 255.0, b / 255.0);
         position.y = 1 - darkeningFactor;
         
+        /*
+            We know that at all times, one of the components of a base color has a value of 0.
+            Here, we can calculate the color where the darkening has been inversed.
+        */
         int brightR = (int) Math.round(r / darkeningFactor);
         int brightG = (int) Math.round(g / darkeningFactor);
         int brightB = (int) Math.round(b / darkeningFactor);
@@ -199,6 +209,11 @@ public class SexyColorPickerPanel extends JComponent implements MouseListener, M
             return;
         }
         
+        /*
+            We know the brighteningFactor because we know the value of the component
+            with the lowest value. This component will have a value of 0 in the base-color
+            state. Knowing this, we can calculate the base color.
+        */
         double brighteningFactor = leastSignificantComponentValue / 255.0;
         position.x = 1 - brighteningFactor;
         

@@ -55,6 +55,7 @@ public class UIImageSet extends ColorSchemeItem<UIImageSet> {
 
     public void setPlayButtomImageSet(ControlImageSet playButtomImageSet) {
         this.playButtomImageSet = playButtomImageSet;
+        notifyObservers();
     }
 
     public ControlImageSet getStopButtonImageSet() {
@@ -63,6 +64,7 @@ public class UIImageSet extends ColorSchemeItem<UIImageSet> {
 
     public void setStopButtonImageSet(ControlImageSet stopButtonImageSet) {
         this.stopButtonImageSet = stopButtonImageSet;
+        notifyObservers();
     }
 
     public ControlImageSet getPauseButtonImageSet() {
@@ -71,6 +73,7 @@ public class UIImageSet extends ColorSchemeItem<UIImageSet> {
 
     public void setPauseButtonImageSet(ControlImageSet pauseButtonImageSet) {
         this.pauseButtonImageSet = pauseButtonImageSet;
+        notifyObservers();
     }
 
     public ControlImageSet getShuffleButtonImageSet() {
@@ -79,6 +82,7 @@ public class UIImageSet extends ColorSchemeItem<UIImageSet> {
 
     public void setShuffleButtonImageSet(ControlImageSet shuffleButtonImageSet) {
         this.shuffleButtonImageSet = shuffleButtonImageSet;
+        notifyObservers();
     }
 
     public ControlImageSet getAlphabeticSortButtonImageSet() {
@@ -87,6 +91,7 @@ public class UIImageSet extends ColorSchemeItem<UIImageSet> {
 
     public void setAlphabeticSortButtonImageSet(ControlImageSet alphabeticSortButtonImageSet) {
         this.alphabeticSortButtonImageSet = alphabeticSortButtonImageSet;
+        notifyObservers();
     }
 
     public ControlImageSet getClearButtonImageSet() {
@@ -95,6 +100,7 @@ public class UIImageSet extends ColorSchemeItem<UIImageSet> {
 
     public void setClearButtonImageSet(ControlImageSet clearButtonImageSet) {
         this.clearButtonImageSet = clearButtonImageSet;
+        notifyObservers();
     }
 
     public ControlImageSet getNextButtonImageSet() {
@@ -103,6 +109,7 @@ public class UIImageSet extends ColorSchemeItem<UIImageSet> {
 
     public void setNextButtonImageSet(ControlImageSet nextButtonImageSet) {
         this.nextButtonImageSet = nextButtonImageSet;
+        notifyObservers();
     }
 
     public ControlImageSet getPreviousButtonImageSet() {
@@ -111,6 +118,7 @@ public class UIImageSet extends ColorSchemeItem<UIImageSet> {
 
     public void setPreviousButtonImageSet(ControlImageSet previousButtonImageSet) {
         this.previousButtonImageSet = previousButtonImageSet;
+        notifyObservers();
     }
 
     public ControlImageSet getMinimizeScreenButtonImageSet() {
@@ -119,6 +127,7 @@ public class UIImageSet extends ColorSchemeItem<UIImageSet> {
 
     public void setMinimizeScreenButtonImageSet(ControlImageSet minimizeScreenButtonImageSet) {
         this.minimizeScreenButtonImageSet = minimizeScreenButtonImageSet;
+        notifyObservers();
     }
 
     public ControlImageSet getStretchScreenButtonImageSet() {
@@ -127,6 +136,7 @@ public class UIImageSet extends ColorSchemeItem<UIImageSet> {
 
     public void setStretchScreenButtonImageSet(ControlImageSet stretchScreenButtonImageSet) {
         this.stretchScreenButtonImageSet = stretchScreenButtonImageSet;
+        notifyObservers();
     }
 
     public ControlImageSet getCloseScreenButtonImageSet() {
@@ -135,6 +145,7 @@ public class UIImageSet extends ColorSchemeItem<UIImageSet> {
 
     public void setCloseScreenButtonImageSet(ControlImageSet closeScreenButtonImageSet) {
         this.closeScreenButtonImageSet = closeScreenButtonImageSet;
+        notifyObservers();
     }
 
     @Override

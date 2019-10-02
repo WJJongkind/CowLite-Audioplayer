@@ -189,6 +189,11 @@ public class SexyColorPickerStave extends JComponent implements MouseListener, M
     }
     
     private Color getColorForRelativePosition(double position) {
+        /*
+            The stave is divided into six sections: (rmax, g^), (gmax, rv), (gmax, b^), (bmax, gv), (bmax, r^), (rmax, bv). 
+            Each section is of equal size. Below, we first calculate in which segment the position is. Then, we can calculate
+            the relative position within that section and thus calculate the color.
+        */
         int red = 0;
         int green = 0;
         int blue = 0;

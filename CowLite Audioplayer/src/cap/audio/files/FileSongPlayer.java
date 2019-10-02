@@ -132,7 +132,7 @@ public class FileSongPlayer implements SongPlayer<FileSong> {
 
     @Override
     public long getDuration() {
-        return mediaPlayer.media().info().duration();
+        return activeSong.getDuration();
     }
     
     @Override

@@ -27,18 +27,27 @@ public final class ActivityQueue extends Thread {
     
     public static final class ActivityToken {
         
+        // MARK: - Private associated types
+        
         private enum State {
             scheduled,
             running,
             done
         }
         
+        // MARK: - Private properties
+        
         private final Activity activity;
+        
         private State state = State.scheduled;
+        
+        // MARK: - Initialisers
         
         private ActivityToken(Activity activity) {
             this.activity = activity;
         }
+        
+        // MARK: - Public methods
         
         public boolean cancelActivity() {
             boolean isCancellable;
@@ -65,6 +74,8 @@ public final class ActivityQueue extends Thread {
                 return state == State.done;
             }
         }
+        
+        // MARK: - Private methods
         
         private void performActivity() {
             synchronized(state) {
