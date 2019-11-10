@@ -13,11 +13,14 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Set;
 
 /**
- *
- * @author Wessel
+ * DynamicSongPlayer is a type which can play multiple types of Song objects. Currently it supports playing:
+ * 
+ * 1. FileSong
+ * 2. YouTubeSong
+ * 
+ * @author Wessel Jongkind
  */
 public class DynamicSongPlayer implements SongPlayer<Song> {
     
@@ -32,6 +35,10 @@ public class DynamicSongPlayer implements SongPlayer<Song> {
     
     // MARK: - Initialisers
     
+    /**
+     * Instantiates a new DynamicSongPlayer.
+     * @throws IOException If one of the underlying players could not be loaded.
+     */
     public DynamicSongPlayer() throws IOException {
         fileSongPlayer = new FileSongPlayer();
         ytSongPlayer = new YTSongPlayer();

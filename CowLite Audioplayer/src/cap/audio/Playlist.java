@@ -11,13 +11,22 @@ import java.util.List;
 import java.util.Random;
 
 /**
- *
- * @author Wessel
+ * Playlist is a type which represents a playlist of songs. Aside from allowing
+ * songs to be added / removed, Playlist also offers several high-level functions
+ * such as alphabetically sorting the playlist and shuffling the playlist.
+ * @author Wessel Jongkind
  */
 public class Playlist {
     
     // MARK: - Associated types
     
+    /**
+     * The various "modes" which a playlist can have:
+     * 
+     * 1. Normal: The playlist represented as the order in which the songs were added to it.
+     * 2. Shuffeld: The playlist representing the songs in a random order.
+     * 3. Alphabetic: The playlist representing the songs in an alphabetic order by song name.
+     */
     public enum PlaylistMode {
         
         // MARK: - Enum cases
@@ -28,6 +37,9 @@ public class Playlist {
         
         // MARK: - Private properties
         
+        /**
+         * String-representation of the enum case.
+         */
         public String rawValue;
         
         // MARK: - Initialisers
@@ -38,6 +50,9 @@ public class Playlist {
         
         // MARK: - Lookup
         
+        /**
+         * HashMap mapping all string-representations of the enum cases to the enum cases themselves.
+         */
         public static final HashMap<String, PlaylistMode> lookup = new HashMap<>();
         
         static {
@@ -59,12 +74,21 @@ public class Playlist {
     
     // MARK: - Getters & Setters
     
+    /**
+     * Adds a song to this playlist.
+     * @param song The song to be added.
+     */
     public void addSong(Song song) {
         songs.add(song);
         randomInsertSong(song);
         alphabeticallyInsertSong(song);
     }
     
+    /**
+     * Adds a song to this playlist at the given index.
+     * @param song The song to be added.
+     * @param index The index at which it needs to be added.
+     */
     public void addSong(Song song, int index) {
         
         switch(mode) {
@@ -87,28 +111,54 @@ public class Playlist {
         }
     }
     
+    /**
+     * Removes the given song from this playlist.
+     * @param song The song that needs to be removed.
+     */
     public void removeSong(Song song) {
         songs.remove(song);
         shuffledSongs.remove(song);
         alphabeticallySortedSongs.remove(song);
     }
     
+    /**
+     * Removes the song at the given index or throws an OutOfBoundsException if the given
+     * index less than 0 or larger than the size of the array.
+     * @param index The index of the song that needs to be removed.
+     */
     public void removeSong(int index) {
         removeSong(getSongs().get(index));
     }
     
+    /**
+     * Sets the name of this playlist.
+     * @param name The name that needs to be set.
+     */
     public void setName(String name) {
         this.name = name;
     }
     
+    /**
+     * Returns the name of this playlist.
+     * @return The name of this playlist.
+     */
     public String getName() {
         return name;
     }
     
+    /**
+     * Returns the songs in the order in which they were originally added.
+     * @return The songs in original order.
+     */
     public List<Song> getSongsInOriginalOrder() {
         return new ArrayList<>(songs);
     }
     
+    /**
+     * Returns the current representation of the playlist as a List of Song objects.
+     * The current representation can either be 1. normal, 2. shuffled or 3. alphabetically sorted.
+     * @return 
+     */
     public List<Song> getSongs() {
         switch(mode) {
             case normal:
@@ -122,6 +172,11 @@ public class Playlist {
         return null; // Should never happen
     }
     
+    /**
+     * Returns the song at the given index.
+     * @param index The index of the song that needs  to be obtained.
+     * @return The song at the given index.
+     */
     public Song getSong(int index) {
         switch(mode) {
             case normal:
@@ -135,10 +190,18 @@ public class Playlist {
         return null; // Should never happen
     }
     
+    /**
+     * Sets the representation mode of this playlist.
+     * @param mode The mode in which the playlist needs to be represented.
+     */
     public void setMode(PlaylistMode mode) {
         this.mode = mode;
     }
     
+    /**
+     * Returns the mode in which the playlist is being represented.
+     * @return The mode of the playlist.
+     */
     public PlaylistMode getMode() {
         return mode;
     }
@@ -146,9 +209,8 @@ public class Playlist {
     // MARK: - Private methods
     
     private void randomInsertSong(Song song) {
-        if(shuffledSongs.size() == 0) {
+        if(shuffledSongs.isEmpty()) {
             shuffledSongs.add(song);
-            return;
         } else {
             Random random = new Random();
             int index = random.nextInt(shuffledSongs.size() + 1);
