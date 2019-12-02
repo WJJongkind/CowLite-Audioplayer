@@ -27,15 +27,23 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
- * @author Wessel
+ * Class with which various pieces of information can be obtained based on YouTube video URLs.
+ * @author Wessel Jongkind
  */
-public class YouTubeService {
+public final class YouTubeService {
     
     // MARK: - Associated types & constants
     
+    /**
+     * Interface used for methods in YouTube service that support asynchronous returning
+     * of requested results.
+     */
     public interface PlaylistReceiver {
         
+        /**
+         * Notifies the receiver that a YouTube song has been loaded.
+         * @param song The song that has been loaded.
+         */
         public void songLoaded(YouTubeSong song);
         
     }
@@ -60,20 +68,38 @@ public class YouTubeService {
         
     // MARK: - Public methods
         
+    /**
+     * Returns the ID of the video denoted by the given YouTube URL (or null if the URL is invalid).
+     * @param url The URL from which the video ID has to be obtained.
+     * @return The ID of the video denoted by the given YouTube URL.
+     */
     public String getVideoId(URL url) {
         String query = url.toString().substring(url.toString().indexOf("?") + 1);
         Map<String, String> queryParts = QueryReader.readQuery(query);
         return queryParts.get("v");
     }
         
-    public List<YouTubeSong> getYouTubeSongs(String... videoIds) throws IOException {
+    /**
+     * Returns all YouTubeSongs by loading them from the list of given videoIds.
+     * @param videoIds The IDs of the video IDs of which YouTubeSongs have to be obtained.
+     * @return The list of YouTubeSongs that were obtained from the given video ids. Note that any videos that are not embeddable, are not included.
+     * @throws IOException If the metadata of the videos could not be obtained from the YouTube API.
+     */
+    public List<YouTubeSong> getYouTubeSongs(String... videoIds) throws IOException { // TODO if we will non-embeddable videos, change documentation.
         ArrayList<YouTubeSong> songs = new ArrayList<>();
         getMetaData(song -> songs.add(song), videoIds);
         
         return songs;
     }
         
-    public YouTubeSong getYouTubeSongByUrl(URL url) throws IOException, VideoNotEmbeddableException {
+    /**
+     * Obtains a single YouTubeSong from the given URL.
+     * @param url The URL pointing to the location of the YouTube video.
+     * @return A YouTubeSong representing the video at the given URL.
+     * @throws IOException If the YouTubeAPI could not be reached.
+     * @throws VideoNotEmbeddableException When the video is not embeddable. 
+     */
+    public YouTubeSong getYouTubeSongByUrl(URL url) throws IOException, VideoNotEmbeddableException { // TODO if we will non-embeddable videos, change documentation.
         String videoId = getVideoId(url);
         
         YouTube.Videos.List list = youTube.videos().list("snippet,contentDetails,status");
@@ -91,6 +117,13 @@ public class YouTubeService {
         }
     }
     
+    /**
+     * Reads the given URL and if it is a YouTube playlist, will notify the receiver of all the YouTubeSongs in that playlist. If it is a single video, 
+     * notifies the receiver of that single song.
+     * @param url The URL denoting the YouTube video or playlist.
+     * @param receiver The receiver which can be notified if a YouTube song has been laoded from the given URL. 
+     *                 May be notified several times if the URL denotes a playlist. May not be notified at all if the given URL does not contain any embeddable videos.
+     */
     public void readUrl(String url, PlaylistReceiver receiver) {
         new Thread() {
             @Override
@@ -119,6 +152,12 @@ public class YouTubeService {
         }.start();
     }
     
+    /**
+     * Reads the given URL and if it is a YouTube playlist returns a list with all embeddable songs of that playlist. If the URL denotes a single video,
+     * the list may contain only one item and potentially zero if the video is not embeddable.
+     * @param url The URL of which all YouTube songs have to be obtained (a valid YouTube playlist or video URL).
+     * @return The obtained YouTubeSongs.
+     */
     public List<YouTubeSong> readUrl(String url) {
         try {
             // Try to see if it is a playlist first. If so, obtain all videos in the playlist.

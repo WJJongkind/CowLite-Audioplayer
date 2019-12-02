@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- *
- * @author Wessel
+ * Implementation of Song that points to YouTube videos as songs.
+ * @author Wessel Jongkind
  */
 public class YouTubeSong implements Song {
     
@@ -32,7 +32,13 @@ public class YouTubeSong implements Song {
     
     // MARK: - Public Initialisers
     
-    public YouTubeSong(URL url) throws IOException, VideoNotEmbeddableException {
+    /**
+     * Instantiates a new YouTubeSong objects from the given video URL.
+     * @param url The URL at which the video is located.
+     * @throws IOException When no meta-data could be obtained from the YouTube API.
+     * @throws VideoNotEmbeddableException When the video cannot be embedded. Note: This may change in the future where this class will expose a boolean "isEmbeddable".
+     */
+    public YouTubeSong(URL url) throws IOException, VideoNotEmbeddableException { // TODO consider removing VideoNotEmbeddableException and replacing it with "isEmbeddable" property.
         YouTubeSong info = Constants.youtubeService.getYouTubeSongByUrl(url);
         this.duration = info.duration;
         this.songName = info.songName;
@@ -44,6 +50,14 @@ public class YouTubeSong implements Song {
     
     // MARK: - Package-private initialisers
 
+    /**
+     * Package-private initialiser used for convenience initialisation of a YouTube song.
+     * @param url The URL at which the video is located.
+     * @param songName The name of the song (or video).
+     * @param artistName The name of the video's artist.
+     * @param videoId The ID of the video.
+     * @param duration The duration of the video.
+     */
     YouTubeSong(URL url, String songName, String artistName, String videoId, long duration) {
         this.songName = songName;
         this.artistName = artistName;

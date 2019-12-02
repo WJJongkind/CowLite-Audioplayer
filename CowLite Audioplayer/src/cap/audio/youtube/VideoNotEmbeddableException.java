@@ -6,8 +6,8 @@
 package cap.audio.youtube;
 
 /**
- *
- * @author Wessel
+ * Exception that is thrown when a YouTube video is not embeddable.
+ * @author Wessel Jongkind
  */
 public class VideoNotEmbeddableException extends Exception {
     public VideoNotEmbeddableException() {

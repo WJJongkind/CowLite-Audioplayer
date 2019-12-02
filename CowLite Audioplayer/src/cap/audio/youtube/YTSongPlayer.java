@@ -20,13 +20,11 @@ import java.lang.ref.WeakReference;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 /**
- *
- * @author Wessel
+ * Implementation of SongPlayer that allows the playback of YouTubeSong objects.
+ * @author Wessel Jongkind
  */
 public class YTSongPlayer implements SongPlayer<YouTubeSong> {
     
@@ -37,7 +35,6 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
         public static final String stateMessage = "CowLite-STATE";
     }
 
-    
     // MARK: - Shared properties
     
     private static String videoPlayerHtml;
@@ -234,10 +231,12 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
     
     // MARK: - Private associated types
     
-    // Required because YouTube blocks playing some videos in browsers when they are not
+    // Required because YouTube blocks playing some embedded videos in browsers when they are not
     // being played from a domain (e.g. when playing a YT video from a .html file).
     // We trick YouTube by hosting the video on localhost... Sucks but is required for
     // a reliable experience.
+    //
+    // TODO: May consider deprecating this and replacing it with LavaPlayer.
     private class YTSocket extends Thread {
         
         private final ServerSocket serverSocket;
