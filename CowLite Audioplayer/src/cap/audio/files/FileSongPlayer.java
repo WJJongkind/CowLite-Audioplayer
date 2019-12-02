@@ -16,13 +16,16 @@ import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 
 /**
- *
- * @author Wessel
+ * Implementation of SongPlayer that allows the playback of FileSong objects.
+ * @author Wessel Jongkind
  */
-public class FileSongPlayer implements SongPlayer<FileSong> {
+public final class FileSongPlayer implements SongPlayer<FileSong> {
     
     // MARK: - Constants
     
+    /**
+     * A set of file types that are supported by FileSongPlayer. 
+     */
     public static final Set<String> supportedFileTypes = new HashSet<>();
 
     static {

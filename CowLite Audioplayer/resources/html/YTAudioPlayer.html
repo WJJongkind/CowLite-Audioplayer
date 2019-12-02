@@ -55,6 +55,7 @@
             function playerStateChange(event) {
                 /* Fix for volume not being properly set... Probably some bug in YouTube's iFrame API */
                 setVolume(volume);
+                console.log('CowLite-READY');
                 
                 /* Notify java code that we're live */
                 console.log('CowLite-STATE' + event.data);

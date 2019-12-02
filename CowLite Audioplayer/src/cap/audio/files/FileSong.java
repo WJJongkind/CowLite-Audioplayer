@@ -7,21 +7,20 @@ package cap.audio.files;
 
 import cap.audio.files.FileSongMetaDataReader.MetaData;
 import cap.audio.Song;
+import static cap.util.SugarySyntax.nilCoalesce;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
-import uk.co.caprica.vlcj.player.base.MediaPlayer;
 
 /**
- *
- * @author Wessel
+ * Implementation of the Song interface used for referencing songs that are present on the local file-system.
+ * @author Wessel Jongkind
  */
 public class FileSong implements Song {
     
     // MARK: - Constants
     
-    private static final MediaPlayer mediaPlayer = new MediaPlayerFactory().mediaPlayers().newMediaPlayer();
+    private static final FileSongMetaDataReader reader = new FileSongMetaDataReader();
     
     // MARK: - Private properties
     
@@ -31,26 +30,19 @@ public class FileSong implements Song {
     private final String artistName;
     private final URL url;
     
+    /**
+     * Instantiates a new FileSong from the given File.
+     * @param file The File denoting the location at which the song can be found.
+     * @throws MalformedURLException Should in practice never happen, but may occur when the given File cannot be converted to a URL.
+     */
     public FileSong(File file) throws MalformedURLException {
         this.url = file.toURI().toURL();
         
-        synchronized(mediaPlayer) {
-            MetaData metaData;
-            mediaPlayer.media().prepare(this.url.getProtocol() + "://" + this.url.getPath());
-            metaData = new FileSongMetaDataReader().readMetaData(mediaPlayer);
-            
-            if(metaData != null) {
-                this.songName = parseMetadataValue(metaData.song);
-                this.albumName = parseMetadataValue(metaData.album);
-                this.artistName = parseMetadataValue(metaData.artist);
-                this.duration = metaData.duration;
-            } else {
-                this.songName = file.getName();
-                this.albumName = unknownPlaceholder;
-                this.artistName = unknownPlaceholder;
-                this.duration = mediaPlayer.media().info().duration();
-            }
-        }
+        MetaData metaData = reader.readMetaData(this.url);
+        this.songName = nilCoalesce(metaData.song, file.getName());
+        this.albumName = parseMetadataValue(metaData.album);
+        this.artistName = parseMetadataValue(metaData.artist);
+        this.duration = metaData.duration;
     }
     
     private String parseMetadataValue(String value) {

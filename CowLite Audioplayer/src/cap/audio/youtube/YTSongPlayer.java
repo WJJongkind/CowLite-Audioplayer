@@ -82,7 +82,7 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
             return;
         }
         
-        activityQueue.submitActivity(() -> {
+        playSongToken = activityQueue.submitActivity(() -> {
             browser.setConsoleListener(message -> {
                 Integer value;
                 if(message != null && message.contains(Constants.stateMessage) && (value = tryParseInt(message.replace(Constants.stateMessage, ""))) != null) {
@@ -149,7 +149,7 @@ public class YTSongPlayer implements SongPlayer<YouTubeSong> {
             setSongToken.cancelActivity();
         }
         if(playSongToken != null) {
-            setSongToken.cancelActivity();
+            playSongToken.cancelActivity();
         }
         
         setSongToken = activityQueue.submitActivity(() -> {

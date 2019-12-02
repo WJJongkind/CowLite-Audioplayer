@@ -13,6 +13,10 @@ import java.util.Collection;
  * @author Wessel
  */
 public class SugarySyntax {
+    
+    public interface Callback<ReturnType, ParameterType> {
+        public ReturnType perform(ParameterType result);
+    }
 
     public interface Action {
         public void perform();
