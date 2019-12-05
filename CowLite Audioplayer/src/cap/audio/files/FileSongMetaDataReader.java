@@ -63,6 +63,7 @@ class FileSongMetaDataReader {
     public synchronized MetaData readMetaData(URL url) {
         mediaPlayer.media().prepare(url.getProtocol() + "://" + url.getPath());
         try {
+            countdownLatch = new ResultCarryingCountdownLatch<>(1);
             MediaEventListener listener = new MediaEventListenerImpl();
             mediaPlayer.media().events().addMediaEventListener(listener);
             mediaPlayer.media().parsing().parse(timeout);
