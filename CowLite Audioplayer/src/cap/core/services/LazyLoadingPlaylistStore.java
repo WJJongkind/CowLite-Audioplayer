@@ -20,8 +20,10 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- *
- * @author Wessel
+ * Class that implements the PlaylistStoreInterface and lazely loads all playlists
+ * on a background thread. This is useful when not all playlists are needed
+ * immediately after initialising this object.
+ * @author Wessel Jongkind
  */
 public class LazyLoadingPlaylistStore implements PlaylistStoreInterface {
     
@@ -36,6 +38,12 @@ public class LazyLoadingPlaylistStore implements PlaylistStoreInterface {
     
     // MARK: - Initialisers
     
+    /**
+     * Initialises the LazyLoadingPlaylistStore.
+     * @param file The file in which all files of stored playlists are defined.
+     * @throws IOException
+     * @throws URISyntaxException 
+     */
     public LazyLoadingPlaylistStore(File file) throws IOException, URISyntaxException {
         this.storeFile = file;
         this.playlistService = new LazyLoadingPlaylistService();
@@ -106,6 +114,8 @@ public class LazyLoadingPlaylistStore implements PlaylistStoreInterface {
     }
     
     private void updateSaveFile() throws IOException{
+        // TODO this function really should be optimized. It won't cause much of an issue as is,
+        // but this is still a dirty implementation.
         PrintWriter out = null;
         try {
             storeFile.delete();

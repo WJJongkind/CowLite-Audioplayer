@@ -29,8 +29,8 @@ import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
 
 /**
- *
- * @author Wessel
+ * Default implementation of LazyLoadingPlaylistServiceInterface.
+ * @author Wessel Jongkind
  */
 class LazyLoadingPlaylistService implements LazyLoadingPlaylistServiceInterface {
     
@@ -125,7 +125,7 @@ class LazyLoadingPlaylistService implements LazyLoadingPlaylistServiceInterface 
     
     @Override
     public void savePlayList(Playlist playList, File target) throws FileNotFoundException {
-        // TODO implement some sort of caching mechanism
+        // TODO implement some sort of caching mechanism for youtube songs.
         PrintWriter out = null;
         try {
             out = new PrintWriter(new FileOutputStream(target));

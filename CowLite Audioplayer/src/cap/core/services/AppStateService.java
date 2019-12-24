@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
- * @author Wessel
+ * Default implementation of AppStateServiceInterface.
+ * @author Wessel Jongkind
  */
 public class AppStateService implements AppStateServiceInterface {
 
@@ -71,7 +71,19 @@ public class AppStateService implements AppStateServiceInterface {
     
     // MARK: - Initialisers
     
-    public AppStateService(HashMap<HotkeyListener.Control, String> defaultControls, 
+    /**
+     * Initialises a new AppStateService.
+     * @param defaultControls Default control mapping for when no persisted mapping can be found.
+     * @param defaultVolume Default volume for when no persisted volume can be found.
+     * @param defaultPlaylistMode Default playlist mode for when no persisted playlist mode can be found.
+     * @param defaultWindowSize Default window size for when no persisted window size can be found.
+     * @param defaultWindowLocation Default window location for when no persisted window location can be found.
+     * @param defaultOverlaySize Default overlay size for when no persisted overlay size can be found.
+     * @param defaultOverlayLocation Default overlay location for when no persisted overlay location can be found.
+     * @param isWindowDefaultFullscreen Default setting for if the app should be fullscreen in case no persisted setting can be found.
+     * @param defaultIsOverlayEnabled Default setting for if the overlay should be enabled in case no persisted setting can be found.
+     */
+    public AppStateService(Map<HotkeyListener.Control, String> defaultControls, 
                            double defaultVolume, 
                            PlaylistMode defaultPlaylistMode, 
                            Dimension defaultWindowSize, 

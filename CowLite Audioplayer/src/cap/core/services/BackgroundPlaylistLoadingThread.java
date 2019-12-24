@@ -8,10 +8,10 @@ package cap.core.services;
 import java.util.List;
 
 /**
- *
- * @author Wessel
+ * Processing thread for loading lazily loadable playlists.
+ * @author Wessel Jongkind
  */
-public final class BackgroundPlaylistLoadingThread extends Thread {
+final class BackgroundPlaylistLoadingThread extends Thread {
     
     // MARK: - Private properties
     
@@ -20,6 +20,12 @@ public final class BackgroundPlaylistLoadingThread extends Thread {
     
     // MARK: - Initialisers
     
+    /**
+     * Initialises a new BackgroundPlaylistLoadingThread.
+     * @param playlistService A service with which LazyLoadablePlaylists can be loaded.
+     * @param playlists The playlists that need to be loaded. Note that if the playlist's state is
+     * already set to "loaded" before this thread processes it, then it will not be handled by this thread.
+     */
     public BackgroundPlaylistLoadingThread(LazyLoadingPlaylistServiceInterface playlistService, List<LazyLoadablePlaylist> playlists) {
         this.playlistService = playlistService;
         this.playlists = playlists;
