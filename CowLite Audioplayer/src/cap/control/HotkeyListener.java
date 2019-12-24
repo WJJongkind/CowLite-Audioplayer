@@ -7,12 +7,15 @@ import org.jnativehook.keyboard.*;
 
 /**
  * (c) Copyright This class makes the whole hotkey-thing possible. Thanks to
- * this class we can still control the program from outside of the interface.
+ * this class we can still control the program from outside of the user interface.
  */
 public class HotkeyListener implements NativeKeyListener {
     
     // MARK: - Associated types & constants
     
+    /**
+     * The various controls that the hotkeylistener can hook into
+     */
     public enum Control {
         play("play"),
         pause("pause"),
@@ -44,17 +47,65 @@ public class HotkeyListener implements NativeKeyListener {
         
     }
     
+    /**
+     * Interface for delegates that want to act whenever a specific hotkey is pressed.
+     */
     public interface HotkeyListenerDelegate {
+        
+        /**
+         * Notifies the delegate that the "play" hotkey was pressed.
+         */
         public void didPressPlay();
+        
+        /**
+         * Notifies the delegate that the "pause" hotkey was pressed.
+         */
         public void didPressPause();
+        
+        /**
+         * Notifies the delegate that the "stop" hotkey was pressed.
+         */
         public void didPressStop();
+        
+        /**
+         * Notifies the delegate that the "play previous song" hotkey was pressed.
+         */
         public void didPressPrevious();
+        
+        /**
+         * Notifies the delegate that the "play next song" hotkey was pressed.
+         */
         public void didPressNext();
+        
+        /**
+         * Notifies the delegate that the "volume up" hotkey was pressed.
+         */
         public void didPressVolumeUp();
+        
+        /**
+         * Notifies the delegate that the "volume down" hotkey was pressed.
+         */
         public void didPressVolumeDown();
+        
+        /**
+         * Notifies the delegate that the "reposition overlay" hotkey combination was pressed. The delegate should ensure that, if enabled,
+         * the overlay should be repositioned in the given direction.
+         * @param dx The amount of pixels in the x-axis that the overlay should be moved.
+         * @param dy The amount of pixels in the y-axis that the overlay should be moved.
+         */
         public void repositionOverlay(int dx, int dy);
+        
+        /**
+         * Notifies the delegate that overlay repositioning should be allowed or disallowed.
+         * @param shouldAllowOverlayRepositioning True if repositioning should be allowed, false otherwise.
+         */
         public void shouldAllowOverlayRepositioning(boolean shouldAllowOverlayRepositioning);
+        
+        /**
+         * Notifies the delegate that the overlay should be toggled (turned off if it is on, turned on if it is off).
+         */
         public void toggleOverlay();
+        
     }
     
     // MARK: - Private final properties
@@ -150,12 +201,7 @@ public class HotkeyListener implements NativeKeyListener {
             }
         }
     }
-
-    /**
-     * checks if any key gets released from any window
-     *
-     * @param e the key
-     */
+    
     @Override
     public void nativeKeyReleased(NativeKeyEvent e) {
         if (e.getKeyCode() == NativeKeyEvent.VC_ALT_L) {
@@ -212,4 +258,5 @@ public class HotkeyListener implements NativeKeyListener {
     @Override
     public void nativeKeyTyped(NativeKeyEvent e) {
     }
+    
 }
