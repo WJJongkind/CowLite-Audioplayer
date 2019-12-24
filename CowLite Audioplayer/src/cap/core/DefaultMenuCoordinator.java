@@ -20,18 +20,43 @@ import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 
 /**
- *
- * @author Wessel
+ * This class is responsible for maintaining the menu and responding to menu-related events.
+ * Flows that can be started from the menu will be managed here.
+ * @author Wessel Jongkind
  */
 public class DefaultMenuCoordinator implements Coordinator, AboutViewController.AboutViewControllerDelegate {
     
     // MARK: - Associated types
     
+    /**
+     * Interface defining some core dependencies that are needed by the menu coordinator.
+     */
     public interface DefaultMenuContextInterface {
+        
+        /**
+         * Should return the application's playlist storage.
+         * @return The application's playlist storage.
+         */
         public PlaylistStoreInterface getPlaylistStore();
+        
+        /**
+         * Should return the currently active playlist in the application.
+         * @return The currently active playlist.
+         */
         public Playlist getCurrentPlaylist();
+        
+        /**
+         * Should return the "about" text of the application (e.g. explaining about the CowLite project)
+         * @return The "about" text.
+         */
         public String getAboutText();
+        
+        /**
+         * Should return the text that describes the features of the application.
+         * @return The "features" text.
+         */
         public String getFeaturesText();
+        
     }
     
     // MARK: - Private properties
@@ -45,6 +70,12 @@ public class DefaultMenuCoordinator implements Coordinator, AboutViewController.
     
     // MARK: - Initialisers
     
+    /**
+     * Initialises a new DefaultMenuCoordinator.
+     * @param colorScheme The colorscheme that is used in the application.
+     * @param menuContext Container-object that contains several low level dependencies required in this coordinator.
+     * @param overlay The application's overlay.
+     */
     public DefaultMenuCoordinator(ColorScheme colorScheme, DefaultMenuContextInterface menuContext, SongInfoOverlay overlay) {
         this.menuContext = menuContext;
         this.aboutViewController = new AboutViewController(colorScheme);

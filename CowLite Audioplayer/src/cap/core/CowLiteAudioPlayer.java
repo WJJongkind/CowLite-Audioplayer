@@ -31,7 +31,7 @@ import javafx.embed.swing.JFXPanel;
 import javax.swing.JFrame;
 
 /**
- * (c) Copyright This class initializes CowLite Audio Player. Main class, yippy!
+ * This class initialises CowLite Audio Player. Main class, yippy!
  *
  * @author Wessel Jongkind
  */
@@ -111,7 +111,7 @@ public class CowLiteAudioPlayer {
     }
 
     private static void configureGlobalEnvironment() {
-        // Initialize JavaFX toolkit
+        // Initialize JavaFX toolkit. Needed for our HeadlessBrowser impl.
         new JFXPanel();
         
         // VLC for audio decoding support

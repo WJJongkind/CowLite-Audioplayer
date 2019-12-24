@@ -14,13 +14,12 @@ import cap.core.DefaultMenuCoordinator.DefaultMenuContextInterface;
 import cap.core.services.AppStateServiceInterface;
 import cap.gui.Window;
 import cap.gui.mainscreen.MainScreenViewController;
-import java.io.IOException;
 import cap.gui.colorscheme.ColorScheme;
 import cap.gui.overlay.SongInfoOverlay;
 
 /**
- *
- * @author Wessel
+ * This class forms the root coordinator of the application. It is responsible for presenting the main screen & ensures that the menu is visible.
+ * @author Wessel Jongkind
  */
 public class ApplicationCoordinator implements Coordinator, HotkeyListener.HotkeyListenerDelegate, Window.WindowDelegate {
     
@@ -41,7 +40,17 @@ public class ApplicationCoordinator implements Coordinator, HotkeyListener.Hotke
     
     // MARK: - Initialisers
     
-    public ApplicationCoordinator(ColorScheme colorScheme, HotkeyListener hotkeyListener, PlaylistPlayer playlistPlayer, PlaylistStoreInterface playlistStore, DefaultMenuContextInterface menuContext, AppStateServiceInterface appStateService, SongInfoOverlay overlay) throws IOException {
+    /**
+     * Instantiates a new application coordinator.
+     * @param colorScheme The colorscheme that needs to be used in the application.
+     * @param hotkeyListener A hotkey listener that responds to system-wide key events.
+     * @param playlistPlayer A player that can play playlists.
+     * @param playlistStore A service with which playlists can be stored.
+     * @param menuContext Object-container that has dependencies which are needed by the MenuCoordinator.
+     * @param appStateService Service with which app state can be read and persisted.
+     * @param overlay Overlay that can display song info.
+     */
+    public ApplicationCoordinator(ColorScheme colorScheme, HotkeyListener hotkeyListener, PlaylistPlayer playlistPlayer, PlaylistStoreInterface playlistStore, DefaultMenuContextInterface menuContext, AppStateServiceInterface appStateService, SongInfoOverlay overlay) {
         this.playlistPlayer = playlistPlayer;
         this.mainScreenController = new MainScreenViewController(colorScheme, playlistPlayer, new YouTubeService(), playlistStore);
         this.defaultMenuCoordinator = new DefaultMenuCoordinator(colorScheme, menuContext, overlay);

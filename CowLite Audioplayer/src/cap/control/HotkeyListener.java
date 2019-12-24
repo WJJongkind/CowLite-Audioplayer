@@ -6,7 +6,7 @@ import java.util.Map;
 import org.jnativehook.keyboard.*;
 
 /**
- * (c) Copyright This class makes the whole hotkey-thing possible. Thanks to
+ * This class makes the whole hotkey-thing possible. Thanks to
  * this class we can still control the program from outside of the user interface.
  */
 public class HotkeyListener implements NativeKeyListener {

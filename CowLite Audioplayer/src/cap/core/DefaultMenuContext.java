@@ -10,37 +10,46 @@ import cap.audio.PlaylistPlayer;
 import cap.core.services.PlaylistStoreInterface;
 
 /**
- *
- * @author Wessel
+ * Default implementation of the DefaultMenuContext interface.
+ * @author Wessel Jongkind
  */
 class DefaultMenuContext implements DefaultMenuCoordinator.DefaultMenuContextInterface {
+    
+    // MARK: - Private properties
         
-        private final PlaylistPlayer playlistPlayer;
-        private final PlaylistStoreInterface playlistStore;
+    private final PlaylistPlayer playlistPlayer;
+    private final PlaylistStoreInterface playlistStore;
 
-        public DefaultMenuContext(PlaylistPlayer playlistPlayer, PlaylistStoreInterface playlistStore) {
-            this.playlistPlayer = playlistPlayer;
-            this.playlistStore = playlistStore;
-        }
-
-        @Override
-        public PlaylistStoreInterface getPlaylistStore() {
-            return playlistStore;
-        }
-
-        @Override
-        public Playlist getCurrentPlaylist() {
-            return playlistPlayer.getPlaylist();
-        }
-
-        @Override
-        public String getAboutText() {
-            return "";
-        }
-
-        @Override
-        public String getFeaturesText() {
-            return "";
-        }
-        
+    // MARK: - Initialisers
+    
+    /**
+     * Initialises a new DefaultMenuContext object.
+     * @param playlistPlayer A player that can play playlists.
+     * @param playlistStore A storage with which playlists can be persisted.
+     */
+    public DefaultMenuContext(PlaylistPlayer playlistPlayer, PlaylistStoreInterface playlistStore) {
+        this.playlistPlayer = playlistPlayer;
+        this.playlistStore = playlistStore;
     }
+
+    @Override
+    public PlaylistStoreInterface getPlaylistStore() {
+        return playlistStore;
+    }
+
+    @Override
+    public Playlist getCurrentPlaylist() {
+        return playlistPlayer.getPlaylist();
+    }
+
+    @Override
+    public String getAboutText() {
+        return "";
+    }
+
+    @Override
+    public String getFeaturesText() {
+        return "";
+    }
+        
+}
