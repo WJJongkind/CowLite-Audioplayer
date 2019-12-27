@@ -17,12 +17,13 @@ import java.lang.ref.WeakReference;
 import cap.gui.colorscheme.ColorScheme;
 import cap.gui.shared.Menu;
 import cap.gui.shared.SubMenu;
-import java.awt.Insets;
 import java.util.Stack;
 
 /**
- *
- * @author Wessel
+ * This class represents a singular window in the application. Multiple windows can be
+ * active in the application at any time. The window supports various UI operations such
+ * as presenting a viewcontroller's view, or pushing new viewcontrollers to the navigation stack.
+ * @author Wessel Jongkind
  */
 public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDelegate {
     
@@ -50,6 +51,10 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
     
     // MARK: - Initialisers
     
+    /**
+     * Initialises a new DefaultWindow object
+     * @param colorScheme The colorscheme that needs to be applied
+     */
     public DefaultWindow(ColorScheme colorScheme) {
         super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         super.setBackground(colorScheme.general().getFrameColor());
@@ -88,13 +93,6 @@ public class DefaultWindow extends JFrame implements Window, WindowActionsPaneDe
 
         super.add(contentPane);
     }
-    
-    // MARK: - Public methods
-    
-    // TODO: maybe not needed?
-//    public JPanel getWindowContentPane() {
-//        return contentPane;
-//    }
     
     // MARK: - Window
 

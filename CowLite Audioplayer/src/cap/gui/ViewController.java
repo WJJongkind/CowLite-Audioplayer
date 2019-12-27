@@ -6,12 +6,18 @@
 package cap.gui;
 
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 
 /**
- *
- * @author Wessel
+ * Base interface for a viewcontrolle. Each viewcontroller should have a method
+ * that exposes the view that is being controlled.
+ * @author Wessel Jongkind
  */
 public interface ViewController {
+    
+    /**
+     * The view that this viewcontroller is controlling.
+     * @return This viewcontroller's view.
+     */
     public JComponent getView();
+    
 }

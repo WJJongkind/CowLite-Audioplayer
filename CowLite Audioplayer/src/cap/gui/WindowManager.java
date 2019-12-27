@@ -7,10 +7,13 @@ import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 /**
- * The ComponentResizer allows you to resize a component by dragging a border of
- * the component.
+ * A WindowManager is a type with which window resize & relocate events can be handled.
+ * Note that this type should only be used for one single window at a time. Based
+ * off of some random crappy implementation I found on google. I added some bugfixes
+ * and extra behavior.
+ * @author Wessel Jongkind
  */
-public class WindowManager extends MouseAdapter {
+class WindowManager extends MouseAdapter {
 
     // MARK: - Associated types & constants
     

@@ -22,17 +22,34 @@ import javax.swing.border.AbstractBorder;
 import cap.gui.colorscheme.ColorScheme;
 
 /**
- *
- * @author Wessel
+ * A WindowActionsPane is a component containing the minimize, stretch and close buttons
+ * for a Window.
+ * @author Wessel Jongkind
  */
-public class WindowActionsPane extends JPanel {
+class WindowActionsPane extends JPanel {
     
     // MARK: - Associated types & constants
     
     public interface WindowActionsPaneDelegate {
+        
+        /**
+         * Notifies the delegate that the close button has been pressed.
+         * @param sender The sender of the event.
+         */
         public void didPressCloseButton(WindowActionsPane sender);
+        
+        /**
+         * Notifies the delegate that the minimize button has been pressed.
+         * @param sender The sender of the event.
+         */
         public void didPressMinimizeButton(WindowActionsPane sender);
+        
+        /**
+         * Notifies the delegate that the stretch screen button has been pressed.
+         * @param sender The sender of the event.
+         */
         public void didPressStretchButton(WindowActionsPane sender);
+        
     }
     
     private static class Layout {
@@ -94,7 +111,6 @@ public class WindowActionsPane extends JPanel {
     }
     
     private JToggleButton makeButton(ControlImageSet imageSet, Dimension size) {
-        //Make the button
         JToggleButton button = new JToggleButton();
         button.setPreferredSize(size);
         button.setMinimumSize(size);
