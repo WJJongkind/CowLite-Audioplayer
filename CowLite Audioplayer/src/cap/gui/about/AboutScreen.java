@@ -18,8 +18,8 @@ import java.lang.ref.WeakReference;
 import javax.swing.border.Border;
 
 /**
- *
- * @author Wessel
+ * Unfinished. // TODO.
+ * @author Wessel Jongkind
  */
 class AboutScreen extends JPanel {
     

@@ -6,23 +6,27 @@
 package cap.gui.colorscheme;
 
 /**
- *
- * @author Wessel
+ * Default implementation of ColorScheme.
+ * @author Wessel Jongkind
  */
 public class BasicColorScheme implements ColorScheme {
     
-    private DynamicFont font;
-    private GeneralColorScheme generalColorScheme;
-    private ButtonColorScheme defaultButtonColorScheme;
-    private InputFieldColorScheme defaultInputFieldColorScheme;
-    private MenuColorScheme menuColorScheme;
-    private TableColorScheme playlistPaneColorScheme;
-    private SavedListsPaneColorScheme savedListsPaneColorScheme;
-    private SliderColorScheme timeSliderColorScheme;
-    private SliderColorScheme volumeSliderColorScheme;
-    private OverlayColorScheme overlayColorScheme;
-    private UIImageSet imageSet;
+    // MARK: - Private properties
+    
+    private final DynamicFont font;
+    private final GeneralColorScheme generalColorScheme;
+    private final ButtonColorScheme defaultButtonColorScheme;
+    private final InputFieldColorScheme defaultInputFieldColorScheme;
+    private final MenuColorScheme menuColorScheme;
+    private final TableColorScheme playlistPaneColorScheme;
+    private final SavedListsPaneColorScheme savedListsPaneColorScheme;
+    private final SliderColorScheme timeSliderColorScheme;
+    private final SliderColorScheme volumeSliderColorScheme;
+    private final OverlayColorScheme overlayColorScheme;
+    private final UIImageSet imageSet;
 
+    // MARK: - Initialisers
+    
     public BasicColorScheme(
             DynamicFont font, 
             GeneralColorScheme generalColorScheme,
@@ -48,6 +52,8 @@ public class BasicColorScheme implements ColorScheme {
         this.overlayColorScheme = overlayColorScheme;
         this.imageSet = imageSet;
     }
+    
+    // MARK: - ColorScheme
 
     @Override
     public DynamicFont font() {

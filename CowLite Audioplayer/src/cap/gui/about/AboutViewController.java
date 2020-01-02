@@ -12,8 +12,8 @@ import static cap.util.SugarySyntax.unwrappedPerform;
 import java.lang.ref.WeakReference;
 
 /**
- *
- * @author Wessel
+ * Unfinished. // TODO
+ * @author Wessel Jongkind
  */
 public class AboutViewController implements ViewController, AboutScreen.AboutScreenDelegate {
     

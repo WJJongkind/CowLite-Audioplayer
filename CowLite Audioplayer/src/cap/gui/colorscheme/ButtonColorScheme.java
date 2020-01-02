@@ -8,20 +8,26 @@ package cap.gui.colorscheme;
 import java.awt.Color;
 
 /**
- *
- * @author Wessel
+ * Class containing all required properties to fully lay out a basic button.
+ * @author Wessel Jongkind
  */
 public class ButtonColorScheme extends ColorSchemeItem<ButtonColorScheme> {
+    
+    // MARK: - Private properties
     
     private Color pressedBackgroundColor;
     private Color backgroundColor;
     private Color textColor;
+    
+    // MARK: - Initialisers
 
     public ButtonColorScheme(Color pressedBackgroundColor, Color backgroundColor, Color textColor) {
         this.pressedBackgroundColor = pressedBackgroundColor;
         this.backgroundColor = backgroundColor;
         this.textColor = textColor;
     }
+    
+    // MARK: - Public methods
 
     public Color getPressedBackgroundColor() {
         return pressedBackgroundColor;
@@ -52,6 +58,7 @@ public class ButtonColorScheme extends ColorSchemeItem<ButtonColorScheme> {
     
     // MARK: - Protected methods
     
+    @Override
     protected ButtonColorScheme copy() {
         return new ButtonColorScheme(pressedBackgroundColor, backgroundColor, textColor);
     }

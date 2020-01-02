@@ -6,15 +6,14 @@
 package cap.gui.about;
 
 import cap.gui.shared.SexyScrollPane;
-import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import cap.gui.colorscheme.ColorScheme;
 
 /**
- *
- * @author Wessel
+ * Unfinished. // TODO
+ * @author Wessel Jongkind
  */
 class AboutPanel extends SexyScrollPane {
     
