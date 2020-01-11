@@ -25,8 +25,8 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 /**
- *
- * @author Wessel
+ * This class defines the dark mode colorscheme for the application.
+ * @author Wessel Jongkind
  */
 public class DarkMode extends BasicColorScheme {
     
@@ -49,6 +49,11 @@ public class DarkMode extends BasicColorScheme {
     
     // MARK: - Initialisers
     
+    /**
+     * 
+     * @param resourcesFolder The folder where all resources for the app can be found.
+     * @throws IOException When one or more of the required resources could not be loaded.
+     */
     public DarkMode(File resourcesFolder) throws IOException {
         super(font, generalColorScheme, buttonColorScheme, inputFieldColorScheme, menuColorScheme, playlistPaneColorScheme, savedListsColorScheme, timeSliderColorScheme, volumeSliderColorScheme, overlayColorScheme, makeImageSet(resourcesFolder));
     }

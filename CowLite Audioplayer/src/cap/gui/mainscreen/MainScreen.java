@@ -7,19 +7,21 @@ import cap.gui.mainscreen.SavedPlaylistsPane.PlayListSelectionDelegate;
 import cap.gui.mainscreen.VolumeSlider.VolumeSliderDelegate;
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
 import cap.gui.colorscheme.ColorScheme;
 import cap.gui.mainscreen.TimeSlider.TimeSliderDelegate;
 
 /**
- * (c) Copyright
- * The main GUI. Here all buttons, labels, frame-items etc. are created
- * & added to the interface of CowLite Audio Player.
+ * This class is the main screen of the application. It contains UI elements
+ * for loading playlists, starting playback, pausing etc..
+ * @author Wessel Jongkind
  */
 public class MainScreen extends JPanel {
     
     // MARK: - Associated types & constants
     
+    /**
+     * The delegate will be notified of any relevant user interaction with the UI.
+     */
     public interface MainScreenDelegate extends MusicControlPaneDelegate, PlayListSelectionDelegate, SongSelectionDelegate, TimeSliderDelegate, VolumeSliderDelegate {
     }
     
@@ -58,6 +60,12 @@ public class MainScreen extends JPanel {
     private final VolumeSlider volumeSlider;
     private final TimeSlider timeSlider;
     
+    // MARK: - Initialisers
+    
+    /**
+     * 
+     * @param colorScheme The colorscheme that needs to be applied.
+     */
     public MainScreen(ColorScheme colorScheme) {
         controlPane = new MusicControlPane(colorScheme);
         playlistPane = new PlaylistPane<>(colorScheme);
@@ -72,6 +80,62 @@ public class MainScreen extends JPanel {
         super.setBackground(colorScheme.general().getFrameColor());
         layoutComponents();
     }
+    
+    // MARK: - Getters & Setters
+    
+    /**
+     * 
+     * @param delegate The delegate which will be notified of relevant UI events.
+     */
+    public void setDelegate(MainScreenDelegate delegate) {
+        controlPane.setDelegate(delegate);
+        playlistPane.setDelegate(delegate);
+        savedPlaylistsPane.setDelegate(delegate);
+        volumeSlider.setDelegate(delegate);
+        timeSlider.setDelegate(delegate);
+    }
+    
+    /**
+     * 
+     * @return The pane that displays the loaded playlist.
+     */
+    public PlaylistPane getPlaylistPane() {
+        return playlistPane;
+    }
+    
+    /**
+     * 
+     * @return The pane that displays all saved playlists.
+     */
+    public SavedPlaylistsPane getSavedPlaylistsPane() {
+        return savedPlaylistsPane;
+    }
+    
+    /**
+     * 
+     * @return The track position slider.
+     */
+    public Slider getTrackPositionSlider() {
+        return timeSlider;
+    }
+    
+    /**
+     * 
+     * @return The volume slider.
+     */
+    public Slider getVolumeSlider() {
+        return volumeSlider;
+    }
+    
+    /**
+     * 
+     * @return The control pane that contains the play, pause, shuffle etc. buttons.
+     */
+    public MusicControlPane getControlPane() {
+        return controlPane;
+    }
+    
+    // MARK: - Private methods
     
     private void layoutComponents() {
         super.setLayout(new GridBagLayout());
@@ -99,6 +163,7 @@ public class MainScreen extends JPanel {
         
         add(playlistsSplitPane, c);
     }
+    
     private void layoutVolumeSlider() {
         GridBagConstraints c = new GridBagConstraints();
         
@@ -142,36 +207,6 @@ public class MainScreen extends JPanel {
         c.insets = new Insets(0, Layout.controlPaneMarginLeft, Layout.marginBottom, 0);
         
         add(controlPane, c);
-    }
-    
-    // MARK: - Getters & Setters
-    
-    public void setDelegate(MainScreenDelegate delegate) {
-        controlPane.setDelegate(delegate);
-        playlistPane.setDelegate(delegate);
-        savedPlaylistsPane.setDelegate(delegate);
-        volumeSlider.setDelegate(delegate);
-        timeSlider.setDelegate(delegate);
-    }
-    
-    public PlaylistPane getPlaylistPane() {
-        return playlistPane;
-    }
-    
-    public SavedPlaylistsPane getSavedPlaylistsPane() {
-        return savedPlaylistsPane;
-    }
-    
-    public Slider getTrackPositionSlider() {
-        return timeSlider;
-    }
-    
-    public Slider getVolumeSlider() {
-        return volumeSlider;
-    }
-    
-    public MusicControlPane getControlPane() {
-        return controlPane;
     }
     
 }

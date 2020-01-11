@@ -14,7 +14,6 @@ import cap.audio.SongPlayer.SongPlayerObserver;
 import cap.audio.files.FileSong;
 import cap.audio.files.FileSongPlayer;
 import cap.audio.youtube.YouTubeService;
-import cap.audio.youtube.YouTubeSong;
 import cap.core.services.PlaylistStoreInterface;
 import cap.gui.ViewController;
 import static cap.util.SugarySyntax.nilCoalesce;
@@ -36,17 +35,13 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 import cap.gui.colorscheme.ColorScheme;
-import cap.util.ActivityQueue;
-import cap.util.ActivityQueue.ActivityToken;
-import static cap.util.SugarySyntax.doTry;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 /**
- *
- * @author Wessel
+ * The MainScreenViewController handles all UI events that occur on the MainScreen of the application.
+ * These events include handling play events, pause events, load playlist events etc.
+ * @author Wessel Jongkind
  */
 public class MainScreenViewController implements SongPlayerObserver<Song>, MainScreen.MainScreenDelegate, ViewController, DropTargetListener, PlaylistStoreInterface.PlaylistStoreObserver {
 
@@ -63,11 +58,17 @@ public class MainScreenViewController implements SongPlayerObserver<Song>, MainS
     private final Timer timer;
     private final YouTubeService youTubeService;
     private final PlaylistStoreInterface playlistStore;
-    
-    private DropTarget dropTarget;
+    private final DropTarget dropTarget;
     
     // MARK: - Initialisers
     
+    /**
+     * 
+     * @param colorScheme The colorscheme that needs to be applied.
+     * @param playlistPlayer The playlistplayer that the viewcontroller will use to play back songs.
+     * @param youTubeService A service with which YouTube videos & playlists can be loaded.
+     * @param playlistStore A store with which all saved playlists can be loaded and new playlists can be saved.
+     */
     public MainScreenViewController(ColorScheme colorScheme, PlaylistPlayer playlistPlayer, YouTubeService youTubeService, PlaylistStoreInterface playlistStore) {
         // YT Service
         this.youTubeService = youTubeService;
