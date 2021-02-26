@@ -1,0 +1,196 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package cap.gui.mainscreen;
+
+import cap.gui.colorscheme.ControlImageSet;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Image;
+import java.lang.ref.WeakReference;
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.JToggleButton;
+import static cap.util.SugarySyntax.unwrappedPerform;
+import java.awt.image.BufferedImage;
+import cap.gui.colorscheme.UIImageSet;
+import cap.gui.colorscheme.ColorScheme;
+
+/**
+ *
+ * @author Wessel
+ */
+public class MusicControlPane extends JPanel {
+    
+    // MARK: - Associated types
+    
+    public interface MusicControlPaneDelegate {
+        public void didPressPlayButton(MusicControlPane sender);
+        public void didPressPauseButton(MusicControlPane sender);
+        public void didPressPreviousButton(MusicControlPane sender);
+        public void didPressNextButton(MusicControlPane sender);
+        public void didPressStopButton(MusicControlPane sender);
+        public boolean didPressShuffleButton(MusicControlPane sender);
+        public boolean didPressAlphabeticSortButton(MusicControlPane sender);
+        public void didPressClearButton(MusicControlPane sender);
+    }
+    
+    // MARK: - Layout properties
+    
+    private static final class Layout {
+        static final Dimension playButtonSize = new Dimension(14, 14);
+        static final Dimension pauseButtonSize = new Dimension(14, 14);
+        static final Dimension stopButtonSize = new Dimension(14, 14);
+        static final Dimension nextButtonSize = new Dimension(10, 10);
+        static final Dimension previousButtonSize = new Dimension(10, 10);
+        static final Dimension shuffleButtonSize = new Dimension(16, 12);
+        static final Dimension clearButtonSize = new Dimension(34, 10);
+        static final Dimension alphabeticButtonSize = new Dimension(22, 10);
+        static final int spacingBetweenButtons = 5;
+    }
+    
+    // MARK: - Private properties
+    
+    private WeakReference<MusicControlPaneDelegate> delegate;
+    private UIImageSet imageSet;
+    
+    private JToggleButton playButton, 
+                          pauseButton,
+                          stopButton,
+                          prevButton, 
+                          nextButton, 
+                          clearButton, 
+                          shuffleButton, 
+                          alphabeticButton;
+    
+    // MARK: - Initialisers
+    
+    public MusicControlPane(ColorScheme colorScheme) {
+        imageSet = colorScheme.imageSet();
+        makeButtons(colorScheme);
+        
+        super.setBackground(colorScheme.general().getFrameColor());
+        super.setLayout(new FlowLayout(FlowLayout.LEFT, Layout.spacingBetweenButtons, 0));
+        super.add(prevButton);
+        super.add(playButton);
+        super.add(pauseButton);
+        super.add(stopButton);
+        super.add(nextButton);
+        super.add(shuffleButton);
+        super.add(alphabeticButton);
+        super.add(clearButton);
+        
+        pauseButton.setVisible(false);
+    }
+    
+    // MARK: - Getters & setters
+    
+    public void setDelegate(MusicControlPaneDelegate delegate) {
+        this.delegate = new WeakReference<>(delegate);
+    }
+    
+    // MARK: - Private methods
+    
+    private void makeButtons(ColorScheme colorScheme) {
+        playButton = makeButton(colorScheme.imageSet().getPlayButtonImageSet(), Layout.playButtonSize);
+        playButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> didPressPlay(delegate)));
+        
+        pauseButton = makeButton(colorScheme.imageSet().getPauseButtonImageSet(), Layout.pauseButtonSize);
+        pauseButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressPauseButton(this)));
+        
+        stopButton = makeButton(colorScheme.imageSet().getStopButtonImageSet(), Layout.stopButtonSize);
+        stopButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressStopButton(this)));
+        
+        nextButton = makeButton(colorScheme.imageSet().getNextButtonImageSet(), Layout.nextButtonSize);
+        nextButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressNextButton(this)));
+        
+        prevButton = makeButton(colorScheme.imageSet().getPreviousButtonImageSet(), Layout.previousButtonSize);
+        prevButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressPreviousButton(this)));
+        
+        clearButton = makeButton(colorScheme.imageSet().getClearButtonImageSet(), Layout.clearButtonSize);
+        clearButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> delegate.didPressClearButton(this)));
+
+        shuffleButton = makeButton(colorScheme.imageSet().getShuffleButtonImageSet(), Layout.shuffleButtonSize);
+        shuffleButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> didPressShuffle(delegate)));
+        setButtonImage(shuffleButton, imageSet.getShuffleButtonImageSet(), false);
+        
+        alphabeticButton = makeButton(colorScheme.imageSet().getAlphabeticSortButtonImageSet(), Layout.alphabeticButtonSize);
+        alphabeticButton.addActionListener(e -> unwrappedPerform(delegate, delegate -> didPressAlphabeticSort(delegate)));
+        setButtonImage(alphabeticButton, imageSet.getAlphabeticSortButtonImageSet(), false);
+    }
+    
+    private JToggleButton makeButton(ControlImageSet imageSet, Dimension size) {
+        //Make the button
+        JToggleButton button = new JToggleButton();
+        button.setPreferredSize(size);
+        button.setMinimumSize(size);
+        button.setMaximumSize(size);
+        button.setFocusPainted(false);
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(false);
+        button.setOpaque(false);
+        
+        button.setIcon(new ImageIcon(imageSet.defaultImage().getScaledInstance(button.getPreferredSize().width, button.getPreferredSize().height, Image.SCALE_SMOOTH)));
+        button.setPressedIcon(new ImageIcon(imageSet.pressedImage().getScaledInstance(button.getPreferredSize().width, button.getPreferredSize().height, Image.SCALE_SMOOTH)));
+        button.setDisabledIcon(new ImageIcon(imageSet.disabledImage().getScaledInstance(button.getPreferredSize().width, button.getPreferredSize().height, Image.SCALE_SMOOTH)));
+        
+        return button;
+    }
+    
+    // MARK: - Public functions
+    
+    public void enablePlayButton() {
+        playButton.setVisible(true);
+        pauseButton.setVisible(false);
+        invalidate();
+        repaint();
+    }
+    
+    public void enablePauseButton() {
+        playButton.setVisible(false);
+        pauseButton.setVisible(true);
+        invalidate();
+        repaint();
+    }
+    
+    public void setShuffleEnabled(boolean enabled) {
+        if(enabled) {
+            setButtonImage(shuffleButton, imageSet.getShuffleButtonImageSet(), true);
+            setButtonImage(alphabeticButton, imageSet.getAlphabeticSortButtonImageSet(), false);
+        } else {
+            setButtonImage(shuffleButton, imageSet.getShuffleButtonImageSet(), false);
+        }
+    }
+    
+    public void setAlphabeticSortEnabled(boolean enabled) {
+        if(enabled) {
+            setButtonImage(alphabeticButton, imageSet.getAlphabeticSortButtonImageSet(),true);
+            setButtonImage(shuffleButton, imageSet.getShuffleButtonImageSet(), false);
+        } else {
+            setButtonImage(alphabeticButton, imageSet.getAlphabeticSortButtonImageSet(), false);
+        }
+    }
+    
+    // MARK: - Private functions
+    
+    private void didPressPlay(MusicControlPaneDelegate delegate) {
+        delegate.didPressPlayButton(this);
+    }
+    
+    private void didPressShuffle(MusicControlPaneDelegate delegate) {
+        setShuffleEnabled(delegate.didPressShuffleButton(this));
+    }
+    
+    private void didPressAlphabeticSort(MusicControlPaneDelegate delegate) {
+        setAlphabeticSortEnabled(delegate.didPressAlphabeticSortButton(this));
+    }
+    
+    private void setButtonImage(JToggleButton button, ControlImageSet imageSet, boolean isEnabled) {
+        BufferedImage image = isEnabled ? imageSet.defaultImage() : imageSet.disabledImage();
+        button.setIcon(new ImageIcon(image.getScaledInstance(button.getPreferredSize().width, button.getPreferredSize().height, Image.SCALE_SMOOTH)));
+    }
+
+    
+}

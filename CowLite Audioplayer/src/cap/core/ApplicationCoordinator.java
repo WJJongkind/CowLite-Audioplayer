@@ -1,0 +1,153 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package cap.core;
+
+import cap.control.HotkeyListener;
+import cap.audio.PlaylistPlayer;
+import cap.audio.SongPlayer;
+import cap.audio.youtube.YouTubeService;
+import cap.core.services.PlaylistStoreInterface;
+import cap.core.DefaultMenuCoordinator.DefaultMenuContextInterface;
+import cap.core.services.AppStateServiceInterface;
+import cap.gui.Window;
+import cap.gui.mainscreen.MainScreenViewController;
+import cap.gui.colorscheme.ColorScheme;
+import cap.gui.overlay.SongInfoOverlay;
+
+/**
+ * This class forms the root coordinator of the application. It is responsible for presenting the main screen & ensures that the menu is visible.
+ * @author Wessel Jongkind
+ */
+public class ApplicationCoordinator implements Coordinator, HotkeyListener.HotkeyListenerDelegate, Window.WindowDelegate {
+    
+    // MARK: - Constants
+    
+    private static final double volumeChangeAmount = 0.05;
+    
+    // MARK: - Private properties
+    
+    private final MainScreenViewController mainScreenController;
+    private final PlaylistPlayer playlistPlayer;
+    private final Coordinator defaultMenuCoordinator;
+    private final AppStateServiceInterface appStateService;
+    private final HotkeyListener hotkeyListener;
+    private final SongInfoOverlay overlay;
+    
+    private Window window;
+    
+    // MARK: - Initialisers
+    
+    /**
+     * Instantiates a new application coordinator.
+     * @param colorScheme The colorscheme that needs to be used in the application.
+     * @param hotkeyListener A hotkey listener that responds to system-wide key events.
+     * @param playlistPlayer A player that can play playlists.
+     * @param playlistStore A service with which playlists can be stored.
+     * @param menuContext Object-container that has dependencies which are needed by the MenuCoordinator.
+     * @param appStateService Service with which app state can be read and persisted.
+     * @param overlay Overlay that can display song info.
+     */
+    public ApplicationCoordinator(ColorScheme colorScheme, HotkeyListener hotkeyListener, PlaylistPlayer playlistPlayer, PlaylistStoreInterface playlistStore, DefaultMenuContextInterface menuContext, AppStateServiceInterface appStateService, SongInfoOverlay overlay) {
+        this.playlistPlayer = playlistPlayer;
+        this.mainScreenController = new MainScreenViewController(colorScheme, playlistPlayer, new YouTubeService(), playlistStore);
+        this.defaultMenuCoordinator = new DefaultMenuCoordinator(colorScheme, menuContext, overlay);
+        this.appStateService = appStateService;
+        this.overlay = overlay;
+        
+        // Catch global hotkey events
+        this.hotkeyListener = hotkeyListener;
+        hotkeyListener.setDelegate(this);
+    }
+    
+    // MARK: - Coordinator
+    
+    @Override
+    public void start(Window window) {
+        this.window = window;
+        window.presentViewController(mainScreenController);
+        window.setDelegate(this);
+        
+        defaultMenuCoordinator.start(window);
+    }
+    
+    // MARK: - HotkeyListenerDelegate
+    
+    @Override
+    public void didPressPlay() {
+        if(playlistPlayer.getPlayer().getPlayerState() == SongPlayer.PlayerState.playing) {
+            playlistPlayer.getPlayer().stop();
+        }
+        
+        if(playlistPlayer.getPlayer().getSong() == null) {
+            playlistPlayer.playNextSong();
+        } else {
+            playlistPlayer.getPlayer().play();
+        }
+    }
+
+    @Override
+    public void didPressPause() {
+        playlistPlayer.getPlayer().pause();
+    }
+
+    @Override
+    public void didPressStop() {
+        playlistPlayer.getPlayer().stop();
+    }
+
+    @Override
+    public void didPressPrevious() {
+        playlistPlayer.playPreviousSong();
+    }
+
+    @Override
+    public void didPressNext() {
+        playlistPlayer.playNextSong();
+    }
+
+    @Override
+    public void didPressVolumeUp() {
+        playlistPlayer.getPlayer().setVolume(playlistPlayer.getPlayer().getVolume() + volumeChangeAmount);
+    }
+
+    @Override
+    public void didPressVolumeDown() {
+        playlistPlayer.getPlayer().setVolume(playlistPlayer.getPlayer().getVolume() - volumeChangeAmount);
+    }
+
+    @Override
+    public void repositionOverlay(int dx, int dy) {
+        int newX = overlay.getLocation().x + dx;
+        int newY = overlay.getLocation().y + dy;
+        
+        overlay.setLocation(newX, newY);
+    }
+
+    @Override
+    public void shouldAllowOverlayRepositioning(boolean shouldAllowOverlayRepositioning) {
+        overlay.setIsMovable(shouldAllowOverlayRepositioning);
+    }
+
+    @Override
+    public void toggleOverlay() {
+        overlay.setVisible(!overlay.isVisible());
+    }
+    
+    // MARK: - WindowDelegate
+
+    @Override
+    public void didPressCloseWindow(Window window) {
+        if(window == this.window) {
+            appStateService.saveWindowSettings(window.getLocation(), window.getSize(), window.isFullScreen());
+            appStateService.saveOverlaySettings(overlay.getLocation(), overlay.getSize(), overlay.isVisible());
+            appStateService.saveVolume(playlistPlayer.getPlayer().getVolume());
+            appStateService.savePlaylistMode(playlistPlayer.getPlaylist().getMode());
+            appStateService.saveControls(hotkeyListener.getControls());
+            System.exit(0);
+        }
+    }
+    
+}

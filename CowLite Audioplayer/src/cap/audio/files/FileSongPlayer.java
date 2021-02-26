@@ -1,0 +1,151 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package cap.audio.files;
+
+import cap.audio.SongPlayer;
+import static cap.util.SugarySyntax.unwrappedPerform;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.player.base.MediaPlayer;
+
+/**
+ * Implementation of SongPlayer that allows the playback of FileSong objects.
+ * @author Wessel Jongkind
+ */
+public final class FileSongPlayer implements SongPlayer<FileSong> {
+    
+    // MARK: - Constants
+    
+    /**
+     * A set of file types that are supported by FileSongPlayer. 
+     */
+    public static final Set<String> supportedFileTypes = new HashSet<>();
+
+    static {
+        String[] supportedExtensions = {"3pg", "aac", "act", "aiff", "flac", "gsm", "m4a", "m4p", "mp3", "ogg", "oga", "mogg", "opus", "vox", "webm", "wma", "mp4", "avi", "wmv", "wav", "flv", "mov"};
+        supportedFileTypes.addAll(Arrays.asList(supportedExtensions));
+    }
+        
+    private static final class Constants {
+        public static final double defaultVolume = 0.5;
+    }
+    
+    // MARK: - Private properties
+    
+    private final ArrayList<WeakReference<SongPlayerObserver<FileSong>>> observers = new ArrayList<>();
+    
+    private MediaPlayer mediaPlayer;
+    private FileSong activeSong;
+    private PlayerState state = PlayerState.stopped;
+    
+    // MARK: - Initialisers
+    
+    public FileSongPlayer() {
+        mediaPlayer = new MediaPlayerFactory().mediaPlayers().newMediaPlayer();
+        setVolume(Constants.defaultVolume);
+    }
+    
+    // MARK: - SongPlayer
+
+    @Override
+    public void play() {
+        mediaPlayer.controls().play();
+        PlayerState oldState = state;
+        state = mediaPlayer.media().isValid() && mediaPlayer.status().isPlayable() ? PlayerState.playing : PlayerState.stopped;
+        if(oldState != state) {
+            unwrappedPerform(observers, observer -> observer.stateChanged(this, state));
+        }
+    }
+
+    @Override
+    public void pause() {
+        if(state == PlayerState.playing) {
+            mediaPlayer.controls().pause();
+            state = PlayerState.paused;
+            unwrappedPerform(observers, observer -> observer.stateChanged(this, state));
+        }
+    }
+
+    @Override
+    public void stop() {
+        if(state == PlayerState.playing || state == PlayerState.paused) {
+            mediaPlayer.controls().stop();
+            state = PlayerState.stopped;
+            unwrappedPerform(observers, observer -> observer.stateChanged(this, state));
+        }
+    }
+
+    @Override
+    public PlayerState getPlayerState() {
+        return state;
+    }
+
+    @Override
+    public void setVolume(double volume) {
+        mediaPlayer.audio().setVolume((int)Math.round(volume * 100));
+        unwrappedPerform(observers, observer -> observer.volumeChanged(this, volume));
+    }
+
+    @Override
+    public double getVolume() {
+        return mediaPlayer.audio().volume() / 100.0;
+    }
+
+    @Override
+    public void setSong(FileSong song) {
+        stop();
+        
+        if(song == null) {
+            double volume = getVolume();
+            mediaPlayer.release();
+            mediaPlayer = new MediaPlayerFactory().mediaPlayers().newMediaPlayer();
+            setVolume(volume);
+        } else {
+            mediaPlayer.media().prepare(song.getUrl().getProtocol() + "://" + song.getUrl().getPath());
+            this.activeSong = song;
+        }
+        
+        unwrappedPerform(observers, observer -> observer.songChanged(this, song));
+    }
+
+    @Override
+    public FileSong getSong() {
+        return activeSong;
+    }
+
+    @Override
+    public void seek(long toPosition) {
+        if(state == PlayerState.playing || state == PlayerState.paused) {
+            mediaPlayer.controls().setTime(toPosition);
+            unwrappedPerform(observers, observer -> observer.positionChanged(this, toPosition));
+        }
+    }
+
+    @Override
+    public long getPosition() {
+        return state == PlayerState.playing && mediaPlayer.status().time() == -1 ? mediaPlayer.media().info().duration() : mediaPlayer.status().time();
+    }
+
+    @Override
+    public long getDuration() {
+        return activeSong.getDuration();
+    }
+    
+    @Override
+    public void addObserver(SongPlayerObserver<FileSong> observer) {
+        observers.add(new WeakReference<>(observer));
+    }
+
+    @Override
+    public void removeObserver(SongPlayerObserver<FileSong> observer) {
+        observers.remove(new WeakReference<>(observer));
+    }
+    
+}

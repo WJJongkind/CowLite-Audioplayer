@@ -1,3 +1,6 @@
 /CowLite Audioplayer/nbproject/private/
 /CowLite Audioplayer/build/
 /CowLite Audioplayer Rework/nbproject/private/
+/CowLite Audioplayer/dist/
+*.db
+/CowLite Audioplayer/resources/persistence/
